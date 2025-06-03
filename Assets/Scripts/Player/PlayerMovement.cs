@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform earsSlot; // drag the child transform in the inspector
     [SerializeField] private GameObject earsPrefab; // drag the ears prefab here
     private SpriteRenderer playerSpriteRenderer;
-    private int facingDirecton = 1;
+    private int facingDirection = 1;
 
 
     private GameObject equippedEars;
@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
 
         // 2) Decide “forward” based on which way the player is facing.
         //    If you already flip your sprite via localScale.x, you can use that:
-        Vector2 checkDirection = facingDirecton == 1 ? Vector2.right : Vector2.left;
+        Vector2 checkDirection = facingDirection == 1 ? Vector2.right : Vector2.left;
 
         // 3) Perform the short box-cast in front of the player only.
         RaycastHit2D hit = Physics2D.BoxCast(
@@ -549,7 +549,7 @@ public void Recoil(Vector2 sourcePosition, Vector2 recoilDirection = default)
     // Ensure minimum horizontal knockback (prevent getting stuck)
     if (Mathf.Abs(knockbackDirection.x) < 0.3f)
     {
-        knockbackDirection.x = facingDirecton == 1 ? 0.5f : -0.5f;
+        knockbackDirection.x = facingDirection == 1 ? 0.5f : -0.5f;
     }
     
     // Apply recoil

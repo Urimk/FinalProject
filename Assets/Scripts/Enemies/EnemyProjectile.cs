@@ -83,7 +83,7 @@ public class EnemyProjectile : EnemyDamage {
     
     // Rest of your methods remain the same
     private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.gameObject.tag == "NoCollision") {
+        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy") {
             return;
         }
 
@@ -93,6 +93,7 @@ public class EnemyProjectile : EnemyDamage {
 
         if (anim != null) {
             anim.SetTrigger("explosion");
+            anim.SetTrigger("fade");
         } else {
             gameObject.SetActive(false);
         }
