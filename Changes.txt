@@ -1,0 +1,2 @@
+Wall jump is implemented differently
+you need to hold back to the wall to slide down slower, you can't stick to a wall and have only one jump off wall option.

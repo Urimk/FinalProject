@@ -1,0 +1,65 @@
+{
+    "MyBehavior": {
+        "checkpoints": [
+            {
+                "steps": 940,
+                "file_path": "results\\BossPart1\\MyBehavior\\MyBehavior-940.onnx",
+                "reward": null,
+                "creation_time": 1747297164.0125434,
+                "auxillary_file_paths": [
+                    "results\\BossPart1\\MyBehavior\\MyBehavior-940.pt"
+                ]
+            },
+            {
+                "steps": 299980,
+                "file_path": "results\\BossPart1\\MyBehavior\\MyBehavior-299980.onnx",
+                "reward": -5.770665675750934,
+                "creation_time": 1747301770.4980166,
+                "auxillary_file_paths": [
+                    "results\\BossPart1\\MyBehavior\\MyBehavior-299980.pt"
+                ]
+            },
+            {
+                "steps": 599973,
+                "file_path": "results\\BossPart1\\MyBehavior\\MyBehavior-599973.onnx",
+                "reward": -5.407823823392391,
+                "creation_time": 1747306169.886981,
+                "auxillary_file_paths": [
+                    "results\\BossPart1\\MyBehavior\\MyBehavior-599973.pt"
+                ]
+            },
+            {
+                "steps": 899943,
+                "file_path": "results\\BossPart1\\MyBehavior\\MyBehavior-899943.onnx",
+                "reward": -5.611973407339644,
+                "creation_time": 1747310550.753303,
+                "auxillary_file_paths": [
+                    "results\\BossPart1\\MyBehavior\\MyBehavior-899943.pt"
+                ]
+            },
+            {
+                "steps": 933009,
+                "file_path": "results\\BossPart1\\MyBehavior\\MyBehavior-933009.onnx",
+                "reward": -5.796200752923531,
+                "creation_time": 1747317751.7918866,
+                "auxillary_file_paths": [
+                    "results\\BossPart1\\MyBehavior\\MyBehavior-933009.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 933009,
+            "file_path": "results\\BossPart1\\MyBehavior.onnx",
+            "reward": -5.796200752923531,
+            "creation_time": 1747317751.7918866,
+            "auxillary_file_paths": [
+                "results\\BossPart1\\MyBehavior\\MyBehavior-933009.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.26.0",
+        "torch_version": "2.7.0+cu118"
+    }
+}

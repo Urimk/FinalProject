@@ -1,0 +1,12 @@
+{
+    "name": "Game",
+    "references": [
+        "TestUtilities",
+        "PlayFab",
+        "Unity.TextMeshPro",
+        "SPUM",
+        "Unity.ML-Agents",
+        "com.unity.nuget.newtonsoft-json"
+    ],
+    "autoReferenced": true
+}

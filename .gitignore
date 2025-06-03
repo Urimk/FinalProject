@@ -1,0 +1,46 @@
+# Ignore Unity generated files and directories
+Library/
+Temp/
+Logs/
+UserSettings/
+myenv39/
+Packages/*
+!Packages/manifest.json
+!Packages/packages-lock.json
+# Ignore all Visual Studio files
+.vscode/
+# Ignore build directories
+Build/
+# Ignore macOS files (if you are not developing for macOS)
+.DS_Store
+# Ignore Windows specific files
+Thumbs.db
+
+*.csproj
+*.sln
+
+# Unity generated
+obj/
+.vs/
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Unity3D Asset meta data
+*.pidb
+*.pdb
+*.mdb
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# Builds
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Crashlytics generated file
+crashlytics-build.properties
+
+Assets/StreamingAssets/api_key.txt
