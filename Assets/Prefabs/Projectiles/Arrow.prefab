@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6309106981407345248}
   - component: {fileID: 4097417183068631814}
   - component: {fileID: 2977914538304899582}
+  - component: {fileID: 722679093046933300}
   m_Layer: 9
   m_Name: Arrow
   m_TagString: Enemy
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1874385987
-  m_SortingLayer: 2
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 1802472957, guid: 80c6da308065f384590130c5f2809d6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -172,5 +173,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 5
+  size: 0
   resetTime: 5
+--- !u!111 &722679093046933300
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7038307197905767762}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0

@@ -3,7 +3,7 @@
 behaviors:
   MyBehavior:  # This name must match the Behavior Name on your Agent's Behavior Parameters component in Unity
     trainer_type: ppo
-    max_steps: 20000000
+    max_steps: 10000000
     checkpoint_interval: 300000
     time_horizon: 64
     summary_freq: 10000
@@ -12,10 +12,10 @@ behaviors:
       batch_size: 64
       buffer_size: 20000
       learning_rate: 1e-4
-      beta: 0.005 # Increased beta for more exploration
-      epsilon: 0.15
+      beta: 0.01 # Increased beta for more exploration
+      epsilon: 0.25
       lambd: 0.95
-      num_epoch: 3
+      num_epoch: 4
 
     network_settings:
       normalize: true  # Normalize observations - highly recommended

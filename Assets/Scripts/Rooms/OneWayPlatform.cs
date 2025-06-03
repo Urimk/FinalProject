@@ -3,6 +3,7 @@ using UnityEngine;
 public class OneWayPlatform : MonoBehaviour
 {
     [SerializeField] private bool isAIControlled;
+    [SerializeField] private bool isFallable = true;
     private PlatformEffector2D effector;
     private EdgeCollider2D edgeCollider;
     public float waitTime = 0.4f; // Delay before enabling collision again
@@ -22,7 +23,7 @@ public class OneWayPlatform : MonoBehaviour
     {
         if (!isAIControlled)
         {
-            if (Input.GetKeyDown(KeyCode.S)) // Press 'S' to fall through
+            if (Input.GetKeyDown(KeyCode.S) && isFallable) // Press 'S' to fall through
             {
                 FallThroughPlatform();
             }
@@ -35,7 +36,7 @@ public class OneWayPlatform : MonoBehaviour
     // AI can trigger falling through the platform
     public void SetAIFallThrough(bool shouldFall)
     {
-        if (isAIControlled && shouldFall)
+        if (isAIControlled && shouldFall && isFallable)
         {
             FallThroughPlatform();
         }
