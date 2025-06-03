@@ -19,6 +19,7 @@ public class PlayerAI : Agent
     [SerializeField] private Transform boss;
     [SerializeField] private Transform flames;
     [SerializeField] private GameObject[] bossFireballs;
+    [SerializeField] private GameObject[] playerFireballs;
 
     // Remove RayPerceptionSensor reference
     // [Header("Sensors")]
@@ -45,9 +46,9 @@ public class PlayerAI : Agent
     // Define relevant environment layers for observation
     // You NEED to set these layer numbers correctly in the Inspector!
     [Header("Environment Layers (for Observation)")]
-    [SerializeField] private int groundLayer = 8; // Example layer number
-    [SerializeField] private int platformLayer = 9; // Example layer number
-    [SerializeField] private int wallLayer = 10; // Example layer number
+    [SerializeField] private int groundLayer = 3; // Example layer number
+    [SerializeField] private int platformLayer = 7; // Example layer number
+    [SerializeField] private int wallLayer = 6; // Example layer number
 
     private int numRaycasts; // Calculated from rayAngles + 1 (for world down)
     private int numEnvironmentLayersToObserve; // Number of layers defined above
@@ -58,8 +59,8 @@ public class PlayerAI : Agent
     [Header("Reward Settings")]
     [SerializeField] private float rewardWin = 1.0f;
     [SerializeField] private float penaltyLose = -1.0f;
-    [SerializeField] private float rewardDamageBoss = 0.5f;
-    [SerializeField] private float penaltyTakeDamage = -1.5f;
+    [SerializeField] private float rewardDamageBoss = 0.75f;
+    [SerializeField] private float penaltyTakeDamage = -3f;
     // Step penalty can be set in Behavior Parameters directly (Negative Reward)
     [SerializeField] private float penaltyPerStep = -0.0001f;
 
@@ -75,7 +76,7 @@ public class PlayerAI : Agent
     private Rigidbody2D rb;
     private bool isBossDefeated = false;
     private bool isPlayerDead = false;
-    private float maxJumpHoldDuration = 0.5f;
+    private float maxJumpHoldDuration = 0.6f;
 
 
     // --- INITIALIZATION ---
@@ -132,6 +133,7 @@ public class PlayerAI : Agent
 
         EpisodeManager.Instance?.ResetEnvironmentForNewEpisode();
         ClearProjectiles(bossFireballs);
+        ClearProjectiles(playerFireballs);
 
         Debug.Log($"[PlayerAI] OnEpisodeBegin completed.");
     }
@@ -153,6 +155,7 @@ public class PlayerAI : Agent
         sensor.AddObservation(rb.velocity);           // 2 floats (Vector2)
         sensor.AddObservation(playerHealth != null ? playerHealth.currentHealth / playerHealth.startingHealth : 0f); // 1 float
         sensor.AddObservation(playerMovement != null && playerMovement.isGrounded()); // 1 bool (as float)
+        sensor.AddObservation(playerHealth != null && playerHealth.invulnerable); // 1 bool (as float)
         sensor.AddObservation(playerMovement != null && playerMovement.onWall());     // 1 bool (as float)
         sensor.AddObservation(playerMovement != null ? playerMovement.GetFacingDirection() : 1f); // 1 float
         sensor.AddObservation(playerAttack != null ? playerAttack.IsAttackReady() : 1f);       // 1 float
@@ -232,9 +235,17 @@ public class PlayerAI : Agent
         Vector2 relativeFlameMarkerPos = Vector2.zero;
         float closestFlameMarkerDist = float.MaxValue;
 
-        // --- Active Flame Hazard Observation ---
-        bool activeFlameFound = false;
-        Vector2 relativeActiveFlamePos = Vector2.zero;
+        // --- Active Flame Hazard Observation (using the 'flames' Transform) ---
+        bool isFlameHazardActive = flames != null && flames.gameObject.activeInHierarchy;
+        Vector2 relativeFlamePosObs = Vector2.zero;
+
+        if (isFlameHazardActive)
+        {
+            relativeFlamePosObs = (Vector2)flames.position - (Vector2)transform.position;
+            // You might also want to check if it's within a certain range if it's not always relevant
+        }
+        sensor.AddObservation(isFlameHazardActive);     // 1 float (is it currently active?)
+        sensor.AddObservation(relativeFlamePosObs);     // 2 floats (its relative position)
         float closestActiveFlameDist = float.MaxValue;
 
         for (int i = 0; i < hitCount; i++)
@@ -271,8 +282,8 @@ public class PlayerAI : Agent
         sensor.AddObservation(relativeDashIndicatorPos);
         sensor.AddObservation(flameMarkerFound);
         sensor.AddObservation(relativeFlameMarkerPos);
-        sensor.AddObservation(activeFlameFound);
-        sensor.AddObservation(relativeActiveFlamePos);
+        sensor.AddObservation(isFlameHazardActive);
+        sensor.AddObservation(relativeFlamePosObs);
 
 
         // --- Closest Boss Fireballs --- (Keep existing logic)

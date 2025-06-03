@@ -121,6 +121,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     public void ResetHealth()
     {
         currentHealth = maxHealth;
+        healthSlider.gameObject.SetActive(true);
         isDying = false;
     }
 }

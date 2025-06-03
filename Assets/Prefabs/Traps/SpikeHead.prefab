@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1874385987
-  m_SortingLayer: 0
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1508ab85aab80754fb0213cd79267961, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -175,10 +175,7 @@ MonoBehaviour:
   speed: 0.25
   range: 8
   checkDelay: 0.75
-  chargeDuration: 0.6
-  chargeBackDistance: 1
-  attackSpeedMultiplier: 2
   playerLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 256
   crashSound: {fileID: 8300000, guid: cf6797e95e1bc9947a51a4b8a6f6320f, type: 3}

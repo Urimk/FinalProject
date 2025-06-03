@@ -131,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
                 newPosition = new Vector3(0.05f, 0f, 0f);
             }
 
-            earsSlot.localPosition = newPosition;
+            earsSlot.localPosition = newPosition;       
         }
     }
     private void UpdateTimers()
@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovementInput()
     {
-        if (!isAIControlled)
+        if (!isAIControlled && disableMovementTimer <= 0)
         {
             horizontalInput = Input.GetAxis("Horizontal");
         }
@@ -161,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
         else if (IsHorizontallyBlocked() && !isGrounded())
         {
             // If blocked horizontally and not grounded, ensure falling
-            body.velocity = new Vector2(0, body.velocity.y);
+            body.velocity = new Vector2(body.velocity.x, body.velocity.y);
         }
 
         // Flips the player sprite when moving left and right
@@ -171,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
     // AI can set movement input using this method
     public void SetAIInput(float moveDirection)
     {
-        if (isAIControlled)
+        if (isAIControlled && disableMovementTimer <= 0)
         {
             horizontalInput = moveDirection;
         }
@@ -220,12 +220,12 @@ public class PlayerMovement : MonoBehaviour
         if (horizontalInput > 0.01f)
         {
             transform.localScale = Vector3.one;
-            facingDirecton = 1;
+            facingDirection = 1;
         }
         else if (horizontalInput < -0.01f)
         {
             transform.localScale = new Vector3(-1, 1, 1);
-            facingDirecton = -1;
+            facingDirection = -1;
         }
     }
 
@@ -253,14 +253,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void resetExtraJumps()
     {
-        if (isGrounded())
+        if (isGrounded() && body.velocity.y == 0)
         {
-            jumpCounter = extraJumps;
+            jumpCounter = extraJumps + 1;
+            //Move frome here
+            wallJumpCooldown = 0;
         }
     }
 
     private void HandleWallInteraction()
     {
+        wallJumpCooldown += Time.deltaTime;
         if (onWall() && horizontalInput != 0 && !isGrounded())
         {
             if (timeSinceGrounded > groundedGraceTime)
@@ -319,15 +322,7 @@ public class PlayerMovement : MonoBehaviour
         if (isAIControlled)
         {
             // Stop any previous jump hold simulation if a new jump command comes
-            if (currentAIJumpRoutine != null)
-            {
-                StopCoroutine(currentAIJumpRoutine);
-                currentAIJumpRoutine = null;
-                // Optional: Decide if releasing the previous jump early should trigger AdjustJumpHeight here
-                // if (body.velocity.y > 0) { AdjustJumpHeight(); }
-            }
-
-            if (jumpDuration <= 0) // Use <= 0 for safety
+            if (currentAIJumpRoutine != null || jumpDuration <= 0)
             {
                 return; // No jump requested
             }
@@ -338,15 +333,17 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator AIJumpRoutine(float jumpDuration)
     {
-        AttemptJump(); // Simulate pressing the jump button
-        yield return new WaitForSeconds(jumpDuration); // Simulate holding the button
-
-        // Check velocity *after* the wait
-        if (body.velocity.y > 0)
+        bool wasGroundJump = AttemptJump(); // Simulate pressing the jump button
+        if (wasGroundJump)
         {
-            AdjustJumpHeight(); // Simulate releasing the jump button early
+            yield return new WaitForSeconds(jumpDuration); // Simulate holding the button
+            // Check velocity *after* the wait
+            if (body.velocity.y > 0)
+            {
+                AdjustJumpHeight(); // Simulate releasing the jump button early
+            }
+            currentAIJumpRoutine = null; // Mark the routine as finished 
         }
-        currentAIJumpRoutine = null; // Mark the routine as finished
     }
 
     // Add ResetState method if you don't have one, to clear the coroutine reference on episode reset
@@ -361,19 +358,20 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Handles jump logic
-    private void AttemptJump()
+    private bool AttemptJump()
     {
         if (UIManager.instance.IsGamePaused())
         {
-            return;
+            return false;
         }
-        Jump();
+        bool wasGroundJump = Jump();
 
         // Play jump sound when grounded
         if (isGrounded())
         {
             SoundManager.instance.PlaySound(jumpSound);
         }
+        return wasGroundJump;
     }
 
 
@@ -385,20 +383,22 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private void Jump()
+    private bool Jump()
     {
         if (coyoteCounter <= 0 && !onWall() && jumpCounter <= 0)
         {
-            return;
+            return false;
         }
 
         if (isGrounded())
         {
             PerformGroundJump();
+            return true;
         }
         else
         {
             PerformWallOrAirJump();
+            return false;
         }
     }
 
@@ -407,11 +407,12 @@ public class PlayerMovement : MonoBehaviour
         body.velocity = new Vector2(body.velocity.x, jumpPower);
         coyoteCounter = 0;
         anim.SetTrigger("jump");
+        jumpCounter--;
     }
 
     private void PerformWallOrAirJump()
     {
-        if (onWall() && !isGrounded() && timeSinceGrounded > groundedGraceTime)
+        if (onWall() && !isGrounded() && timeSinceGrounded > groundedGraceTime && wallJumpCooldown > 0.05f)
         {
             PerformWallJump();
         }
@@ -438,11 +439,12 @@ public class PlayerMovement : MonoBehaviour
         body.gravityScale = 6;
 
         // Apply wall jump force (away from the wall)
-        body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 12);
+        horizontalInput = 0;
+        body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 6);
         Vector3 s = transform.localScale;
         s.x = -s.x;
         transform.localScale = s;
-        facingDirecton = -facingDirecton;
+        facingDirection = -facingDirection;
     }
 
     public bool isGrounded()
@@ -464,7 +466,7 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.bounds.center,
             boxCollider.bounds.size,
             0,
-            new Vector2(transform.localScale.x, 0),
+            new Vector2(facingDirection, 0),
             0.01f,
             wallLayer
         );
@@ -488,13 +490,13 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDisable()
     {
-        anim.SetBool("grounded", true);
-        anim.SetBool("running", false);  // Force running to stop
+         anim.SetBool("grounded", true);
+         anim.SetBool("running", false);  // Force running to stop
     }
 
     public int GetFacingDirection()
     {
-        return facingDirecton;
+        return facingDirection;
     }
 
     public void ActivatePowerUp(int bonusJumps, float bonusJumpPower)

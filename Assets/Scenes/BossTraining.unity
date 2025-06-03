@@ -4210,6 +4210,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1943961469}
     - target: {fileID: 6326773157898625309, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      propertyPath: attackCooldown
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326773157898625309, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: isAIControlled
       value: 1
       objectReference: {fileID: 0}
@@ -7029,6 +7033,17 @@ MonoBehaviour:
   - {fileID: 1721609926}
   - {fileID: 1558456096}
   - {fileID: 1455788293}
+  playerFireballs:
+  - {fileID: 1292831299}
+  - {fileID: 1397233026}
+  - {fileID: 366846050}
+  - {fileID: 378944430}
+  - {fileID: 1832807652}
+  - {fileID: 1379048511}
+  - {fileID: 906406351}
+  - {fileID: 513587700}
+  - {fileID: 1895430468}
+  - {fileID: 386825171}
   raycastDistance: 10
   environmentLayerMask:
     serializedVersion: 2
@@ -7038,9 +7053,9 @@ MonoBehaviour:
   wallLayer: 10
   rewardWin: 1
   penaltyLose: -1
-  rewardDamageBoss: 0.1
-  penaltyTakeDamage: -0.2
-  penaltyPerStep: -0.0001
+  rewardDamageBoss: 1
+  penaltyTakeDamage: -2
+  penaltyPerStep: -0.001
   maxBossFireballsToObserve: 3
   hazardDetectionRadius: 15
   hazardDetectionLayerMask:
@@ -7069,7 +7084,7 @@ MonoBehaviour:
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
-  m_InferenceDevice: 0
+  m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: MyBehavior
   TeamId: 0
@@ -9613,10 +9628,10 @@ MonoBehaviour:
   damage: 0
   rb: {fileID: 0}
   movementSpeed: 1
-  attackCooldown: 2.5
+  attackCooldown: 8
   fireballDamage: 1
-  projectileSpeed: 5
-  projectileSize: 1
+  projectileSpeed: 2.5
+  projectileSize: 0.7
   attackRange: 20
   fireballSound: {fileID: 0}
   bossHealth: {fileID: 1957706222}
@@ -9637,7 +9652,7 @@ MonoBehaviour:
   fireballHolder: {fileID: 739563515}
   flame: {fileID: 743609662}
   areaMarkerPrefab: {fileID: 1760400758}
-  fireAttackCooldown: 5
+  fireAttackCooldown: 7
   dashChargeTime: 2
   dashSpeed: 10
   dashCooldown: 5

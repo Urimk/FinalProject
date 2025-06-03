@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 747159523822648464}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.41, y: 0.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 7747469538398640580}
   - component: {fileID: 6636763723565328137}
   - component: {fileID: 5068752097448051994}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (3)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 2445066067992630457}
   - component: {fileID: 7168710354984581858}
   - component: {fileID: 5461648219416826818}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (7)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 8586329546744959576}
   - component: {fileID: 3405285063442617844}
   - component: {fileID: 1459383387958815735}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (6)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -609,7 +609,7 @@ GameObject:
   - component: {fileID: 6367507120284885422}
   - component: {fileID: 8646862823655736577}
   - component: {fileID: 7389607404660322598}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (1)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -843,7 +843,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1874385987
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: -8654421302381229280, guid: 573c22279c1eb734696548dfba41d021, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -915,9 +915,6 @@ MonoBehaviour:
   - {fileID: 3574931536121698808}
   - {fileID: 6197152972378851267}
   arrowSound: {fileID: 8300000, guid: c537372af4edc564385e72f1b4dd8341, type: 3}
-  rotateFirepoint: 0
-  rotationAngle: 40
-  rotationDuration: 3
 --- !u!1 &6197152972378851267
 GameObject:
   m_ObjectHideFlags: 0
@@ -931,7 +928,7 @@ GameObject:
   - component: {fileID: 7777272937020201478}
   - component: {fileID: 5941020337550702999}
   - component: {fileID: 4577455636875036538}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (8)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1106,7 +1103,7 @@ GameObject:
   - component: {fileID: 6220111453859792676}
   - component: {fileID: 4965552462645029395}
   - component: {fileID: 4440718853419300147}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (4)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1281,7 +1278,7 @@ GameObject:
   - component: {fileID: 7729947859856161909}
   - component: {fileID: 3099785798517570074}
   - component: {fileID: 8159131888697483967}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1456,7 +1453,7 @@ GameObject:
   - component: {fileID: 3011769277340440998}
   - component: {fileID: 1961681352813704525}
   - component: {fileID: 8244951329445152398}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (5)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1631,7 +1628,7 @@ GameObject:
   - component: {fileID: 1917628200187338119}
   - component: {fileID: 3242867496229029968}
   - component: {fileID: 1351594892135919518}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arrow (2)
   m_TagString: Enemy
   m_Icon: {fileID: 0}

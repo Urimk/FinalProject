@@ -29,7 +29,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
     [Header("Flame Attack")]
     [SerializeField] private GameObject flame; // Prefab or instance of the fire attack GameObject
     [SerializeField] private GameObject areaMarkerPrefab; // Red marker prefab
-    [SerializeField] private float fireAttackCooldown = 8f;
+    [SerializeField] private float fireAttackCooldown = 7f;
 
     [Header("Charge Dash Attack")]
     [SerializeField] private float dashChargeTime = 2f; // Charge time before dash
@@ -108,8 +108,8 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         // isFlameDeactivationCanceled = false; // Reset if used
 
         // Reset timers to be ready for new attacks
-        attackCooldown = 3f;
-        fireAttackCooldown = 6f;
+        attackCooldown = 6f;
+        fireAttackCooldown = 7f;
         dashCooldown = 10f;
         cooldownTimer = attackCooldown;
         fireAttackTimer = fireAttackCooldown;
@@ -149,6 +149,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
     {
         if (isDead) return;  // Skip everything if the boss is dead
 
+        transform.rotation = Quaternion.Euler(0, 0, 0);
         // Check for phase 2 transition (50% health)
         if (!isPhase2 && bossHealth != null)
         {
@@ -178,7 +179,9 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         if (!isChargingDash && distanceToPlayer < attackRange) // Only move if not busy and outside attack range
         {
             // Calculate direction towards the player
-            Vector2 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 fixPlayerPosition = player.position;
+            fixPlayerPosition.y -= 0.75f;
+            Vector2 directionToPlayer = (fixPlayerPosition - transform.position).normalized;
 
             // Set Rigidbody velocity to move towards the player
             rb.velocity = directionToPlayer * movementSpeed;
@@ -214,7 +217,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         if (distanceToPlayer <= attackRange && cooldownTimer >= attackCooldown)
         {
             cooldownTimer = 0;
-            //RangedAttack();
+            RangedAttack();
         }
 
         fireballHolder.localScale = transform.localScale;
@@ -223,7 +226,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         if (distanceToPlayer <= attackRange && fireAttackTimer >= fireAttackCooldown && !flame.activeInHierarchy)
         {
             fireAttackTimer = 0;
-           // SpawnFireAtPlayer();
+            SpawnFireAtPlayer();
         }
     }
 

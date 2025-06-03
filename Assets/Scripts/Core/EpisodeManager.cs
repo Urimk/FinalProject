@@ -62,8 +62,8 @@ public class EpisodeManager : MonoBehaviour
 
     private void Awake()
     {
-        Time.timeScale = 10f;
-        Application.targetFrameRate = -1; // No frame limit
+        //Time.timeScale = 10f;
+        //Application.targetFrameRate = -1; // No frame limit
 
         // --- Singleton Setup ---
         if (Instance != null && Instance != this)
