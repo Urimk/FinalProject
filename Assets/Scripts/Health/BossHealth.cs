@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,12 +15,16 @@ public class BossHealth : MonoBehaviour, IDamageable
     [SerializeField] private GameObject spumPrefabObject;
     [SerializeField] private Transform boss;  // Reference to the boss Transform
     [SerializeField] private BossRewardManager rm;
+    [SerializeField] private GameObject trophy;
+
 
     private SPUM_Prefabs spumPrefabs;
     private bool isDying = false;
 
     // Reference to BossEnemy script to access flame and warning marker
-    [SerializeField] private AIBoss bossEnemyScript; 
+    [SerializeField] private List<MonoBehaviour> bossScriptObjects; // Drag any boss component here (AIBoss or BossEnemy)
+    private List<IBoss> bossScripts = new List<IBoss>();
+
 
     private void Awake()
     {
@@ -49,6 +54,14 @@ public class BossHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
+        foreach (var obj in bossScriptObjects)
+        {
+            if (obj is IBoss boss)
+                bossScripts.Add(boss);
+            else
+                Debug.LogError($"{obj.name} does not implement IBoss!");
+        }
+
     }
 
     public void TakeDamage(float damage)
@@ -58,11 +71,13 @@ public class BossHealth : MonoBehaviour, IDamageable
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthBar();
 
-        if (spumPrefabs != null && !isDying && !bossEnemyScript.IsCurrentlyChargingOrDashing())
+        bool allIdle = bossScripts.TrueForAll(b => !b.IsCurrentlyChargingOrDashing());
+        if (spumPrefabs != null && !isDying && allIdle)
         {
             spumPrefabs.PlayAnimation(PlayerState.DAMAGED, 0);
             OnBossDamaged?.Invoke(damage);
         }
+
 
         if (currentHealth <= 0)
         {
@@ -102,13 +117,17 @@ public class BossHealth : MonoBehaviour, IDamageable
             {
                 healthSlider.gameObject.SetActive(false);
             }
-            if (bossEnemyScript != null)
+            foreach (var boss in bossScripts)
             {
-                bossEnemyScript.Die();
+                boss.Die();
             }
             OnBossDied?.Invoke();
 
-            //StartCoroutine(DestroyAfterAnimation());
+            StartCoroutine(DestroyAfterAnimation());
+        }
+        if (trophy != null)
+        {
+            trophy.SetActive(true);
         }
     }
 

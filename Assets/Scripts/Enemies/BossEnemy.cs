@@ -2,13 +2,13 @@ using System.Collections;
 using UnityEngine;
 
 // Manages the Boss's behavior, attacks, and state.
-public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base health/damage logic
+public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides base health/damage logic
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float movementSpeed;
 
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown = 3f;
+    [SerializeField] private float attackCooldown = 4f;
     [SerializeField] private int fireballDamage = 1;
     [SerializeField] private float projectileSpeed = 5f;
     [SerializeField] private float projectileSize = 0.3f;
@@ -29,7 +29,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
     [Header("Flame Attack")]
     [SerializeField] private GameObject flame; // Prefab or instance of the fire attack GameObject
     [SerializeField] private GameObject areaMarkerPrefab; // Red marker prefab
-    [SerializeField] private float fireAttackCooldown = 7f;
+    [SerializeField] private float fireAttackCooldown = 6f;
 
     [Header("Charge Dash Attack")]
     [SerializeField] private float dashChargeTime = 2f; // Charge time before dash
@@ -42,6 +42,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
 
     // Flags to track boss state
     private bool isChargingDash = false; // Flag to track if dash is charging
+    private bool detectedPlayer;
     private bool isDashing = false; // Flag to track if boss is currently dashing
     private Vector2 dashTarget; // Target position for dash
 
@@ -108,8 +109,8 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         // isFlameDeactivationCanceled = false; // Reset if used
 
         // Reset timers to be ready for new attacks
-        attackCooldown = 6f;
-        fireAttackCooldown = 7f;
+        attackCooldown = 4f;
+        fireAttackCooldown = 6f;
         dashCooldown = 10f;
         cooldownTimer = attackCooldown;
         fireAttackTimer = fireAttackCooldown;
@@ -148,6 +149,13 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
     private void Update()
     {
         if (isDead) return;  // Skip everything if the boss is dead
+        if (!detectedPlayer)
+        {
+            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+            if (distanceToPlayer <= attackRange)
+                detectedPlayer = true;
+        }
+
 
         transform.rotation = Quaternion.Euler(0, 0, 0);
         // Check for phase 2 transition (50% health)
@@ -170,15 +178,13 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
 
         
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-
         // --- Movement Logic (Hardcoded - Consider removing for Q-Learning) ---
         // In a Q-Learning setup, the QL agent should call AIRequestMove
         // with the desired action type (e.g., Move_TowardsPlayer)
         // This hardcoded logic is here based on your request but may conflict with QL training.
-        if (!isChargingDash && distanceToPlayer < attackRange) // Only move if not busy and outside attack range
+        if (!isChargingDash && detectedPlayer) // Only move if not busy and outside attack range
         {
-            // Calculate direction towards the player
+                        // Calculate direction towards the player
             Vector3 fixPlayerPosition = player.position;
             fixPlayerPosition.y -= 0.75f;
             Vector2 directionToPlayer = (fixPlayerPosition - transform.position).normalized;
@@ -189,13 +195,13 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
             // Update animation parameter
             //if (anim != null) anim.SetBool("IsMoving", true);
         }
-        else if (isChargingDash || distanceToPlayer > attackRange) // Stop moving if within attack range and not busy
+        else if (isChargingDash || detectedPlayer) // Stop moving if within attack range and not busy
         {
             rb.velocity = Vector2.zero;
             //if (anim != null) anim.SetBool("IsMoving", false);
         }
 
-        if (isPhase2 && distanceToPlayer <= attackRange * 1.5f && dashCooldownTimer >= dashCooldown && !isChargingDash)
+        if (isPhase2 && detectedPlayer && dashCooldownTimer >= dashCooldown && !isChargingDash)
         {
             dashCooldownTimer = 0;
             //ChargeDashAttack();
@@ -214,7 +220,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         }
 
         // Ranged attack logic
-        if (distanceToPlayer <= attackRange && cooldownTimer >= attackCooldown)
+        if (detectedPlayer && cooldownTimer >= attackCooldown)
         {
             cooldownTimer = 0;
             RangedAttack();
@@ -223,7 +229,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         fireballHolder.localScale = transform.localScale;
 
         // Flame attack logic
-        if (distanceToPlayer <= attackRange && fireAttackTimer >= fireAttackCooldown && !flame.activeInHierarchy)
+        if (detectedPlayer && fireAttackTimer >= fireAttackCooldown && !flame.activeInHierarchy)
         {
             fireAttackTimer = 0;
             SpawnFireAtPlayer();
@@ -276,7 +282,7 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         }
 
 
-        if (anim != null) anim.SetTrigger("Attack"); // Use the correct attack trigger
+        if (anim != null) anim.SetTrigger("2_Attack"); // Use the correct attack trigger
         if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound); // Assuming SoundManager is correctly set up
 
         // Only reset cooldown if the launch was successful
@@ -544,13 +550,13 @@ public class BossEnemy : EnemyDamage // Assuming EnemyDamage provides base healt
         if (rb != null) rb.isKinematic = true; // Make kinematic to stop physics interactions
 
         // Play death animation
-        if (anim != null) anim.SetTrigger("Die"); // Assuming you have a die animation trigger
+        if (anim != null) anim.SetTrigger("4_Death"); // Assuming you have a die animation trigger
 
         // Disable the script itself so Update doesn't run
         this.enabled = false;
 
         // Optionally, you can destroy the boss GameObject after a delay:
-        // Destroy(gameObject, 2f); // Adjust the time to fit your death animation length
+        Destroy(gameObject, 2f); // Adjust the time to fit your death animation length
     }
 
     // Method to deactivate flame and warning markers

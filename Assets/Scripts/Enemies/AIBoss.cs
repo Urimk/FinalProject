@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 // This script handles the boss's mechanics, state, and execution of actions requested by the Q-learning agent.
-public class AIBoss : EnemyDamage // Assuming EnemyDamage handles health or similar
+public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health or similar
 {
     [Header("Boss Parameters")]
     [SerializeField] private float movementSpeed = 3.0f; // Adjusted speed example

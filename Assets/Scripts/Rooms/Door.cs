@@ -4,7 +4,7 @@ public class Door : MonoBehaviour
 {
     [SerializeField] private Transform prevRoom;
     [SerializeField] private Transform nextRoom;
-    [SerializeField] private bool isXDoor = false;
+    [SerializeField] private bool isHorizontalDoor = false;
 
     [SerializeField] private PlayerRespawn playerRespawn;
 
@@ -13,9 +13,9 @@ public class Door : MonoBehaviour
     {
         if (!collision.CompareTag("Player")) return;
 
-        bool toNext = isXDoor
-            ? collision.transform.position.x > transform.position.x
-            : collision.transform.position.y < transform.position.y;
+        bool toNext = isHorizontalDoor
+            ? collision.transform.position.y + 1.7f > transform.position.y
+            : collision.transform.position.x > transform.position.x;
 
         Transform fromRoom = toNext ? prevRoom : nextRoom;
         Transform intoRoom = toNext ? nextRoom : prevRoom;
