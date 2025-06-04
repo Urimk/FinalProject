@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Coyote Time")]
     [SerializeField] private float coyoteTime;
-    [SerializeField] private float groundedGraceTime = 0.2f;
+    [SerializeField] private float groundedGraceTime = 0.5f;
 
     [Header("Multiple Jumps")]
     [SerializeField] private int baseExtraJumps;
@@ -161,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
         else if (IsHorizontallyBlocked() && !isGrounded())
         {
             // If blocked horizontally and not grounded, ensure falling
-            body.velocity = new Vector2(body.velocity.x, body.velocity.y);
+            body.velocity = new Vector2(0f, body.velocity.y);
         }
 
         // Flips the player sprite when moving left and right
@@ -199,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
             0f,
             checkDirection,
             0.1f,
-            obstacleLayer
+            obstacleLayer | wallLayer
         );
 
         if (hit.collider != null)
@@ -440,7 +440,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply wall jump force (away from the wall)
         horizontalInput = 0;
-        body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 6);
+        body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 12);
         Vector3 s = transform.localScale;
         s.x = -s.x;
         transform.localScale = s;
@@ -466,7 +466,7 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.bounds.center,
             boxCollider.bounds.size,
             0,
-            new Vector2(facingDirection, 0),
+            new Vector2(transform.localScale.x, 0),
             0.01f,
             wallLayer
         );

@@ -9,6 +9,7 @@ public class GroundManager : MonoBehaviour
     public float spikeMoveTime = 0.4f;
     public float swapTime = 0.2f;
     [SerializeField] private FallingPlatform fallingPlatform;
+    [SerializeField] private int timesToSort = 3;
     [SerializeField] private GameObject trophy;
 
     public List<SortedSpike> spikes = new List<SortedSpike>();
@@ -178,7 +179,7 @@ public class GroundManager : MonoBehaviour
         }
 
         // Continue from where we left off
-        for (int i = currentSortingIndex; i < 3; i++)
+        for (int i = currentSortingIndex; i < timesToSort; i++)
         {
             if (isPlayerDead) yield break;
 

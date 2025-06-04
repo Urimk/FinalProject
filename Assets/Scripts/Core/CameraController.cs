@@ -226,7 +226,7 @@ public class CameraController : MonoBehaviour
         followPlayerY = follow;
         if (yOffset != -1f)
         {
-            playerYOffset = yOffset;
+            currentPosY = playerYOffset +yOffset;
         }
 
         if (followPlayerY)
