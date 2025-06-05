@@ -365,8 +365,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.3
   player: {fileID: 1393604989}
+  playerHealth: {fileID: 0}
   aheadDistance: 5.5
   cameraSpeed: 1.5
+  isChase: 0
+  chaseSpeed: 5
+  followPlayerY: 0
+  playerYOffset: 2
+  offsetTransitionDuration: 0.5
 --- !u!114 &63720342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,6 +983,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemies: []
+  cam: {fileID: 0}
+  pm: {fileID: 0}
+  pr: {fileID: 0}
+  freezeCamX: 0
+  xFreezeValue: 0
+  yOffsetValue: 2
+  gravScaleValue: 2
+  maxFallSpeedValue: 100
+  isChase: 0
+  chaseSpeed: 5
+  followPlayerY: 0
 --- !u!1 &213333083
 GameObject:
   m_ObjectHideFlags: 0
@@ -1545,6 +1562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAIControlled: 1
+  isFallable: 1
   waitTime: 0.3
   player: {fileID: 1393604989}
 --- !u!212 &369539319
@@ -1785,6 +1803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -2321,6 +2340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -3429,6 +3449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -6239,6 +6260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -7074,7 +7096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 75
+    VectorObservationSize: 78
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 1
@@ -7352,6 +7374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -7682,6 +7705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -7850,6 +7874,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -8338,6 +8363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -8753,6 +8779,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -8874,6 +8901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   speed: 1
   size: 0.3
   resetTime: 10
@@ -9549,6 +9577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isRecoil: 0
   movementSpeed: 1
   player: {fileID: 1393604989}
   anim: {fileID: 0}
@@ -9612,7 +9641,9 @@ MonoBehaviour:
   spumPrefabObject: {fileID: 1250826683}
   boss: {fileID: 1957706220}
   rm: {fileID: 1079023050}
-  bossEnemyScript: {fileID: 1957706221}
+  trophy: {fileID: 0}
+  bossScriptObjects:
+  - {fileID: 1957706224}
 --- !u!114 &1957706224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9626,6 +9657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  isRecoil: 0
   rb: {fileID: 0}
   movementSpeed: 1
   attackCooldown: 8
@@ -9987,6 +10019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAIControlled: 1
+  isFallable: 1
   waitTime: 0.3
   player: {fileID: 1393604989}
 --- !u!1 &2008115411
