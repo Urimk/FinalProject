@@ -8,7 +8,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     [SerializeField] private float movementSpeed;
 
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown = 4f;
+    [SerializeField] private float attackCooldown = 5f;
     [SerializeField] private int fireballDamage = 1;
     [SerializeField] private float projectileSpeed = 5f;
     [SerializeField] private float projectileSize = 0.3f;
@@ -109,7 +109,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         // isFlameDeactivationCanceled = false; // Reset if used
 
         // Reset timers to be ready for new attacks
-        attackCooldown = 4f;
+        attackCooldown = 5f;
         fireAttackCooldown = 6f;
         dashCooldown = 10f;
         cooldownTimer = attackCooldown;
@@ -232,7 +232,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (detectedPlayer && fireAttackTimer >= fireAttackCooldown && !flame.activeInHierarchy)
         {
             fireAttackTimer = 0;
-            SpawnFireAtPlayer();
+           // SpawnFireAtPlayer();
         }
     }
 

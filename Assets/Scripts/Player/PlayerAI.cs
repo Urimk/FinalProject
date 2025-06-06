@@ -35,11 +35,11 @@ public class PlayerAI : Agent
     // and one fixed world-down ray. Angles in degrees.
     private readonly float[] rayAngles = {
         0f,     // Forward
-        45f,    // Forward-Up
-        90f,    // Up (relative to player's orientation)
+     //   45f,    // Forward-Up
+    //    90f,    // Up (relative to player's orientation)
        -45f,    // Forward-Down
       180f,    // Backward
-      -135f,   // Backward-Down (relative to facing)
+     // -135f,   // Backward-Down (relative to facing)
        // Note: A world-down ray will be added separately
     };
 
@@ -65,7 +65,7 @@ public class PlayerAI : Agent
     [SerializeField] private float penaltyPerStep = -0.0001f;
 
     [Header("Observation Settings")]
-    [SerializeField] private int maxBossFireballsToObserve = 3;
+    [SerializeField] private int maxBossFireballsToObserve = 1;
     [Header("Physics Detection")]
     [SerializeField] private float hazardDetectionRadius = 15f; // How far around the player to check for indicators/hazards
     [SerializeField] private LayerMask hazardDetectionLayerMask = -1; // Set in inspector to layers containing hazards/indicators (-1 = Everything)
@@ -151,7 +151,7 @@ public class PlayerAI : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // --- Agent's Own State ---
-        sensor.AddObservation(transform.localPosition); // 3 floats (Vector3)
+        sensor.AddObservation((Vector2)transform.localPosition); // Now 2 floats
         sensor.AddObservation(rb.velocity);           // 2 floats (Vector2)
         sensor.AddObservation(playerHealth != null ? playerHealth.currentHealth / playerHealth.startingHealth : 0f); // 1 float
         sensor.AddObservation(playerMovement != null && playerMovement.isGrounded()); // 1 bool (as float)
@@ -194,14 +194,17 @@ public class PlayerAI : Agent
             RaycastHit2D hit = Physics2D.Raycast(origin, direction, raycastDistance, environmentLayerMask);
 
             // Add observations for this ray
-            sensor.AddObservation(hit.collider != null); // Hit? (1 float)
-            sensor.AddObservation(hit.collider != null ? hit.distance / raycastDistance : 1f); // Distance (normalized, 1 if no hit)
+            //sensor.AddObservation(hit.collider != null); // Hit? (1 float)
+            // sensor.AddObservation(hit.collider != null ? hit.distance / raycastDistance : 1f); // Distance (normalized, 1 if no hit)
 
             // Add one-hot encoding for detected layers
-            sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == groundLayer); // Hit Ground? (1 float)
-            sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == platformLayer); // Hit Platform? (1 float)
-            sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == wallLayer); // Hit Wall? (1 float)
+            //sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == groundLayer); // Hit Ground? (1 float)
+            //sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == platformLayer); // Hit Platform? (1 float)
+            //sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == wallLayer); // Hit Wall? (1 float)
             // Add more layers here if needed, updating numEnvironmentLayersToObserve
+            
+            sensor.AddObservation(hit.collider != null); // Hit? (1 float)
+            sensor.AddObservation(hit.collider != null ? hit.distance / raycastDistance : 1f); // Distance (normalized)
         }
 
         // --- Add a specific World Down ray ---

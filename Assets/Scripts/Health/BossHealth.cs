@@ -15,6 +15,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     [SerializeField] private GameObject spumPrefabObject;
     [SerializeField] private Transform boss;  // Reference to the boss Transform
     [SerializeField] private BossRewardManager rm;
+    [SerializeField] private bool isTraining;
     [SerializeField] private GameObject trophy;
 
 
@@ -116,14 +117,16 @@ public class BossHealth : MonoBehaviour, IDamageable
             if (healthSlider != null)
             {
                 healthSlider.gameObject.SetActive(false);
-            }
-            foreach (var boss in bossScripts)
-            {
-                boss.Die();
-            }
+            }    
             OnBossDied?.Invoke();
-
-            StartCoroutine(DestroyAfterAnimation());
+            if (!isTraining)
+            {
+                foreach (var boss in bossScripts)
+                {
+                    boss.Die();
+                }
+                StartCoroutine(DestroyAfterAnimation());
+            }
         }
         if (trophy != null)
         {

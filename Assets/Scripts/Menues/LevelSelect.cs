@@ -29,7 +29,7 @@ public class LevelSelect : MonoBehaviour
         Debug.Log($"Selected Level: {levelIndex}, Difficulty: {difficulty}, Leaderboard: {leaderboardName}");
 
         // Load the selected level
-        SceneManager.LoadScene($"Level {levelIndex}");
+        SceneManager.LoadScene($"Level {levelIndex} - {difficulty}");
         SoundManager.instance.ChangeMusic(SoundManager.instance.level1Music);
     }
 

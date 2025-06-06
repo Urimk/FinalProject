@@ -1444,7 +1444,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1770,7 +1770,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -1783,6 +1783,14 @@ PrefabInstance:
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1842,6 +1850,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2032075436}
     m_Modifications:
+    - target: {fileID: 1757911929244411808, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
+      propertyPath: startingHealth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1983567757429479371, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.69
@@ -1995,7 +2007,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -2012,6 +2024,14 @@ PrefabInstance:
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2929,7 +2949,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 0.75
+  chaseSpeed: 0.5
   followPlayerY: 1
 --- !u!1 &120711852
 GameObject:
@@ -3890,7 +3910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalScale.y
@@ -4961,7 +4981,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7886,7 +7906,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9835,12 +9855,20 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activeTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: alwaysActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activationDelay
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleStartDelay
@@ -10303,7 +10331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: speed
-      value: 1.25
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
+      propertyPath: chargeDuration
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10421,7 +10453,7 @@ PrefabInstance:
       objectReference: {fileID: 848260184}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration
@@ -11719,7 +11751,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11739,6 +11771,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1850422227}
     m_Modifications:
+    - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 88.34
@@ -13564,7 +13604,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15447,7 +15487,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16663,11 +16703,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17335,7 +17383,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: movingNegative
@@ -17344,6 +17392,14 @@ PrefabInstance:
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17586,7 +17642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b5bd6d1b1a5a14fbd3b45c92dcc1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layCooldown: 3.5
+  layCooldown: 4
   eggDropPoint: {fileID: 1522766694}
   eggPrefabs:
   - {fileID: 814274320}
@@ -17608,7 +17664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundManager: {fileID: 0}
-  startingHealth: 2
+  startingHealth: 1
   dead: 0
   iFramesDuration: 0
   numberOfFlashes: 0
@@ -17930,7 +17986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalScale.y
@@ -20041,7 +20097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b5bd6d1b1a5a14fbd3b45c92dcc1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layCooldown: 3.5
+  layCooldown: 4
   eggDropPoint: {fileID: 2069815530}
   eggPrefabs:
   - {fileID: 323536259}
@@ -20063,7 +20119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundManager: {fileID: 0}
-  startingHealth: 2
+  startingHealth: 1
   dead: 0
   iFramesDuration: 0
   numberOfFlashes: 0
@@ -20257,7 +20313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20964,7 +21020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21554,6 +21610,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1325328993}
     m_Modifications:
+    - target: {fileID: 1757911929244411808, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
+      propertyPath: startingHealth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1983567757429479371, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.48
@@ -21843,7 +21903,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23049,7 +23109,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -23062,6 +23122,14 @@ PrefabInstance:
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -23426,12 +23494,20 @@ PrefabInstance:
       value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activeTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: alwaysActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activationDelay
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25052,7 +25128,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 2.25
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -26822,6 +26898,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 139028471}
     m_Modifications:
+    - target: {fileID: 1757911929244411808, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
+      propertyPath: startingHealth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1983567757429479371, guid: 29b9099550c773f47aa1f71e2f2569d5, type: 3}
       propertyPath: m_LocalScale.x
       value: -1
@@ -27769,7 +27849,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 2.25
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -28652,11 +28732,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30771,7 +30851,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30793,7 +30873,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -30810,6 +30890,14 @@ PrefabInstance:
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
       value: Saw (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6315730044366974124, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31460,7 +31548,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32207,7 +32295,7 @@ PrefabInstance:
       objectReference: {fileID: 1289419873}
     - target: {fileID: 531923236697951366, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: startingHealth
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: earsSlot
@@ -32263,7 +32351,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5637722755402703905, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: lives
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5637722755402703905, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: initialRoom
@@ -34240,7 +34328,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: speed
-      value: 1.25
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
+      propertyPath: chargeDuration
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34474,7 +34566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37001,7 +37093,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37875,12 +37967,20 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activeTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: alwaysActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activationDelay
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41198,7 +41298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b5bd6d1b1a5a14fbd3b45c92dcc1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layCooldown: 2
+  layCooldown: 3
   eggDropPoint: {fileID: 1469910688}
   eggPrefabs:
   - {fileID: 7352452}
@@ -41220,7 +41320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundManager: {fileID: 0}
-  startingHealth: 2
+  startingHealth: 1
   dead: 0
   iFramesDuration: 0
   numberOfFlashes: 0
@@ -42653,11 +42753,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -43614,7 +43714,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -47177,6 +47277,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.65
       objectReference: {fileID: 0}
@@ -49099,7 +49203,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 4
+  chaseSpeed: 3
   followPlayerY: 1
 --- !u!1001 &1960547418
 PrefabInstance:
@@ -50425,13 +50529,13 @@ MonoBehaviour:
   damage: 0
   isRecoil: 0
   rb: {fileID: 0}
-  movementSpeed: 1
-  attackCooldown: 8
+  movementSpeed: 0.5
+  attackCooldown: 5
   fireballDamage: 1
   projectileSpeed: 2.5
   projectileSize: 0.7
   attackRange: 8
-  fireballSound: {fileID: 0}
+  fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
   bossHealth: {fileID: 2001206528}
   firepoint: {fileID: 976296015}
   projectilePrefab: {fileID: 9012877507472136899, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
@@ -50452,10 +50556,10 @@ MonoBehaviour:
   areaMarkerPrefab: {fileID: 2069201689}
   fireAttackCooldown: 7
   dashChargeTime: 2
-  dashSpeed: 10
-  dashCooldown: 5
-  chargeSound: {fileID: 0}
-  dashSound: {fileID: 0}
+  dashSpeed: 8
+  dashCooldown: 9
+  chargeSound: {fileID: 8300000, guid: 1abdc509e58ea4743a20ec6ac090a90b, type: 3}
+  dashSound: {fileID: 8300000, guid: 4676f53f32e2a0f40badedf51dda719e, type: 3}
   targetIconPrefab: {fileID: 1570026271}
 --- !u!114 &2001206524
 MonoBehaviour:
@@ -50599,14 +50703,14 @@ MonoBehaviour:
   fireballDamage: 1
   projectileSpeed: 4
   projectileSize: 0.6
-  fireballSound: {fileID: 0}
+  fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
   predictionTime: 0.5
   fireAttackCooldown: 8
   dashChargeTime: 2
   dashSpeed: 10
   dashCooldown: 10
-  chargeSound: {fileID: 0}
-  dashSound: {fileID: 0}
+  chargeSound: {fileID: 8300000, guid: 1abdc509e58ea4743a20ec6ac090a90b, type: 3}
+  dashSound: {fileID: 8300000, guid: 4676f53f32e2a0f40badedf51dda719e, type: 3}
   maxEnergy: 100
   energyRegenRate: 5
   fireballEnergyCost: 10
@@ -50629,11 +50733,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9607d4ce4408f5a498b091319961fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
+  maxHealth: 5
   healthSlider: {fileID: 1314345055}
   spumPrefabObject: {fileID: 2001206522}
   boss: {fileID: 2001206520}
   rm: {fileID: 222581458}
+  isTraining: 0
   trophy: {fileID: 2022983378}
   bossScriptObjects:
   - {fileID: 2001206523}
@@ -50786,6 +50891,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.49
       objectReference: {fileID: 0}
@@ -50901,7 +51010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -52019,7 +52128,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 3
+  chaseSpeed: 2
   followPlayerY: 1
 --- !u!1 &2053763137
 GameObject:
@@ -52210,12 +52319,20 @@ PrefabInstance:
       value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activeTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: alwaysActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
+      propertyPath: activationDelay
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleStartDelay
@@ -52577,6 +52694,10 @@ PrefabInstance:
     - target: {fileID: 3504432749929852845, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -53612,11 +53733,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -53738,7 +53859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -53856,7 +53977,7 @@ PrefabInstance:
       objectReference: {fileID: 779048655}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration

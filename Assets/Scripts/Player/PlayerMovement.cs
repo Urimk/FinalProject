@@ -198,7 +198,7 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.bounds.size,
             0f,
             checkDirection,
-            0.1f,
+            0.01f,
             obstacleLayer | wallLayer
         );
 
@@ -467,7 +467,7 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.bounds.size,
             0,
             new Vector2(transform.localScale.x, 0),
-            0.01f,
+            0.015f,
             wallLayer
         );
         return raycastHit.collider != null;

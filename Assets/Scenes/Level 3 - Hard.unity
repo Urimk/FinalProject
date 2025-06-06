@@ -1444,7 +1444,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1770,7 +1770,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -1995,7 +1995,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -2929,7 +2929,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 0.75
+  chaseSpeed: 0.85
   followPlayerY: 1
 --- !u!1 &120711852
 GameObject:
@@ -3968,8 +3968,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   basePosition: 0
   lowPosition: 0
-  baseHoldTime: 2
-  lowHoldTime: 2
+  baseHoldTime: 1.5
+  lowHoldTime: 1.5
   moveSpeed: 7
   initialDelay: 0
 --- !u!1001 &182899288
@@ -3992,6 +3992,10 @@ PrefabInstance:
       propertyPath: enemy
       value: 
       objectReference: {fileID: 851719714}
+    - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
+      propertyPath: speed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3180663193038390214, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: m_LocalPosition.x
       value: 26.145912
@@ -4961,7 +4965,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7886,7 +7890,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8759,7 +8763,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: arrows.Array.size
@@ -9840,7 +9844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
-      value: 2.5
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleStartDelay
@@ -10251,11 +10255,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10304,6 +10308,10 @@ PrefabInstance:
     - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: speed
       value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
+      propertyPath: chargeDuration
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10421,7 +10429,7 @@ PrefabInstance:
       objectReference: {fileID: 848260184}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration
@@ -11719,7 +11727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11739,6 +11747,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1850422227}
     m_Modifications:
+    - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 88.34
@@ -13564,7 +13580,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15447,7 +15463,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16663,7 +16679,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4980276838955259878, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: m_Name
@@ -17335,7 +17351,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: movingNegative
@@ -18008,8 +18024,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   basePosition: 0
   lowPosition: 0
-  baseHoldTime: 2
-  lowHoldTime: 2
+  baseHoldTime: 1.5
+  lowHoldTime: 1.5
   moveSpeed: 7
   initialDelay: 2
 --- !u!1001 &715670243
@@ -20041,7 +20057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b5bd6d1b1a5a14fbd3b45c92dcc1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layCooldown: 3.5
+  layCooldown: 2.5
   eggDropPoint: {fileID: 2069815530}
   eggPrefabs:
   - {fileID: 323536259}
@@ -20257,7 +20273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20964,7 +20980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 1
+      value: 0.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21843,7 +21859,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 3
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23049,7 +23065,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -23431,7 +23447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
-      value: 2.5
+      value: 2.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25052,7 +25068,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 2.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -27551,7 +27567,7 @@ PrefabInstance:
       objectReference: {fileID: 1630180209}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration
@@ -27769,7 +27785,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1676610309288891812, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: attackCooldown
-      value: 2.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2881837815400923039, guid: a1943be7214619e46936964e21b2f0c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -28632,7 +28648,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: movementDistance
@@ -30771,7 +30787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30793,7 +30809,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: speed
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1124091113512282653, guid: df1d29c6ab599d640b3141a9292d93da, type: 3}
       propertyPath: moveVertically
@@ -31460,7 +31476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32207,7 +32223,7 @@ PrefabInstance:
       objectReference: {fileID: 1289419873}
     - target: {fileID: 531923236697951366, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: startingHealth
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: earsSlot
@@ -32263,7 +32279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5637722755402703905, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: lives
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5637722755402703905, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: initialRoom
@@ -34188,11 +34204,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 5128734569134609105, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34241,6 +34257,10 @@ PrefabInstance:
     - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
       propertyPath: speed
       value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612431809765002927, guid: 197151d4dbf653441a88bacfdaddab23, type: 3}
+      propertyPath: chargeDuration
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34474,7 +34494,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 1
+      value: 0.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -35437,7 +35457,7 @@ PrefabInstance:
       objectReference: {fileID: 1609654575}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration
@@ -35714,7 +35734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: speed
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7038307197905767762, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: m_Name
@@ -36290,11 +36310,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.15
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.15
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7002561045397625971, guid: 86725159ffb653842a2a4ff4d8588bdc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -37001,7 +37021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37880,7 +37900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
-      value: 2.5
+      value: 2.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41198,7 +41218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b5bd6d1b1a5a14fbd3b45c92dcc1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layCooldown: 2
+  layCooldown: 1.5
   eggDropPoint: {fileID: 1469910688}
   eggPrefabs:
   - {fileID: 7352452}
@@ -43614,7 +43634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -45593,7 +45613,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: speed
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7038307197905767762, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: m_Name
@@ -47177,12 +47197,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.65
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0.71000016
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -49099,7 +49123,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 4
+  chaseSpeed: 4.1
   followPlayerY: 1
 --- !u!1001 &1960547418
 PrefabInstance:
@@ -50425,13 +50449,13 @@ MonoBehaviour:
   damage: 0
   isRecoil: 0
   rb: {fileID: 0}
-  movementSpeed: 1
-  attackCooldown: 8
+  movementSpeed: 0.75
+  attackCooldown: 3
   fireballDamage: 1
   projectileSpeed: 2.5
   projectileSize: 0.7
   attackRange: 8
-  fireballSound: {fileID: 0}
+  fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
   bossHealth: {fileID: 2001206528}
   firepoint: {fileID: 976296015}
   projectilePrefab: {fileID: 9012877507472136899, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
@@ -50450,12 +50474,12 @@ MonoBehaviour:
   fireballHolder: {fileID: 267710871}
   flame: {fileID: 865857553}
   areaMarkerPrefab: {fileID: 2069201689}
-  fireAttackCooldown: 7
+  fireAttackCooldown: 5
   dashChargeTime: 2
   dashSpeed: 10
-  dashCooldown: 5
-  chargeSound: {fileID: 0}
-  dashSound: {fileID: 0}
+  dashCooldown: 6
+  chargeSound: {fileID: 8300000, guid: 1abdc509e58ea4743a20ec6ac090a90b, type: 3}
+  dashSound: {fileID: 8300000, guid: 4676f53f32e2a0f40badedf51dda719e, type: 3}
   targetIconPrefab: {fileID: 1570026271}
 --- !u!114 &2001206524
 MonoBehaviour:
@@ -50599,14 +50623,14 @@ MonoBehaviour:
   fireballDamage: 1
   projectileSpeed: 4
   projectileSize: 0.6
-  fireballSound: {fileID: 0}
+  fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
   predictionTime: 0.5
   fireAttackCooldown: 8
   dashChargeTime: 2
   dashSpeed: 10
   dashCooldown: 10
-  chargeSound: {fileID: 0}
-  dashSound: {fileID: 0}
+  chargeSound: {fileID: 8300000, guid: 1abdc509e58ea4743a20ec6ac090a90b, type: 3}
+  dashSound: {fileID: 8300000, guid: 4676f53f32e2a0f40badedf51dda719e, type: 3}
   maxEnergy: 100
   energyRegenRate: 5
   fireballEnergyCost: 10
@@ -50629,11 +50653,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9607d4ce4408f5a498b091319961fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
+  maxHealth: 10
   healthSlider: {fileID: 1314345055}
   spumPrefabObject: {fileID: 2001206522}
   boss: {fileID: 2001206520}
   rm: {fileID: 222581458}
+  isTraining: 0
   trophy: {fileID: 2022983378}
   bossScriptObjects:
   - {fileID: 2001206523}
@@ -50786,12 +50811,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.49
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0.71000016
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -50901,7 +50930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -52019,7 +52048,7 @@ MonoBehaviour:
   gravScaleValue: 2
   maxFallSpeedValue: 100
   isChase: 1
-  chaseSpeed: 3
+  chaseSpeed: 3.2
   followPlayerY: 1
 --- !u!1 &2053763137
 GameObject:
@@ -52215,7 +52244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleWaitTime
-      value: 2.5
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: cycleStartDelay
@@ -52579,12 +52608,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.29
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0.71
       objectReference: {fileID: 0}
     - target: {fileID: 7045491356994280799, guid: 6fcc31f9a3c2a9c4da8b78f746a081a0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -53738,7 +53771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182806268864140387, guid: b80101cb433d42746bee0f8f2bd8cce5, type: 3}
       propertyPath: activationDelay
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -53856,7 +53889,7 @@ PrefabInstance:
       objectReference: {fileID: 779048655}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: speed
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 2770324533339473555, guid: ff507727fdd7033449b22073bf074914, type: 3}
       propertyPath: idleDuration
