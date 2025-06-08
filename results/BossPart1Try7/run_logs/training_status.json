@@ -2,58 +2,58 @@
     "MyBehavior": {
         "checkpoints": [
             {
-                "steps": 3899973,
-                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-3899973.onnx",
-                "reward": 3.5100008323788643,
-                "creation_time": 1749177804.1667962,
+                "steps": 7499950,
+                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-7499950.onnx",
+                "reward": 3.9501118900047407,
+                "creation_time": 1749355153.3175228,
                 "auxillary_file_paths": [
-                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-3899973.pt"
+                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-7499950.pt"
                 ]
             },
             {
-                "steps": 4199962,
-                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4199962.onnx",
-                "reward": -0.04879887948433558,
-                "creation_time": 1749183578.0207045,
+                "steps": 7799944,
+                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-7799944.onnx",
+                "reward": 2.520250811241567,
+                "creation_time": 1749358678.924132,
                 "auxillary_file_paths": [
-                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4199962.pt"
+                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-7799944.pt"
                 ]
             },
             {
-                "steps": 4499949,
-                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4499949.onnx",
-                "reward": 2.558375919237733,
-                "creation_time": 1749189992.2876313,
+                "steps": 8099951,
+                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8099951.onnx",
+                "reward": 2.106143856687205,
+                "creation_time": 1749362395.7674766,
                 "auxillary_file_paths": [
-                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4499949.pt"
+                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8099951.pt"
                 ]
             },
             {
-                "steps": 4799984,
-                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4799984.onnx",
-                "reward": 2.6851186625221195,
-                "creation_time": 1749196412.666493,
+                "steps": 8399954,
+                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8399954.onnx",
+                "reward": 3.127000704407692,
+                "creation_time": 1749366713.9659092,
                 "auxillary_file_paths": [
-                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-4799984.pt"
+                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8399954.pt"
                 ]
             },
             {
-                "steps": 5006892,
-                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-5006892.onnx",
-                "reward": 4.258250720798969,
-                "creation_time": 1749200625.0861304,
+                "steps": 8486250,
+                "file_path": "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8486250.onnx",
+                "reward": 3.9296160816000056,
+                "creation_time": 1749367957.6977818,
                 "auxillary_file_paths": [
-                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-5006892.pt"
+                    "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8486250.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 5006892,
+            "steps": 8486250,
             "file_path": "results\\BossPart1Try7\\MyBehavior.onnx",
-            "reward": 4.258250720798969,
-            "creation_time": 1749200625.0861304,
+            "reward": 3.9296160816000056,
+            "creation_time": 1749367957.6977818,
             "auxillary_file_paths": [
-                "results\\BossPart1Try7\\MyBehavior\\MyBehavior-5006892.pt"
+                "results\\BossPart1Try7\\MyBehavior\\MyBehavior-8486250.pt"
             ]
         }
     },

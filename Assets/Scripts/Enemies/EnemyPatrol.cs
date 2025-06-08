@@ -20,8 +20,6 @@ public class EnemyPatrol : MonoBehaviour
 
     [Header ("Enemy Animator")]
     [SerializeField] private Animator anim;
-    [Header ("Score")]
-    [SerializeField] private int scoreValue = 100;
 
 
     private void Awake()
@@ -83,7 +81,6 @@ public class EnemyPatrol : MonoBehaviour
 
     private void OnDisable()
     {
-        ScoreManager.Instance.AddScore(scoreValue);
         if (anim != null) {
             anim.SetBool("moving", false);
         }

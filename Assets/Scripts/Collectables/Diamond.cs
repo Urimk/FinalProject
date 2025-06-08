@@ -3,6 +3,7 @@ using UnityEngine;
 public class Diamond : MonoBehaviour
 {
     [SerializeField] private int scoreValue = 50;
+    public string collectableID;
 
     [Header("Sound")]
     [SerializeField] private AudioClip collectSound;

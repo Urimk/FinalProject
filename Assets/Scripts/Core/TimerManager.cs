@@ -40,6 +40,11 @@ public class TimerManager : MonoBehaviour
         return Mathf.Max(0, currentTime);
     }
 
+    public void SetRemainingTime(float time)
+    {
+        currentTime = time;
+    }
+
     public void StopTimer()
     {
         isRunning = false;

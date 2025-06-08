@@ -192,14 +192,19 @@ public class PlayerMovement : MonoBehaviour
         //    If you already flip your sprite via localScale.x, you can use that:
         Vector2 checkDirection = facingDirection == 1 ? Vector2.right : Vector2.left;
 
+        Vector2 size = boxCollider.bounds.size;
+        size.y += 0.015f; // increase height a little
+
+        Vector2 center = boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
+
         // 3) Perform the short box-cast in front of the player only.
         RaycastHit2D hit = Physics2D.BoxCast(
-            boxCollider.bounds.center,
-            boxCollider.bounds.size,
+            center,
+            size,
             0f,
             checkDirection,
             0.01f,
-            obstacleLayer | wallLayer
+            obstacleLayer | wallLayer | groundLayer
         );
 
         if (hit.collider != null)
@@ -420,6 +425,7 @@ public class PlayerMovement : MonoBehaviour
         {
             body.velocity = new Vector2(body.velocity.x, jumpPower);
             coyoteCounter = 0; // Reset after using
+            jumpCounter--;
         }
         else
         {
@@ -445,6 +451,7 @@ public class PlayerMovement : MonoBehaviour
         s.x = -s.x;
         transform.localScale = s;
         facingDirection = -facingDirection;
+        jumpCounter--;
     }
 
     public bool isGrounded()
@@ -462,12 +469,18 @@ public class PlayerMovement : MonoBehaviour
 
     public bool onWall()
     {
+        Vector2 size = boxCollider.bounds.size;
+        size.y += 0.025f; // increase height a little
+
+        // Shift the center up by half of the added height
+        Vector2 center = boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
+
         RaycastHit2D raycastHit = Physics2D.BoxCast(
-            boxCollider.bounds.center,
-            boxCollider.bounds.size,
+            center,
+            size,
             0,
             new Vector2(transform.localScale.x, 0),
-            0.015f,
+            0.01f,
             wallLayer
         );
         return raycastHit.collider != null;

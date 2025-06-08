@@ -18,6 +18,7 @@ public class CameraController : MonoBehaviour
     private bool isXFrozen = false;
     private float frozenX = 0f;
 
+
     // Chase mode
     [Header("Chase Mode Settings")]
     [SerializeField] private bool isChase = false;
@@ -207,6 +208,12 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    public void SetCameraYFreeze(float yPosition = 0f)
+    {
+        followPlayerY = false;
+        frozenX = yPosition; // Set the X position to freeze the camera at
+    }
+
     // Method to enable/disable chase mode
     public void SetChaseMode(bool chase)
     {
@@ -221,18 +228,18 @@ public class CameraController : MonoBehaviour
     }
 
     // Optional: Method to toggle Y follow mode and set offset
-    public void SetFollowPlayerY(bool follow, float yOffset = -1f)
+    public void SetFollowPlayerY(float yOffset = -1f)
     {
-        followPlayerY = follow;
+        followPlayerY = true;
         if (yOffset != -1f)
         {
-            currentPosY = playerYOffset +yOffset;
+            currentPosY = playerYOffset + yOffset;
         }
-
-        if (followPlayerY)
+        else
         {
             snapYNextFrame = true; // Trigger snapping in next Update
         }
+
     }
 
     public void SetYOffset(float newOffset)

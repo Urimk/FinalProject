@@ -45,4 +45,10 @@ public class ScoreManager : MonoBehaviour
     {
         return score;
     }
+
+    public void SetScore(int points)
+    {
+        score = points;
+        UpdateScoreText();
+    }
 }

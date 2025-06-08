@@ -10,6 +10,8 @@ public class PlayerRespawn : MonoBehaviour
     private Health playerHealth;
     private Transform currentRoom; // Tracks the currently active room
     private UIManager uiManager;
+    private int scoreAtCheckpoint;
+    private float timeAtCheckpoint;
 
     private void Awake()
     {
@@ -36,6 +38,7 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
+        playerHealth.setFirstHealth(0);
         if (lives <= 0)
         {
             uiManager.GameOver();
@@ -52,17 +55,20 @@ public class PlayerRespawn : MonoBehaviour
         // Move player to the checkpoint
         transform.position = currentCheckpoint.position;
         var roomComponent = respawnRoom.GetComponent<Room>();
+        roomComponent.ResetRoom();
         roomComponent.EnterRoom();
 
         // Respawn player health
         playerHealth.HRespawn();
+        ScoreManager.Instance.SetScore(scoreAtCheckpoint);
+        TimerManager.Instance.SetRemainingTime(timeAtCheckpoint);
 
         if (respawnRoom != null)
         {
             // Move camera to the respawn room
             if (groundManager != null)
             {
-                groundManager.OnPlayerRespawn();               
+                groundManager.OnPlayerRespawn();
             }
             Camera.main.GetComponent<CameraController>().MoveToNewRoom(respawnRoom);
 
@@ -82,14 +88,27 @@ public class PlayerRespawn : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+private void OnTriggerEnter2D(Collider2D collision)
+{
+    if (collision.CompareTag("Checkpoint"))
     {
-        if (collision.transform.tag == "Checkpoint")
+        Checkpoint checkpoint = collision.GetComponent<Checkpoint>();
+        
+        if (checkpoint != null && !checkpoint.isActivated)
         {
+            checkpoint.isActivated = true;
+
             currentCheckpoint = collision.transform;
             SoundManager.instance.PlaySound(checkpointSound);
+            scoreAtCheckpoint = ScoreManager.Instance.GetScore();
+            timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
+            Transform respawnRoom = currentCheckpoint.parent;
+            var roomComponent = respawnRoom.GetComponent<Room>();
+            roomComponent.RemoveCollectedDiamonds();
             collision.GetComponent<Collider2D>().enabled = false;
             collision.GetComponent<Animator>().SetTrigger("appear");
         }
     }
+}
+
 }

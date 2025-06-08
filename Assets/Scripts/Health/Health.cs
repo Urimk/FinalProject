@@ -22,13 +22,16 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip hurtSound;
     public bool invulnerable;
+    private int isFirstHealth = 1;
     private PlayerAI playerAI; // Reference to PlayerAI
     private PlayerMovement player; // Reference to PlayerAI
+    [Header("Score")]
+    [SerializeField] private int scoreValue = 100;
 
 
 
     private float maxDamageThisFrame;
-    private bool isDamageQueued;       
+    private bool isDamageQueued;
 
     private void Awake()
     {
@@ -90,11 +93,15 @@ public class Health : MonoBehaviour, IDamageable
                 anim.SetTrigger("die");
                 if (groundManager != null)
                 {
-                    groundManager.OnPlayerDeath();      
+                    groundManager.OnPlayerDeath();
                 }
                 foreach (Behaviour component in components)
                 {
                     component.enabled = false;
+                }
+                if (CompareTag("Enemy"))
+                {
+                    ScoreManager.Instance.AddScore(scoreValue);
                 }
                 OnDamaged?.Invoke(damage); // Notify AI of damage
                 SoundManager.instance.PlaySound(deathSound);
@@ -147,5 +154,24 @@ public class Health : MonoBehaviour, IDamageable
     {
         currentHealth = startingHealth;
         dead = false;
+    }
+
+    public void setFirstHealth(int firstHealth)
+    {
+        isFirstHealth = firstHealth;
+    }
+
+    public int getFirstHealth()
+    {
+        return isFirstHealth;
+    }
+
+    public void reEnableComponents()
+    {
+        foreach (Behaviour component in components)
+        {
+            component.enabled = true;
+        }
+        scoreValue = 0;
     }
 }
