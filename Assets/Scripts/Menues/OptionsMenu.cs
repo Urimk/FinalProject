@@ -11,7 +11,7 @@ public class OptionsMenu : MonoBehaviour
     // Back button functionality
     public void BackToMainMenu()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
 
         // Deactivate OptionsMenu and activate MainMenu
         optionsMenu.SetActive(false);
@@ -36,7 +36,7 @@ public class OptionsMenu : MonoBehaviour
 
     private void SetDifficulty(string difficulty)
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         PlayerPrefs.SetString(DifficultyKey, difficulty); // Save difficulty in PlayerPrefs
         PlayerPrefs.Save(); // Ensure it gets saved
         Debug.Log("Difficulty set to: " + difficulty);

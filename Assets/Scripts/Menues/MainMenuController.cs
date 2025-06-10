@@ -11,7 +11,7 @@ public class MainMenuController : MonoBehaviour
 
     public void Play()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         // Deactivate MainMenu and activate LevelSelect
         mainMenu.SetActive(false);
         levelSelect.SetActive(true);
@@ -19,21 +19,21 @@ public class MainMenuController : MonoBehaviour
 
     public void OpenOptions()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         mainMenu.SetActive(false);
         optionsMenu.SetActive(true);
     }
 
     public void OpenLeaderboard()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         mainMenu.SetActive(false);
         leaderboardMenu.SetActive(true);
     }
 
     public void QuitGame()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         Application.Quit();
     }
 }

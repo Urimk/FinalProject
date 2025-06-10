@@ -34,7 +34,7 @@ public class EggLayingBird : MonoBehaviour
     // Called by animation event
     private void LayEgg()
     {
-        SoundManager.instance.PlaySound(eggDropSound);
+        SoundManager.instance.PlaySound(eggDropSound, gameObject);
 
         GameObject egg = eggPrefabs[FindInactiveEgg()];
         egg.transform.position = eggDropPoint.position;

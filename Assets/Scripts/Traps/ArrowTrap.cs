@@ -24,7 +24,7 @@ public class ArrowTrap : MonoBehaviour
         cooldownTimer = 0;
         if (SoundManager.instance != null && arrowSound != null) // Basic null check
         {
-            SoundManager.instance.PlaySound(arrowSound);
+            SoundManager.instance.PlaySound(arrowSound, gameObject);
         }
         int idx = FindArrow();
         arrows[idx].transform.position = firepoint.position;

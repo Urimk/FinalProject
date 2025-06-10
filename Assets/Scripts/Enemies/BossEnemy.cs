@@ -8,7 +8,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     [SerializeField] private float movementSpeed;
 
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown = 5f;
+    [SerializeField] private float attackCooldown = 6f;
     [SerializeField] private int fireballDamage = 1;
     [SerializeField] private float projectileSpeed = 5f;
     [SerializeField] private float projectileSize = 0.3f;
@@ -109,7 +109,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         // isFlameDeactivationCanceled = false; // Reset if used
 
         // Reset timers to be ready for new attacks
-        attackCooldown = 5f;
+        attackCooldown = 6f;
         fireAttackCooldown = 6f;
         dashCooldown = 10f;
         cooldownTimer = attackCooldown;
@@ -232,7 +232,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (detectedPlayer && fireAttackTimer >= fireAttackCooldown && !flame.activeInHierarchy)
         {
             fireAttackTimer = 0;
-           // SpawnFireAtPlayer();
+            SpawnFireAtPlayer();
         }
     }
 
@@ -283,7 +283,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
 
 
         if (anim != null) anim.SetTrigger("2_Attack"); // Use the correct attack trigger
-        if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound); // Assuming SoundManager is correctly set up
+        if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound, gameObject); // Assuming SoundManager is correctly set up
 
         // Only reset cooldown if the launch was successful
         cooldownTimer = 0f; // Reset cooldown *after* successful launch
@@ -442,7 +442,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
 
         // Start charge-up animation if needed
         if (anim != null) anim.SetTrigger("ChargeDash");
-        if (chargeSound != null) SoundManager.instance.PlaySound(chargeSound);
+        if (chargeSound != null) SoundManager.instance.PlaySound(chargeSound, gameObject);
 
         // Start the coroutine and keep a reference to it
         dashCoroutine = StartCoroutine(PerformDashAttack());
@@ -473,7 +473,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         isDashing = true; // Boss is now dashing
 
         if (anim != null) anim.SetTrigger("Dash");
-        if (dashSound != null) SoundManager.instance.PlaySound(dashSound);
+        if (dashSound != null) SoundManager.instance.PlaySound(dashSound, gameObject);
 
         Vector2 startPosition = transform.position;
         // Direction should be based on the calculated dashTarget

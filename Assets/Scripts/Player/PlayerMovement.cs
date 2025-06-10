@@ -208,14 +208,18 @@ public class PlayerMovement : MonoBehaviour
         );
 
         if (hit.collider != null)
+    {
+        // 4) If it's a falling platform, ignore it.
+        FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
+        if (fallingPlatform != null)
         {
-            // 4) If it’s a falling platform, ignore it.
-            if (hit.collider.GetComponent<FallingPlatform>() != null)
-                return false;
-
-            // 5) Otherwise it really is a horizontal block.
-            return true;
+            return false;
         }
+        
+        // 5) Otherwise it really is a horizontal block.
+        return true;
+    }
+
 
         return false;
     }
@@ -374,7 +378,7 @@ public class PlayerMovement : MonoBehaviour
         // Play jump sound when grounded
         if (isGrounded())
         {
-            SoundManager.instance.PlaySound(jumpSound);
+            SoundManager.instance.PlaySound(jumpSound, gameObject);
         }
         return wasGroundJump;
     }
@@ -453,7 +457,7 @@ public class PlayerMovement : MonoBehaviour
         facingDirection = -facingDirection;
         jumpCounter--;
     }
-
+// HAS 2 BUGS!
     public bool isGrounded()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(
@@ -466,6 +470,7 @@ public class PlayerMovement : MonoBehaviour
         );
         return raycastHit.collider != null;
     }
+
 
     public bool onWall()
     {

@@ -13,7 +13,7 @@ public class LevelSelect : MonoBehaviour
     // Methods for each level button
     public void SelectLevel(int levelIndex)
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
 
         // Save the selected level
         PlayerPrefs.SetInt(LevelKey, levelIndex);
@@ -36,7 +36,7 @@ public class LevelSelect : MonoBehaviour
     // Back button functionality
     public void BackToMainMenu()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
 
         // Deactivate LevelSelect and activate MainMenu
         levelSelect.SetActive(false);

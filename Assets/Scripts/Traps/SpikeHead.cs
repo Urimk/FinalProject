@@ -126,7 +126,7 @@ public class SpikeHead : EnemyDamage
     {
         if (SoundManager.instance != null && crashSound != null)
         {
-            SoundManager.instance.PlaySound(crashSound);
+            SoundManager.instance.PlaySound(crashSound, gameObject);
         }
         base.OnTriggerStay2D(collision); // Assuming EnemyDamage has OnTriggerStay2D
 

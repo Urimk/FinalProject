@@ -34,7 +34,7 @@ public class SelectionArrow : MonoBehaviour
 
     private void Interact()
     {
-        SoundManager.instance.PlaySound(interactSound);
+        SoundManager.instance.PlaySound(interactSound, gameObject);
         options[currentPosition].GetComponent<Button>().onClick.Invoke();
     }
 
@@ -44,7 +44,7 @@ public class SelectionArrow : MonoBehaviour
 
         if (_change != 0)
         {
-            SoundManager.instance.PlaySound(changeSound);
+            SoundManager.instance.PlaySound(changeSound, gameObject);
         }
 
         if (currentPosition < 0) 

@@ -33,7 +33,7 @@ public class BossFlameAttack : MonoBehaviour
         yield return new WaitForSeconds(warningTime);
 
         // Ignite the fire
-        SoundManager.instance.PlaySound(fireSound);
+        SoundManager.instance.PlaySound(fireSound, gameObject);
         spriteRenderer.color = Color.white;
         active = true;
         

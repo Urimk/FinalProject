@@ -86,7 +86,7 @@ public class Room : MonoBehaviour
     {
         for (int i = 0; i < enemies.Length; i++)
         {
-            if (enemies[i] != null)
+            if (enemies[i] != null && enemies[i].GetComponent<Health>().getHealth() != 0f)
             {
                 enemies[i].SetActive(_status);
 

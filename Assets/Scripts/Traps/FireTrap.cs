@@ -89,7 +89,7 @@ public class FireTrap : MonoBehaviour
 
         // Wait for the activation delay, then reset color, mark trap as active, and play activation animation
         yield return new WaitForSeconds(activationDelay);
-        SoundManager.instance.PlaySound(fireSound);
+        SoundManager.instance.PlaySound(fireSound, gameObject);
         spriteRend.color = Color.white; 
         active = true;
         anim.SetBool("activated", true);
@@ -110,7 +110,7 @@ public class FireTrap : MonoBehaviour
             yield return new WaitForSeconds(activationDelay);
 
             // Active phase
-            SoundManager.instance.PlaySound(fireSound);
+            SoundManager.instance.PlaySound(fireSound, gameObject);
             spriteRend.color = Color.white;
             active = true;
             anim.SetBool("activated", true);

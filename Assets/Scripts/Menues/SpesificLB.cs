@@ -34,7 +34,7 @@ public class SpesificLB : MonoBehaviour
 
     public void BackToLeadearboards()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         spesificLB.SetActive(false);
         leaderboards.SetActive(true);
     }

@@ -12,7 +12,7 @@ public class Diamond : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            SoundManager.instance.PlaySound(collectSound);
+            SoundManager.instance.PlaySound(collectSound, gameObject);
             // Add score via the ScoreManager
             ScoreManager.Instance.AddScore(scoreValue);
 

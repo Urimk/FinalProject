@@ -113,7 +113,7 @@ private void Update()
         cooldownTimer = 0;
         if (currentWeapon == WeaponType.Fireball)
         {
-            SoundManager.instance.PlaySound(fireballSound);
+            SoundManager.instance.PlaySound(fireballSound, gameObject);
             anim.SetTrigger("attack");
             int idx = FindFireballs();
             if (idx < 0) return;  // pool exhausted—skip shot (or expand pool)

@@ -99,7 +99,7 @@ private void OnTriggerEnter2D(Collider2D collision)
             checkpoint.isActivated = true;
 
             currentCheckpoint = collision.transform;
-            SoundManager.instance.PlaySound(checkpointSound);
+            SoundManager.instance.PlaySound(checkpointSound, gameObject);
             scoreAtCheckpoint = ScoreManager.Instance.GetScore();
             timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
             Transform respawnRoom = currentCheckpoint.parent;

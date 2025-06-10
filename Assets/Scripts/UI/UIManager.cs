@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     public void GameOver()
     {
         gameOverScreen.SetActive(true);
-        SoundManager.instance.PlaySound(gameOverSound);
+        SoundManager.instance.PlaySound(gameOverSound, gameObject);
     }
 
     public void Restart()

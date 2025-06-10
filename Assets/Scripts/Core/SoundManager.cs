@@ -29,9 +29,37 @@ public class SoundManager : MonoBehaviour
         ChangeSoundVolume(0);
     }
 
-    public void PlaySound(AudioClip _sound)
+    public void PlaySound(AudioClip sound, GameObject caller)
     {
-        soundSource.PlayOneShot(_sound);
+        if (IsObjectVisible(caller))
+        {
+            soundSource.PlayOneShot(sound);
+        }
+    }
+
+    private bool IsObjectVisible(GameObject obj)
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null) return false;
+        
+        // Check the object itself
+        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null && spriteRenderer.isVisible)
+        {
+            return true;
+        }
+        
+        // Check all children
+        SpriteRenderer[] childRenderers = obj.GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer childRenderer in childRenderers)
+        {
+            if (childRenderer.isVisible)
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public void ChangeSoundVolume(float _change)

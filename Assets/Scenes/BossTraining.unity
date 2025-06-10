@@ -983,11 +983,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemies: []
+  Traps: []
+  Collectables: []
   cam: {fileID: 0}
   pm: {fileID: 0}
   pr: {fileID: 0}
   freezeCamX: 0
+  freezeCamY: 1
   xFreezeValue: 0
+  yFreezeValue: 0
   yOffsetValue: 2
   gravScaleValue: 2
   maxFallSpeedValue: 100
@@ -9602,13 +9606,13 @@ MonoBehaviour:
   leftWall: {fileID: 1077036129}
   rightWall: {fileID: 782904748}
   targetIconPrefab: {fileID: 434469124}
-  attackCooldown: 3
+  attackCooldown: 6
   fireballDamage: 1
   projectileSpeed: 4
   projectileSize: 0.6
   fireballSound: {fileID: 0}
   predictionTime: 0.5
-  fireAttackCooldown: 8
+  fireAttackCooldown: 6
   dashChargeTime: 2
   dashSpeed: 10
   dashCooldown: 10

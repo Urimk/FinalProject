@@ -49,7 +49,7 @@ public class LeaderboardMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         leaderboardMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
@@ -63,7 +63,7 @@ public class LeaderboardMenu : MonoBehaviour
         }
         spesificLB.SetActive(false);
 
-        SoundManager.instance.PlaySound(buttonClickSound);
+        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
         leaderboardMenu.SetActive(false);
 
         // Find the MainMenuManager and call SetLeaderboard directly

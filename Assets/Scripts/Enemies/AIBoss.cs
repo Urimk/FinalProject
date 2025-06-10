@@ -367,7 +367,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         bossProjectile.Launch(firepoint.position, targetPosition, projectileSpeed); // Launch towards calculated target!
 
         if (anim != null) anim.SetTrigger("Attack"); // Use the correct attack trigger
-        if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound); // Assuming SoundManager is correctly set up
+        if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound, gameObject); // Assuming SoundManager is correctly set up
 
         // Only reset cooldown if the launch was successful
         cooldownTimer = 0f; // Reset cooldown *after* successful launch
@@ -508,7 +508,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
 
         if (anim != null) anim.SetTrigger("ChargeDash"); // Use the correct trigger
-        if (chargeSound != null) SoundManager.instance.PlaySound(chargeSound); // Assuming SoundManager
+        if (chargeSound != null) SoundManager.instance.PlaySound(chargeSound, gameObject); // Assuming SoundManager
 
         // Start the sequence that performs the charge and dash
         StartCoroutine(PerformDashAttack()); // Assuming this coroutine exists
@@ -692,7 +692,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         // --- Start Dash Movement ---
         isDashing = true; // Now actually moving
         if (anim != null) anim.SetTrigger("Dash");
-        if (dashSound != null) SoundManager.instance.PlaySound(dashSound);
+        if (dashSound != null) SoundManager.instance.PlaySound(dashSound, gameObject);
 
         Vector2 direction = (dashTarget - (Vector2)transform.position).normalized;
         if (direction == Vector2.zero) direction = (player.position - transform.position).normalized; // Prevent zero direction if already at target

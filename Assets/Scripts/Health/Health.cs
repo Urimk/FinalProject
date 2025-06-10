@@ -63,6 +63,7 @@ public class Health : MonoBehaviour, IDamageable
         {
             maxDamageThisFrame = damage;
             isDamageQueued = true;
+            StartCoroutine(Invulnerability());
         }
     }
     public event System.Action<float> OnDamaged;
@@ -81,8 +82,7 @@ public class Health : MonoBehaviour, IDamageable
                 OnDamaged?.Invoke(damage); // Notify AI of damage
             }
             anim.SetTrigger("hurt");
-            StartCoroutine(Invulnerability());
-            SoundManager.instance.PlaySound(hurtSound);
+            SoundManager.instance.PlaySound(hurtSound, gameObject);
 
         }
         else
@@ -104,7 +104,7 @@ public class Health : MonoBehaviour, IDamageable
                     ScoreManager.Instance.AddScore(scoreValue);
                 }
                 OnDamaged?.Invoke(damage); // Notify AI of damage
-                SoundManager.instance.PlaySound(deathSound);
+                SoundManager.instance.PlaySound(deathSound, gameObject);
             }
         }
     }
@@ -173,5 +173,10 @@ public class Health : MonoBehaviour, IDamageable
             component.enabled = true;
         }
         scoreValue = 0;
+    }
+
+    public float getHealth()
+    {
+        return currentHealth;
     }
 }
