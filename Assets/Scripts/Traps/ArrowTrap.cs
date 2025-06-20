@@ -6,6 +6,8 @@ public class ArrowTrap : MonoBehaviour
     [SerializeField] private float attackCooldown;
     [SerializeField] private Transform firepoint;
     [SerializeField] private GameObject[] arrows;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private bool isComingOut = false;
 
     [Header("Sound")]
     [SerializeField] private AudioClip arrowSound;
@@ -41,9 +43,12 @@ public class ArrowTrap : MonoBehaviour
         Vector2 direction = firepoint.right; // Shoots along the firepoint's local X+ axis
         // If firepoint is visually oriented so its "up" is the shooting direction:
         // Vector2 direction = firepoint.up;
-
-        arrows[idx].GetComponent<EnemyProjectile>().SetDirection(direction.normalized);
-        arrows[idx].GetComponent<EnemyProjectile>().ActivateProjectile();
+        
+        var projectile = arrows[idx].GetComponent<EnemyProjectile>();
+        projectile.GetComponent<EnemyProjectile>().SetDirection(direction.normalized);
+        projectile.SetSpeed(speed); // Or whatever speed you want
+        projectile.SetComingOut(isComingOut); // Enable growing collider
+        projectile.GetComponent<EnemyProjectile>().ActivateProjectile();
     }
 
     private int FindArrow()

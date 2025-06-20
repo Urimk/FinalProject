@@ -997,6 +997,7 @@ MonoBehaviour:
   maxFallSpeedValue: 100
   isChase: 0
   chaseSpeed: 5
+  chaseStartOffSet: 0
   followPlayerY: 0
 --- !u!1 &213333083
 GameObject:
@@ -2227,6 +2228,37 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.62, y: 2.52}
   m_EdgeRadius: 0
+--- !u!1 &445868819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 445868820}
+  m_Layer: 9
+  m_Name: GroundDetect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &445868820
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445868819}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1393604989}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &513587700 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
@@ -4151,6 +4183,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1393604985}
     - target: {fileID: 531923236697951366, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      propertyPath: playerAttack
+      value: 
+      objectReference: {fileID: 1393604983}
+    - target: {fileID: 531923236697951366, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: startingHealth
       value: 5
       objectReference: {fileID: 0}
@@ -4166,6 +4202,10 @@ PrefabInstance:
       propertyPath: earsPrefab
       value: 
       objectReference: {fileID: 4742689956371029499, guid: 2fb42ae3be3e49c4cbe93914ba0b8600, type: 3}
+    - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      propertyPath: groundCheck
+      value: 
+      objectReference: {fileID: 445868820}
     - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: baseJumpPower
       value: 12
@@ -4299,6 +4339,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 698975851}
+    - targetCorrespondingSourceObject: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 445868820}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3574517937744291114, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       insertIndex: -1
@@ -7079,7 +7122,7 @@ MonoBehaviour:
   wallLayer: 10
   rewardWin: 1
   penaltyLose: -1
-  rewardDamageBoss: 1
+  rewardDamageBoss: 0.6666666
   penaltyTakeDamage: -2
   penaltyPerStep: -0.001
   maxBossFireballsToObserve: 1
@@ -9612,7 +9655,7 @@ MonoBehaviour:
   projectileSize: 0.6
   fireballSound: {fileID: 0}
   predictionTime: 0.5
-  fireAttackCooldown: 6
+  fireAttackCooldown: 8.5
   dashChargeTime: 2
   dashSpeed: 10
   dashCooldown: 10
@@ -9640,7 +9683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9607d4ce4408f5a498b091319961fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
+  maxHealth: 9
   healthSlider: {fileID: 2051250166}
   spumPrefabObject: {fileID: 1250826683}
   boss: {fileID: 1957706220}
@@ -9665,6 +9708,8 @@ MonoBehaviour:
   isRecoil: 0
   rb: {fileID: 0}
   movementSpeed: 0.5
+  doRestHealth: 0
+  playerHealth: {fileID: 0}
   attackCooldown: 5
   fireballDamage: 1
   projectileSpeed: 2.5

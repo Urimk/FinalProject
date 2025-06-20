@@ -28,7 +28,7 @@ public class RabbitJump : MonoBehaviour
             if (player != null)
             {
                 player.ActivatePowerUp(bonusJumps, bonusJumpPower);
-                Destroy(gameObject); // Remove power-up after collecting
+                gameObject.SetActive(false);
             }
         }
     }

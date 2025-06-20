@@ -11,6 +11,7 @@ public class Room : MonoBehaviour
     [SerializeField] private PlayerMovement pm;
     [SerializeField] private PlayerRespawn pr;
     private Vector3[] initialEnemyPositions;
+    private Quaternion[] initialEnemyRotations;
     private Vector3[] initialTrapPositions;
     private Vector3[] initialCollectablePositions;
 
@@ -25,6 +26,7 @@ public class Room : MonoBehaviour
     public float maxFallSpeedValue = 100;
     public bool isChase = false;
     public float chaseSpeed = 5f;
+    public float chaseStartOffSet = 0;
     public bool followPlayerY = false;
 
     public void EnterRoom()
@@ -34,6 +36,7 @@ public class Room : MonoBehaviour
         cam.SetCameraXFreeze(freezeCamX, xFreezeValue);
         cam.SetChaseMode(isChase);
         cam.SetChaseSpeed(chaseSpeed);
+        cam.SetChaseStart(chaseStartOffSet);
 
         // 2) Y-offset
         if (freezeCamY)
@@ -59,10 +62,13 @@ public class Room : MonoBehaviour
     {
         // Enemies
         initialEnemyPositions = new Vector3[enemies.Length];
+        initialEnemyRotations = new Quaternion[enemies.Length];
         for (int i = 0; i < enemies.Length; i++)
         {
             if (enemies[i] != null)
                 initialEnemyPositions[i] = enemies[i].transform.position;
+                initialEnemyRotations[i] = enemies[i].transform.rotation;
+
         }
 
         // Traps
@@ -94,6 +100,8 @@ public class Room : MonoBehaviour
                 {
                     // Reset enemy position when activating the room
                     enemies[i].transform.position = initialEnemyPositions[i];
+                    enemies[i].transform.rotation = initialEnemyRotations[i];
+
                 }
                 else
                 {
@@ -119,7 +127,7 @@ public class Room : MonoBehaviour
                 enemies[i].GetComponent<Health>().reEnableComponents();
                 enemies[i].GetComponent<Health>().ResetHealth();
                 enemies[i].transform.position = initialEnemyPositions[i];
-
+                enemies[i].transform.rotation = initialEnemyRotations[i];
             }
         }
 

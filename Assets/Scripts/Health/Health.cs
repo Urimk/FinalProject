@@ -4,6 +4,7 @@ using UnityEngine;
 public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private GroundManager groundManager;
+    [SerializeField] private PlayerAttack playerAttack;
     [Header("Health")]
     [SerializeField] public float startingHealth;
     public float currentHealth { get; private set; }
@@ -102,6 +103,10 @@ public class Health : MonoBehaviour, IDamageable
                 if (CompareTag("Enemy"))
                 {
                     ScoreManager.Instance.AddScore(scoreValue);
+                }
+                if (player != null)
+                {
+                    playerAttack.UnequipWeapon();
                 }
                 OnDamaged?.Invoke(damage); // Notify AI of damage
                 SoundManager.instance.PlaySound(deathSound, gameObject);

@@ -6,6 +6,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float movementSpeed;
+    [SerializeField] private bool doRestHealth;
+    [SerializeField] private Health playerHealth;
 
     [Header("Attack Parameters")]
     [SerializeField] private float attackCooldown = 6f;
@@ -52,7 +54,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private float dashCooldownTimer = Mathf.Infinity; // Timer for dash attack cooldown
 
     private Animator anim; // Reference to the Animator component
-
+    private Vector3 initialBossPosition;
     // Flag to track if the boss is dead
     private bool isDead = false;
 
@@ -67,6 +69,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     {
         anim = GetComponent<Animator>();
 
+        initialBossPosition = gameObject.transform.position;
+        
         // If bossHealth wasn't set in inspector, try to get it
         if (bossHealth == null)
         {
@@ -77,6 +81,11 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             }
         }
         rb = GetComponent<Rigidbody2D>();
+        if (playerHealth != null)
+        {
+             playerHealth.OnDamaged += HandlePlayerDeath;
+        }
+
     }
 
     private void Start()
@@ -93,24 +102,39 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         isDead = false;
     }
 
+    public void HandlePlayerDeath(float idc)
+    {
+        if (playerHealth != null && playerHealth.currentHealth <= 0)
+        {
+            ResetState();
+        }
+    }
+
     // This method is called by EpisodeManager to reset the boss state for a new episode
     public void ResetState()
     {
         Debug.Log("[BossEnemy] Resetting BossEnemy state.");
+        detectedPlayer = false;
 
         // Stop any running coroutines related to attacks or movement
         StopAllCoroutines(); // Stop all coroutines on this script
 
         // Reset flags and state variables
         isDead = false;
-        isPhase2 = false; // Reset phase to 1
+
+
+
+        if (doRestHealth)
+        {
+            isPhase2 = false; // Reset phase to 1 
+        }
         isChargingDash = false;
         isDashing = false;
         // isFlameDeactivationCanceled = false; // Reset if used
 
         // Reset timers to be ready for new attacks
-        attackCooldown = 6f;
-        fireAttackCooldown = 6f;
+        attackCooldown = 7f;
+        fireAttackCooldown = 8.5f;
         dashCooldown = 10f;
         cooldownTimer = attackCooldown;
         fireAttackTimer = fireAttackCooldown;
@@ -124,8 +148,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             rb.isKinematic = false; // Ensure physics are enabled
         }
 
+        gameObject.transform.position = initialBossPosition;
+
         // Reset health (EpisodeManager also calls BossHealth.ResetHealth, but good to be safe)
-        if (bossHealth != null) bossHealth.ResetHealth();
+        if (bossHealth != null && doRestHealth) bossHealth.ResetHealth();
 
         // Deactivate any active visual markers or effects
         DeactivateFlameAndWarning(); // Ensure this also cleans up the dash target icon
@@ -152,7 +178,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (!detectedPlayer)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-            if (distanceToPlayer <= attackRange)
+            if (distanceToPlayer <= attackRange && playerHealth.currentHealth > 0)
                 detectedPlayer = true;
         }
 
@@ -204,7 +230,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (isPhase2 && detectedPlayer && dashCooldownTimer >= dashCooldown && !isChargingDash)
         {
             dashCooldownTimer = 0;
-            //ChargeDashAttack();
+            ChargeDashAttack();
         }
 
         // Flip boss based on player's position

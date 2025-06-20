@@ -19,6 +19,8 @@ public class BombTrap : MonoBehaviour
     void Explode()
     {
         Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        GetComponent<Animator>().SetTrigger("hide");
+        gameObject.SetActive(false);
+        triggered = false;
     }
 }

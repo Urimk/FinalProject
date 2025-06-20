@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -133,13 +134,22 @@ private void Update()
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(swordHitPoint.position, swordRange, enemyLayer);
 
+        HashSet<GameObject> damagedObjects = new HashSet<GameObject>();
+
         foreach (Collider2D hit in hits)
         {
+            GameObject obj = hit.gameObject;
+
+            if (damagedObjects.Contains(obj))
+                continue;
+
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(swordDamage);
+                damagedObjects.Add(obj); // Mark as damaged
             }
         }
+
     }
 
     private IEnumerator AnimateSwordSwing()
@@ -220,6 +230,18 @@ private void Update()
         // Instantiate the sword in the weapon holder
         equippedWeaponObject = Instantiate(swordPrefab, weaponHolder);
         equippedWeaponObject.transform.localPosition = Vector3.zero; // adjust if needed
+    }
+
+        public void UnequipWeapon()
+    {
+        currentWeapon = WeaponType.Fireball;
+
+        // Destroy the equipped weapon object
+        if (equippedWeaponObject != null)
+        {
+            Destroy(equippedWeaponObject);
+            equippedWeaponObject = null;
+        }
     }
 
     private void ToggleWeapon()

@@ -7,6 +7,7 @@ public class Door : MonoBehaviour
     [SerializeField] private bool isHorizontalDoor = false;
 
     [SerializeField] private PlayerRespawn playerRespawn;
+    [SerializeField] private bool isOneWay = false;
 
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -16,6 +17,11 @@ public class Door : MonoBehaviour
         bool toNext = isHorizontalDoor
             ? collision.transform.position.y + 1.7f > transform.position.y
             : collision.transform.position.x > transform.position.x;
+
+        if (!toNext && isOneWay)
+        {
+            return;
+        }
 
         Transform fromRoom = toNext ? prevRoom : nextRoom;
         Transform intoRoom = toNext ? nextRoom : prevRoom;

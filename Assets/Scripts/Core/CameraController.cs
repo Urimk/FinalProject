@@ -67,7 +67,7 @@ public class CameraController : MonoBehaviour
     {
         HandleYMovement();
         HandleXMovement();
-        
+
         // Update lookAhead for normal follow mode
         if (!isChase && !isXFrozen)
         {
@@ -150,27 +150,27 @@ public class CameraController : MonoBehaviour
     {
         float cameraCurrentX = transform.position.x;
         float playerCurrentX = player.position.x;
-        
+
         // Check if player is moving
         bool isPlayerMoving = Mathf.Abs(playerCurrentX - playerLastXPosition) > 0.01f;
         playerLastXPosition = playerCurrentX;
-        
+
         // Get camera bounds (assuming camera width, you might need to adjust this based on your camera setup)
         Camera cam = GetComponent<Camera>();
         float cameraHalfWidth = cam.orthographicSize * cam.aspect;
         float cameraLeftEdge = cameraCurrentX - cameraHalfWidth;
         float cameraMiddle = cameraCurrentX;
-        
+
         // Check if player fell out of camera on the left side
         if (playerCurrentX < cameraLeftEdge)
         {
             // Player fell out, give damage
             playerHealth.TakeDamage(100);
         }
-        
+
         // Check if player is in the middle of the camera
         playerInMiddle = Mathf.Abs(playerCurrentX - cameraMiddle) < cameraHalfWidth * 0.1f; // 10% of camera width as "middle" zone
-        
+
         if (playerInMiddle && isPlayerMoving && playerCurrentX > cameraMiddle)
         {
             // Player is in middle, moving, and moving right - camera follows player
@@ -182,7 +182,7 @@ public class CameraController : MonoBehaviour
             // Player stopped moving or moved back - return to normal chase speed
             playerWasMoving = false;
         }
-        
+
         if (!playerWasMoving)
         {
             // Normal chase mode - move right at constant speed
@@ -211,7 +211,7 @@ public class CameraController : MonoBehaviour
     public void SetCameraYFreeze(float yPosition = 0f)
     {
         followPlayerY = false;
-        frozenX = yPosition; // Set the X position to freeze the camera at
+        SetYOffset(yPosition, false);
     }
 
     // Method to enable/disable chase mode
@@ -233,7 +233,8 @@ public class CameraController : MonoBehaviour
         followPlayerY = true;
         if (yOffset != -1f)
         {
-            currentPosY = playerYOffset + yOffset;
+            SetYOffset(yOffset, false);
+
         }
         else
         {
@@ -242,16 +243,21 @@ public class CameraController : MonoBehaviour
 
     }
 
-    public void SetYOffset(float newOffset)
+    public void SetYOffset(float newOffset, bool instantSnap = false)
     {
-        // Capture the start/end values
-        transitionStartYOffset = playerYOffset;
-        transitionTargetYOffset = newOffset;
-        transitionTimer = 0f;
-        isTransitioningYOffset = true;
-
-        // Ensure we snap once, right after transition completes
-        snapYNextFrame = true;
+        if (instantSnap)
+        {
+            playerYOffset = newOffset;
+            snapYNextFrame = true;
+            isTransitioningYOffset = false;
+        }
+        else
+        {
+            transitionStartYOffset = playerYOffset;
+            transitionTargetYOffset = newOffset;
+            transitionTimer = 0f;
+            isTransitioningYOffset = true;
+        }
     }
 
     public float GetPlayerYOffset()
@@ -269,5 +275,10 @@ public class CameraController : MonoBehaviour
     public void SetChaseSpeed(float newChaseSpeed)
     {
         chaseSpeed = newChaseSpeed;
+    }
+    
+    public void SetChaseStart(float offSet)
+    {
+        transform.position = new Vector3(transform.position.x - offSet, transform.position.y, transform.position.z);
     }
 }

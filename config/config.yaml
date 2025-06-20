@@ -3,7 +3,7 @@
 behaviors:
   MyBehavior:  # This name must match the Behavior Name on your Agent's Behavior Parameters component in Unity
     trainer_type: ppo
-    max_steps: 20000000
+    max_steps: 50000000
     checkpoint_interval: 300000
     time_horizon: 64
     summary_freq: 10000

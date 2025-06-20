@@ -12,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask defaultLayer;  // New layer for obstacles
     [SerializeField] private Transform earsSlot; // drag the child transform in the inspector
     [SerializeField] private GameObject earsPrefab; // drag the ears prefab here
+    public Transform groundCheck;
+    [SerializeField] private float groundCheckWidth = 1.0f;
+    [SerializeField] private float groundCheckHeight = 0.1f;
     private SpriteRenderer playerSpriteRenderer;
     private int facingDirection = 1;
 
@@ -103,8 +106,9 @@ public class PlayerMovement : MonoBehaviour
         updateEarsPosition();
         UpdateGravityAndWallInteraction();
         resetExtraJumps();
-        HandleJumpInput();
+        HandleJumpInput(); 
     }
+    
 
     private void updateEarsPosition()
     {
@@ -131,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
                 newPosition = new Vector3(0.05f, 0f, 0f);
             }
 
-            earsSlot.localPosition = newPosition;       
+            earsSlot.localPosition = newPosition;
         }
     }
     private void UpdateTimers()
@@ -156,6 +160,11 @@ public class PlayerMovement : MonoBehaviour
         // Only allow horizontal movement if disableMovementTimer is over and not blocked
         if (disableMovementTimer <= 0 && !IsHorizontallyBlocked())
         {
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                // Slightly lift the player to help with small bumps
+                transform.position += new Vector3(0f, 0.001f, 0f);
+            }
             body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
         }
         else if (IsHorizontallyBlocked() && !isGrounded())
@@ -203,14 +212,15 @@ public class PlayerMovement : MonoBehaviour
             size,
             0f,
             checkDirection,
-            0.01f,
+            0.015f,
             obstacleLayer | wallLayer | groundLayer
         );
 
         if (hit.collider != null)
     {
+        
         // 4) If it's a falling platform, ignore it.
-        FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
+            FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
         if (fallingPlatform != null)
         {
             return false;
@@ -458,18 +468,15 @@ public class PlayerMovement : MonoBehaviour
         jumpCounter--;
     }
 // HAS 2 BUGS!
-    public bool isGrounded()
-    {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(
-            boxCollider.bounds.center,
-            boxCollider.bounds.size,
-            0,
-            Vector2.down,
-            0.05f,
-            groundLayer | obstacleLayer
-        );
-        return raycastHit.collider != null;
-    }
+
+public bool isGrounded()
+{
+    Vector2 boxCenter = groundCheck.position;
+    Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckHeight); // e.g., width = 1f, height = 0.1f
+    return Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer | obstacleLayer);
+}
+
+
 
 
     public bool onWall()
@@ -485,7 +492,7 @@ public class PlayerMovement : MonoBehaviour
             size,
             0,
             new Vector2(transform.localScale.x, 0),
-            0.01f,
+            0.015f,
             wallLayer
         );
         return raycastHit.collider != null;

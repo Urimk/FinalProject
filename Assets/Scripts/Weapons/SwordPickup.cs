@@ -20,7 +20,7 @@ public class SwordPickup : MonoBehaviour
             {
                 playerAttack.HasSword = true; // Call the equip method
                 playerAttack.EquipWeapon();
-                Destroy(gameObject); // Remove the pickup after it's collected
+                gameObject.SetActive(false);
             }
         }
     }
