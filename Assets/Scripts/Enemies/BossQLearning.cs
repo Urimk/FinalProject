@@ -1,8 +1,9 @@
+﻿using System; // Needed for Linq methods like Count()
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System.Linq;
-using System; // Needed for Linq methods like Count()
+
+using UnityEngine;
 
 // This script acts as the "Brain" of the boss, using Q-Learning to decide which action to take.
 // It learns based on state information and rewards provided by other components.
@@ -122,18 +123,21 @@ public class BossQLearning : MonoBehaviour
         Debug.Log($"[Q-Learning] Initialized with {numActions} actions.");
 
         // --- Reference Validation and Setup ---
-         if (player == null) player = GameObject.FindGameObjectWithTag("Player")?.transform;
-         if (aiBoss == null) aiBoss = GetComponent<AIBoss>();
-         if (rewardManager == null) rewardManager = FindObjectOfType<BossRewardManager>();
+        if (player == null) player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (aiBoss == null) aiBoss = GetComponent<AIBoss>();
+        if (rewardManager == null) rewardManager = FindObjectOfType<BossRewardManager>();
 
-        if (player != null) {
-             playerMovement = player.GetComponent<PlayerMovement>();
-             if(playerMovement == null) {
-                 Debug.LogWarning("[Q-Learning] PlayerMovement component not found directly on the player Transform root. Velocity state might be inaccurate.");
-             }
+        if (player != null)
+        {
+            playerMovement = player.GetComponent<PlayerMovement>();
+            if (playerMovement == null)
+            {
+                Debug.LogWarning("[Q-Learning] PlayerMovement component not found directly on the player Transform root. Velocity state might be inaccurate.");
+            }
         }
 
-        if (player == null || aiBoss == null || rewardManager == null) {
+        if (player == null || aiBoss == null || rewardManager == null)
+        {
             Debug.LogError("[Q-Learning] Missing required references! Disabling learning component.");
             this.enabled = false;
             // Even if disabled, try loading in case we just want to inspect the loaded table
@@ -144,17 +148,19 @@ public class BossQLearning : MonoBehaviour
         // --- Q-Table Persistence Path ---
         saveFilePath = Path.Combine(Application.persistentDataPath, "BossQTable_PosVelCooldownsEnergyPlayerState.json");
         LoadQTable(); // Load Q-table and stateVisitCounts
-                // This should work in headless mode
-        AppDomain.CurrentDomain.ProcessExit += (s, e) => {
-        Debug.Log("ProcessExit called, saving Q-table...");
-        SaveQTable();
-    };
+                      // This should work in headless mode
+        AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+        {
+            Debug.Log("ProcessExit called, saving Q-table...");
+            SaveQTable();
+        };
 
-        Console.CancelKeyPress += (sender, args) => {
-        Debug.Log("CancelKeyPress (Ctrl+C) detected, saving Q-table...");
-        SaveQTable();
-        args.Cancel = false; // Let the process continue to shut down
-    };
+        Console.CancelKeyPress += (sender, args) =>
+        {
+            Debug.Log("CancelKeyPress (Ctrl+C) detected, saving Q-table...");
+            SaveQTable();
+            args.Cancel = false; // Let the process continue to shut down
+        };
     }
 
     // No Start() needed unless specific logic is deferred here
@@ -183,12 +189,13 @@ public class BossQLearning : MonoBehaviour
             // Current logic stops all Q-decisions when out of range.
             if (aiBoss != null && !aiBoss.IsCurrentlyChargingOrDashing())
             {
-                 aiBoss.AIRequestIdle(); // Assuming AIRequestIdle stops movement too
+                aiBoss.AIRequestIdle(); // Assuming AIRequestIdle stops movement too
             }
             // If player goes out of range, learning should pause or reset state history
-            if(lastState != null) {
-                 lastState = null;
-                 lastAction = -1;
+            if (lastState != null)
+            {
+                lastState = null;
+                lastAction = -1;
             }
             globalCooldownTimer = 0f; // Reset GCD timer
             return; // Skip Q-learning decision logic if player is out of range
@@ -221,7 +228,7 @@ public class BossQLearning : MonoBehaviour
             // Decay Epsilon after a learning step
             if (epsilon > epsilonMin)
             {
-                 epsilon = Mathf.Max(epsilonMin, epsilon * epsilonDecay);
+                epsilon = Mathf.Max(epsilonMin, epsilon * epsilonDecay);
             }
         }
 
@@ -270,8 +277,9 @@ public class BossQLearning : MonoBehaviour
         // --- Player Velocity ---
         Vector2 playerVel = Vector2.zero;
         // Ensure playerMovement is valid before accessing it
-        if (playerMovement != null) {
-             playerVel = playerMovement.GetVelocity(); // Assuming this method exists and is accurate
+        if (playerMovement != null)
+        {
+            playerVel = playerMovement.GetVelocity(); // Assuming this method exists and is accurate
         }
 
         // --- Player Status (Example: Grounded/Airborne) ---
@@ -294,13 +302,14 @@ public class BossQLearning : MonoBehaviour
 
         // Discretize Energy (if using)
         int energyBin = 0;
-        if (energyDiscretizationBins > 0 && aiBoss != null) {
-             // Clamp energy just in case it goes slightly out of 0-1 range
-             // Ensure AIBoss has a GetCurrentEnergyNormalized method returning 0-1
-             // currentEnergy = aiBoss.GetCurrentEnergyNormalized(); // Uncomment and implement in AIBoss
-             energyBin = Mathf.FloorToInt(Mathf.Clamp01(currentEnergy) * energyDiscretizationBins);
-             // Ensure max value maps to highest valid bin
-             if (energyBin >= energyDiscretizationBins) energyBin = energyDiscretizationBins - 1;
+        if (energyDiscretizationBins > 0 && aiBoss != null)
+        {
+            // Clamp energy just in case it goes slightly out of 0-1 range
+            // Ensure AIBoss has a GetCurrentEnergyNormalized method returning 0-1
+            // currentEnergy = aiBoss.GetCurrentEnergyNormalized(); // Uncomment and implement in AIBoss
+            energyBin = Mathf.FloorToInt(Mathf.Clamp01(currentEnergy) * energyDiscretizationBins);
+            // Ensure max value maps to highest valid bin
+            if (energyBin >= energyDiscretizationBins) energyBin = energyDiscretizationBins - 1;
         }
 
 
@@ -319,7 +328,8 @@ public class BossQLearning : MonoBehaviour
             int playerHealthBins = 5; // Define this as a serialized field or constant
             playerHealthBin = Mathf.FloorToInt(Mathf.Clamp01(playerHealthNormalized) * playerHealthBins);
             if (playerHealthBin >= playerHealthBins) playerHealthBin = playerHealthBins - 1;
-        } else { Debug.LogWarning("[Q-Learning] Player Health reference missing for state!"); }
+        }
+        else { Debug.LogWarning("[Q-Learning] Player Health reference missing for state!"); }
 
 
         // --- Player Invulnerability Status ---
@@ -367,21 +377,21 @@ public class BossQLearning : MonoBehaviour
 
         if (currentlyValidActions.Count == 0)
         {
-             // This should ideally not happen if Idle and basic movement are always possible.
-             Debug.LogWarning($"[Q-Learning] No valid actions found for state {state}! Defaulting to Idle.");
-             return (int)ActionType.Idle; // Default to Idle if somehow no valid actions (shouldn't happen)
+            // This should ideally not happen if Idle and basic movement are always possible.
+            Debug.LogWarning($"[Q-Learning] No valid actions found for state {state}! Defaulting to Idle.");
+            return (int)ActionType.Idle; // Default to Idle if somehow no valid actions (shouldn't happen)
         }
 
         // Epsilon-Greedy Policy
         if (UnityEngine.Random.value < epsilon) // Explore
         {
-             int randomIndex = UnityEngine.Random.Range(0, currentlyValidActions.Count);
-             return currentlyValidActions[randomIndex];
+            int randomIndex = UnityEngine.Random.Range(0, currentlyValidActions.Count);
+            return currentlyValidActions[randomIndex];
         }
         else // Exploit
         {
-             int bestAction = GetBestActionFromValidSet(state, currentlyValidActions);
-             return bestAction;
+            int bestAction = GetBestActionFromValidSet(state, currentlyValidActions);
+            return bestAction;
         }
     }
 
@@ -398,15 +408,15 @@ public class BossQLearning : MonoBehaviour
         // Assume movement is valid unless the AIBoss is in a busy state (like dashing or charging an ability)
         if (aiBoss != null && !aiBoss.IsCurrentlyChargingOrDashing())
         {
-             validActions.Add((int)ActionType.Move_TowardsPlayer);
-             validActions.Add((int)ActionType.Move_AwayFromPlayer);
-             validActions.Add((int)ActionType.Move_StrafeLeft);
-             validActions.Add((int)ActionType.Move_StrafeRight);
-             validActions.Add((int)ActionType.Move_StrafeUp); // NEW
-             validActions.Add((int)ActionType.Move_StrafeDown); // NEW
-             validActions.Add((int)ActionType.Move_ToArenaCenter); // NEW
-             validActions.Add((int)ActionType.Move_ToPlayerFlank); // NEW
-             // Add other movement actions here if you add them to the enum
+            validActions.Add((int)ActionType.Move_TowardsPlayer);
+            validActions.Add((int)ActionType.Move_AwayFromPlayer);
+            validActions.Add((int)ActionType.Move_StrafeLeft);
+            validActions.Add((int)ActionType.Move_StrafeRight);
+            validActions.Add((int)ActionType.Move_StrafeUp); // NEW
+            validActions.Add((int)ActionType.Move_StrafeDown); // NEW
+            validActions.Add((int)ActionType.Move_ToArenaCenter); // NEW
+            validActions.Add((int)ActionType.Move_ToPlayerFlank); // NEW
+                                                                  // Add other movement actions here if you add them to the enum
         }
 
         // --- Check Ability Actions ---
@@ -414,42 +424,47 @@ public class BossQLearning : MonoBehaviour
         // Global cooldown is NOT checked here. Execution handles GCD.
         if (aiBoss != null)
         {
-            if (aiBoss.IsFireballReady(/* potentially pass requiredEnergy */)) {
-                 // If Fireball is ready, all its aiming variants are potential choices
-                 validActions.Add((int)ActionType.Fireball_AtCurrentPos);
-                 validActions.Add((int)ActionType.Fireball_Predictive);
-                 validActions.Add((int)ActionType.Fireball_OffsetUp);
-                 validActions.Add((int)ActionType.Fireball_OffsetDown);
-                 validActions.Add((int)ActionType.Fireball_OffsetLeft);
-                 validActions.Add((int)ActionType.Fireball_OffsetRight);
-                 validActions.Add((int)ActionType.Fireball_PredictiveOffsetUp);
-                 validActions.Add((int)ActionType.Fireball_PredictiveOffsetDown);
-                 validActions.Add((int)ActionType.Fireball_PredictiveOffsetLeft);
-                 validActions.Add((int)ActionType.Fireball_PredictiveOffsetRight);
-                 validActions.Add((int)ActionType.Fireball_RelativeForward);
-                 validActions.Add((int)ActionType.Fireball_RelativeUp);
-                 validActions.Add((int)ActionType.Fireball_RelativeDown);
-                 // Add other Fireball aim modes here
+            if (aiBoss.IsFireballReady(/* potentially pass requiredEnergy */))
+            {
+                // If Fireball is ready, all its aiming variants are potential choices
+                validActions.Add((int)ActionType.Fireball_AtCurrentPos);
+                validActions.Add((int)ActionType.Fireball_Predictive);
+                validActions.Add((int)ActionType.Fireball_OffsetUp);
+                validActions.Add((int)ActionType.Fireball_OffsetDown);
+                validActions.Add((int)ActionType.Fireball_OffsetLeft);
+                validActions.Add((int)ActionType.Fireball_OffsetRight);
+                validActions.Add((int)ActionType.Fireball_PredictiveOffsetUp);
+                validActions.Add((int)ActionType.Fireball_PredictiveOffsetDown);
+                validActions.Add((int)ActionType.Fireball_PredictiveOffsetLeft);
+                validActions.Add((int)ActionType.Fireball_PredictiveOffsetRight);
+                validActions.Add((int)ActionType.Fireball_RelativeForward);
+                validActions.Add((int)ActionType.Fireball_RelativeUp);
+                validActions.Add((int)ActionType.Fireball_RelativeDown);
+                // Add other Fireball aim modes here
             }
-            if (aiBoss.IsFlameTrapReady(/* potentially pass requiredEnergy */)) {
-                 // If FlameTrap is ready, all its placement variants are potential choices
-                 validActions.Add((int)ActionType.FlameTrap_AtPlayer); // Keep existing
-                 validActions.Add((int)ActionType.FlameTrap_NearBoss); // NEW
-                 validActions.Add((int)ActionType.FlameTrap_BetweenBossAndPlayer); // NEW
-                 validActions.Add((int)ActionType.FlameTrap_BehindPlayer); // NEW
-                 // Add other FlameTrap actions here if you add them
+            if (aiBoss.IsFlameTrapReady(/* potentially pass requiredEnergy */))
+            {
+                // If FlameTrap is ready, all its placement variants are potential choices
+                validActions.Add((int)ActionType.FlameTrap_AtPlayer); // Keep existing
+                validActions.Add((int)ActionType.FlameTrap_NearBoss); // NEW
+                validActions.Add((int)ActionType.FlameTrap_BetweenBossAndPlayer); // NEW
+                validActions.Add((int)ActionType.FlameTrap_BehindPlayer); // NEW
+                                                                          // Add other FlameTrap actions here if you add them
             }
             // Dash actions require Dash to be ready and not currently dashing/charging
-            if (aiBoss.IsDashReady(/* potentially pass requiredEnergy */)) { // IsDashReady should include !IsCurrentlyChargingOrDashing check
-                 // If Dash is ready, all its dash variants are potential choices
-                 validActions.Add((int)ActionType.Dash_TowardsPlayer); // Keep existing
-                 validActions.Add((int)ActionType.Dash_AwayFromPlayer); // NEW
-                 validActions.Add((int)ActionType.Dash_ToPlayerFlank); // NEW
-                 // Add other Dash actions here if you add them
+            if (aiBoss.IsDashReady(/* potentially pass requiredEnergy */))
+            { // IsDashReady should include !IsCurrentlyChargingOrDashing check
+              // If Dash is ready, all its dash variants are potential choices
+                validActions.Add((int)ActionType.Dash_TowardsPlayer); // Keep existing
+                validActions.Add((int)ActionType.Dash_AwayFromPlayer); // NEW
+                validActions.Add((int)ActionType.Dash_ToPlayerFlank); // NEW
+                                                                      // Add other Dash actions here if you add them
             }
             // Add checks for other abilities here
-        } else {
-             Debug.LogWarning("[Q-Learning] AIBoss reference missing when getting valid actions.");
+        }
+        else
+        {
+            Debug.LogWarning("[Q-Learning] AIBoss reference missing when getting valid actions.");
         }
 
         return validActions;
@@ -462,7 +477,7 @@ public class BossQLearning : MonoBehaviour
         float maxQ = float.MinValue;
         // Initialize with the Q-value of the first valid action
         int bestAction = validActions.Count > 0 ? validActions[0] : (int)ActionType.Idle; // Default to Idle if somehow no valid actions (shouldn't happen)
-        if(validActions.Count > 0) maxQ = qValues[bestAction];
+        if (validActions.Count > 0) maxQ = qValues[bestAction];
 
 
         foreach (int actionIndex in validActions)
@@ -475,8 +490,10 @@ public class BossQLearning : MonoBehaviour
                     maxQ = qValues[actionIndex];
                     bestAction = actionIndex;
                 }
-            } else {
-                 Debug.LogError($"[Q-Learning] Invalid action index {actionIndex} encountered in GetBestActionFromValidSet for state {state}!");
+            }
+            else
+            {
+                Debug.LogError($"[Q-Learning] Invalid action index {actionIndex} encountered in GetBestActionFromValidSet for state {state}!");
             }
         }
         return bestAction;
@@ -490,15 +507,18 @@ public class BossQLearning : MonoBehaviour
         float maxQ = float.MinValue;
 
         // Standard Q-learning: max over all *possible* actions defined by ActionType enum for the next state.
-        for(int i = 0; i < numActions; i++) {
-             if(nextQValues[i] > maxQ) {
-                 maxQ = nextQValues[i];
-             }
+        for (int i = 0; i < numActions; i++)
+        {
+            if (nextQValues[i] > maxQ)
+            {
+                maxQ = nextQValues[i];
+            }
         }
 
         // Handle case where all Q-values might still be initial (e.g., 0) or negative
-        if (maxQ == float.MinValue) {
-             return 0f; // Return 0 if no values were found or all were negative/zero (standard practice)
+        if (maxQ == float.MinValue)
+        {
+            return 0f; // Return 0 if no values were found or all were negative/zero (standard practice)
         }
         return maxQ;
     }
@@ -517,15 +537,16 @@ public class BossQLearning : MonoBehaviour
 
     private void UpdateQTable(string state, int action, float reward, string nextState)
     {
-        if (action < 0 || action >= numActions) {
+        if (action < 0 || action >= numActions)
+        {
             Debug.LogError($"[Q-Learning] Invalid action index {action} provided to UpdateQTable for state {state}. Aborting update.");
             return;
         }
         // Ensure the state we're updating exists (should always be true due to logic flow)
         if (!qTable.ContainsKey(state))
         {
-             Debug.LogError($"[Q-Learning] Attempted to update Q-Table for non-existent state {state}! This should not happen. Aborting update.");
-             return;
+            Debug.LogError($"[Q-Learning] Attempted to update Q-Table for non-existent state {state}! This should not happen. Aborting update.");
+            return;
         }
 
 
@@ -580,15 +601,15 @@ public class BossQLearning : MonoBehaviour
         // Ensure AIBoss reference is valid before calling methods
         if (aiBoss == null)
         {
-             Debug.LogError("[Q-Learning] AIBoss reference missing during action execution!");
-             return;
+            Debug.LogError("[Q-Learning] AIBoss reference missing during action execution!");
+            return;
         }
 
         // --- Prepare contextual data for AIBoss calls ---
         Vector2 playerPos = player.position;
         Vector2 bossPos = transform.position;
         Vector2 playerVel = Vector2.zero;
-        if(playerMovement != null) playerVel = playerMovement.GetVelocity();
+        if (playerMovement != null) playerVel = playerMovement.GetVelocity();
 
 
         switch (selectedAction)
@@ -612,14 +633,14 @@ public class BossQLearning : MonoBehaviour
             case ActionType.Move_StrafeDown:     // NEW
             case ActionType.Move_ToArenaCenter:  // NEW
             case ActionType.Move_ToPlayerFlank:  // NEW
-                 if (!aiBoss.IsCurrentlyChargingOrDashing()) // Only move if not busy
-                 {
-                     // Pass the selected movement action type and relevant context to AIBoss.
-                     // AIBoss calculates the actual target based on the action type.
-                     // Pass player/boss context, arena center, and offset distance
-                     aiBoss.AIRequestMove(selectedAction, playerPos, bossPos, actionDistanceOffset); // AIBoss interprets actionType
-                 }
-                 break;
+                if (!aiBoss.IsCurrentlyChargingOrDashing()) // Only move if not busy
+                {
+                    // Pass the selected movement action type and relevant context to AIBoss.
+                    // AIBoss calculates the actual target based on the action type.
+                    // Pass player/boss context, arena center, and offset distance
+                    aiBoss.AIRequestMove(selectedAction, playerPos, bossPos, actionDistanceOffset); // AIBoss interprets actionType
+                }
+                break;
 
 
             // --- Ability Actions ---
@@ -638,17 +659,19 @@ public class BossQLearning : MonoBehaviour
             case ActionType.Fireball_RelativeUp:
             case ActionType.Fireball_RelativeDown:
                 if (globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
-                 {
-                     // AIBoss.IsFireballReady() is checked in GetValidActions.
-                     // AIBoss.AIRequestRangedAttack should verify readiness internally for safety.
-                     // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the aim target.
-                      if (aiBoss.AIRequestRangedAttack(selectedAction, playerPos, playerVel, actionDistanceOffset)) // AIBoss interprets actionType and calculates target
-                     {
-                          abilityExecutedSuccessfully = true;
-                     } else {
-                          // Debug.Log($"[Q-Learning] Fireball action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
-                     }
-                 } // else { Debug.Log($"[Q-Learning] Fireball action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
+                {
+                    // AIBoss.IsFireballReady() is checked in GetValidActions.
+                    // AIBoss.AIRequestRangedAttack should verify readiness internally for safety.
+                    // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the aim target.
+                    if (aiBoss.AIRequestRangedAttack(selectedAction, playerPos, playerVel, actionDistanceOffset)) // AIBoss interprets actionType and calculates target
+                    {
+                        abilityExecutedSuccessfully = true;
+                    }
+                    else
+                    {
+                        // Debug.Log($"[Q-Learning] Fireball action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
+                    }
+                } // else { Debug.Log($"[Q-Learning] Fireball action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
             case ActionType.FlameTrap_AtPlayer: // Keep existing
@@ -656,32 +679,36 @@ public class BossQLearning : MonoBehaviour
             case ActionType.FlameTrap_BetweenBossAndPlayer: // NEW
             case ActionType.FlameTrap_BehindPlayer: // NEW
                 if (globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
-                 {
-                     // AIBoss.IsFlameTrapReady() checked in GetValidActions.
-                     // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the placement target.
-                      if (aiBoss.AIRequestFlameAttack(selectedAction, playerPos, bossPos, playerVel, actionDistanceOffset)) // AIBoss interprets actionType and calculates placement
-                     {
-                          abilityExecutedSuccessfully = true;
-                     } else {
-                          // Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
-                     }
-                 } // else { Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
+                {
+                    // AIBoss.IsFlameTrapReady() checked in GetValidActions.
+                    // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the placement target.
+                    if (aiBoss.AIRequestFlameAttack(selectedAction, playerPos, bossPos, playerVel, actionDistanceOffset)) // AIBoss interprets actionType and calculates placement
+                    {
+                        abilityExecutedSuccessfully = true;
+                    }
+                    else
+                    {
+                        // Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
+                    }
+                } // else { Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
             case ActionType.Dash_TowardsPlayer: // Keep existing
             case ActionType.Dash_AwayFromPlayer: // NEW
             case ActionType.Dash_ToPlayerFlank: // NEW
-                 if (globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
-                 {
-                      // AIBoss.IsDashReady() checked in GetValidActions (should include busy check)
-                      // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the dash target.
-                      if (aiBoss.AIRequestDashAttack(selectedAction, playerPos, bossPos, actionDistanceOffset)) // AIBoss interprets actionType and calculates dash target
-                     {
-                          abilityExecutedSuccessfully = true;
-                     } else {
-                          // Debug.Log($"[Q-Learning] Dash action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
-                     }
-                 } // else { Debug.Log($"[Q-Learning] Dash action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
+                if (globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
+                {
+                    // AIBoss.IsDashReady() checked in GetValidActions (should include busy check)
+                    // Pass the *chosen action type* and context (pos/vel, offset). AIBoss interprets this to determine the dash target.
+                    if (aiBoss.AIRequestDashAttack(selectedAction, playerPos, bossPos, actionDistanceOffset)) // AIBoss interprets actionType and calculates dash target
+                    {
+                        abilityExecutedSuccessfully = true;
+                    }
+                    else
+                    {
+                        // Debug.Log($"[Q-Learning] Dash action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
+                    }
+                } // else { Debug.Log($"[Q-Learning] Dash action {selectedAction} attempted but GCD ({globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
             default:
@@ -697,14 +724,14 @@ public class BossQLearning : MonoBehaviour
             globalCooldownTimer = globalCooldown;
             // Debug.Log($"[Q-Learning] Applied global cooldown ({globalCooldown:F2}s) after executing {selectedAction}");
         }
-         // Optional: Log if an ability action was attempted but failed (e.g., due to individual cooldown/resource not checked correctly before SelectAction, or AIBoss busy state)
-         else if (IsAbilityAction(selectedAction) && globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
-         {
-              // This case means the QL agent chose an ability when GCD was ready and AIBoss wasn't busy,
-              // but the AIBoss.AIRequest... method still returned false (e.g., individual cooldown wasn't *actually* ready, or insufficient resources).
-              // This log helps debug why an action chosen by QL isn't happening in game.
-              Debug.LogWarning($"[Q-Learning] Ability Action {selectedAction} chosen & conditions met (GCD ready, not busy), but AIBoss.AIRequest failed (internal readiness/resource/constraint issue).");
-         }
+        // Optional: Log if an ability action was attempted but failed (e.g., due to individual cooldown/resource not checked correctly before SelectAction, or AIBoss busy state)
+        else if (IsAbilityAction(selectedAction) && globalCooldownTimer <= 0 && !aiBoss.IsCurrentlyChargingOrDashing())
+        {
+            // This case means the QL agent chose an ability when GCD was ready and AIBoss wasn't busy,
+            // but the AIBoss.AIRequest... method still returned false (e.g., individual cooldown wasn't *actually* ready, or insufficient resources).
+            // This log helps debug why an action chosen by QL isn't happening in game.
+            Debug.LogWarning($"[Q-Learning] Ability Action {selectedAction} chosen & conditions met (GCD ready, not busy), but AIBoss.AIRequest failed (internal readiness/resource/constraint issue).");
+        }
     }
 
     // Helper to check if an action is a movement action
@@ -757,27 +784,31 @@ public class BossQLearning : MonoBehaviour
                 {
                     qTable = wrapper.ToDictionary();
                     Debug.Log($"[Q-Learning] Q-Table loaded successfully from {saveFilePath}. {qTable.Count} states loaded. Loaded num actions: {wrapper.qValues?.FirstOrDefault()?.array?.Length ?? 0}");
-                     // Log a warning if the loaded number of actions doesn't match the current script's expectation
-                     if (qTable.Count > 0 && qTable.First().Value.Length != numActions)
-                     {
-                          Debug.LogWarning($"[Q-Learning Load] Loaded Q-Table has {qTable.First().Value.Length} actions per state, but current script expects {numActions}. This may lead to incorrect behavior or errors if the action space definition changed. Consider clearing save file if action space changed significantly.");
-                     }
+                    // Log a warning if the loaded number of actions doesn't match the current script's expectation
+                    if (qTable.Count > 0 && qTable.First().Value.Length != numActions)
+                    {
+                        Debug.LogWarning($"[Q-Learning Load] Loaded Q-Table has {qTable.First().Value.Length} actions per state, but current script expects {numActions}. This may lead to incorrect behavior or errors if the action space definition changed. Consider clearing save file if action space changed significantly.");
+                    }
 
-                } else {
-                     Debug.LogWarning("[Q-Learning] Q-Table data in save file is null or incomplete. Starting with empty Q-table.");
-                     qTable = new Dictionary<string, float[]>();
+                }
+                else
+                {
+                    Debug.LogWarning("[Q-Learning] Q-Table data in save file is null or incomplete. Starting with empty Q-table.");
+                    qTable = new Dictionary<string, float[]>();
                 }
 
 
                 // Load State Visit Counts
-                 if (wrapper.visitStates != null && wrapper.visitCounts != null)
-                 {
-                     stateVisitCounts = wrapper.ToStateVisitDictionary();
-                     Debug.Log($"[Q-Learning] State Visit Counts loaded successfully. {stateVisitCounts.Count} states tracked.");
-                 } else {
-                      Debug.LogWarning("[Q-Learning] State Visit data in save file is null or incomplete. Starting state visit counts fresh.");
-                      stateVisitCounts = new Dictionary<string, int>();
-                 }
+                if (wrapper.visitStates != null && wrapper.visitCounts != null)
+                {
+                    stateVisitCounts = wrapper.ToStateVisitDictionary();
+                    Debug.Log($"[Q-Learning] State Visit Counts loaded successfully. {stateVisitCounts.Count} states tracked.");
+                }
+                else
+                {
+                    Debug.LogWarning("[Q-Learning] State Visit data in save file is null or incomplete. Starting state visit counts fresh.");
+                    stateVisitCounts = new Dictionary<string, int>();
+                }
 
             }
             catch (System.Exception ex)
@@ -816,78 +847,93 @@ public class BossQLearning : MonoBehaviour
             visitStates = new List<string>();
             visitCounts = new List<int>();
 
-            if (qTableDict != null) {
-                 foreach (var kvp in qTableDict)
-                 {
-                     qStates.Add(kvp.Key);
-                     qValues.Add(new FloatArrayWrapper(kvp.Value)); // Wrap the float array
-                 }
+            if (qTableDict != null)
+            {
+                foreach (var kvp in qTableDict)
+                {
+                    qStates.Add(kvp.Key);
+                    qValues.Add(new FloatArrayWrapper(kvp.Value)); // Wrap the float array
+                }
             }
 
-            if (visitDict != null) {
-                 foreach (var kvp in visitDict)
-                 {
-                     visitStates.Add(kvp.Key);
-                     visitCounts.Add(kvp.Value);
-                 }
+            if (visitDict != null)
+            {
+                foreach (var kvp in visitDict)
+                {
+                    visitStates.Add(kvp.Key);
+                    visitCounts.Add(kvp.Value);
+                }
             }
         }
 
         // Method for loading Q-Table Dictionary
         public Dictionary<string, float[]> ToDictionary()
         {
-             Dictionary<string, float[]> dict = new Dictionary<string, float[]>();
-             // Need to get the expected action count here during load, assuming it's constant
-             int expectedActionCount = System.Enum.GetNames(typeof(ActionType)).Length;
+            Dictionary<string, float[]> dict = new Dictionary<string, float[]>();
+            // Need to get the expected action count here during load, assuming it's constant
+            int expectedActionCount = System.Enum.GetNames(typeof(ActionType)).Length;
 
-             if (qStates != null && qValues != null && qStates.Count == qValues.Count) {
-                 for (int i = 0; i < qStates.Count; i++)
-                 {
-                      if (!string.IsNullOrEmpty(qStates[i]) && qValues[i] != null && qValues[i].array != null)
-                      {
-                          // Ensure the loaded array size matches the current number of actions
-                          if (qValues[i].array.Length == expectedActionCount)
-                          {
-                               dict[qStates[i]] = qValues[i].array;
-                          } else {
-                               Debug.LogWarning($"[Q-Learning Load] Skipping Q-Table entry for state '{qStates[i]}' due to action count mismatch ({qValues[i].array.Length} vs {expectedActionCount}).");
-                          }
-                      } else {
-                          // Corrected syntax for ternary in string interpolation
-                          Debug.LogWarning($"[Q-Learning Load] Skipping invalid entry during Q-Table loading at index {i}. State: '{(qStates != null && i < qStates.Count ? qStates[i] : "N/A")}', Values null? {(qValues != null && i < qValues.Count ? qValues[i] == null : true)}");
-                      }
-                 }
-             } else {
-                 // Error already logged in LoadQTable if these are null/mismatched
-             }
-             return dict;
+            if (qStates != null && qValues != null && qStates.Count == qValues.Count)
+            {
+                for (int i = 0; i < qStates.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(qStates[i]) && qValues[i] != null && qValues[i].array != null)
+                    {
+                        // Ensure the loaded array size matches the current number of actions
+                        if (qValues[i].array.Length == expectedActionCount)
+                        {
+                            dict[qStates[i]] = qValues[i].array;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[Q-Learning Load] Skipping Q-Table entry for state '{qStates[i]}' due to action count mismatch ({qValues[i].array.Length} vs {expectedActionCount}).");
+                        }
+                    }
+                    else
+                    {
+                        // Corrected syntax for ternary in string interpolation
+                        Debug.LogWarning($"[Q-Learning Load] Skipping invalid entry during Q-Table loading at index {i}. State: '{(qStates != null && i < qStates.Count ? qStates[i] : "N/A")}', Values null? {(qValues != null && i < qValues.Count ? qValues[i] == null : true)}");
+                    }
+                }
+            }
+            else
+            {
+                // Error already logged in LoadQTable if these are null/mismatched
+            }
+            return dict;
         }
 
         // Method for loading State Visit Count Dictionary
         public Dictionary<string, int> ToStateVisitDictionary()
         {
-             Dictionary<string, int> dict = new Dictionary<string, int>();
-             if (visitStates != null && visitCounts != null && visitStates.Count == visitCounts.Count) {
-                 for (int i = 0; i < visitStates.Count; i++)
-                 {
-                      if (!string.IsNullOrEmpty(visitStates[i]))
-                      {
-                           dict[visitStates[i]] = visitCounts[i];
-                      } else {
-                           // Corrected syntax for ternary in string interpolation
-                           Debug.LogWarning($"[Q-Learning Load] Skipping invalid state visit entry at index {i}. State: '{(visitStates != null && i < visitStates.Count ? visitStates[i] : "N/A")}'");
-                      }
-                 }
-             } else {
-                 Debug.LogWarning("[Q-Learning Load] State visit state and count lists mismatch or are null during deserialization. Starting visit counts fresh.");
-             }
-             return dict;
+            Dictionary<string, int> dict = new Dictionary<string, int>();
+            if (visitStates != null && visitCounts != null && visitStates.Count == visitCounts.Count)
+            {
+                for (int i = 0; i < visitStates.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(visitStates[i]))
+                    {
+                        dict[visitStates[i]] = visitCounts[i];
+                    }
+                    else
+                    {
+                        // Corrected syntax for ternary in string interpolation
+                        Debug.LogWarning($"[Q-Learning Load] Skipping invalid state visit entry at index {i}. State: '{(visitStates != null && i < visitStates.Count ? visitStates[i] : "N/A")}'");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[Q-Learning Load] State visit state and count lists mismatch or are null during deserialization. Starting visit counts fresh.");
+            }
+            return dict;
         }
     }
 
     // Helper class because JsonUtility can't directly serialize arrays within lists like this
     [System.Serializable]
-    private class FloatArrayWrapper {
+    private class FloatArrayWrapper
+    {
         public float[] array;
         public FloatArrayWrapper(float[] arr) { this.array = arr; }
     }

@@ -1,5 +1,6 @@
+﻿using System.Collections.Generic;
+
 using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayerRespawn : MonoBehaviour
 {

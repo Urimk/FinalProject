@@ -1,9 +1,11 @@
-using UnityEngine;
-using Unity.MLAgents;
-using Unity.MLAgents.Sensors;
-using Unity.MLAgents.Actuators;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
+
+using UnityEngine;
 
 public class PlayerAI : Agent
 {
@@ -129,7 +131,7 @@ public class PlayerAI : Agent
         if (playerMovement != null) playerMovement.enabled = true;
         if (playerAttack != null) playerAttack.enabled = true;
         Collider2D playerCol = GetComponent<Collider2D>();
-        if(playerCol != null) playerCol.enabled = true;
+        if (playerCol != null) playerCol.enabled = true;
 
         EpisodeManager.Instance?.ResetEnvironmentForNewEpisode();
         ClearProjectiles(bossFireballs);
@@ -202,7 +204,7 @@ public class PlayerAI : Agent
             //sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == platformLayer); // Hit Platform? (1 float)
             //sensor.AddObservation(hit.collider != null && hit.collider.gameObject.layer == wallLayer); // Hit Wall? (1 float)
             // Add more layers here if needed, updating numEnvironmentLayersToObserve
-            
+
             sensor.AddObservation(hit.collider != null); // Hit? (1 float)
             sensor.AddObservation(hit.collider != null ? hit.distance / raycastDistance : 1f); // Distance (normalized)
         }
@@ -219,7 +221,7 @@ public class PlayerAI : Agent
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == groundLayer); // Hit Ground? (1 float)
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == platformLayer); // Hit Platform? (1 float)
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == wallLayer); // Hit Wall? (1 float)
-         // Add more layers here if needed
+                                                                                                                     // Add more layers here if needed
 
 
         // --- Physics-Based Hazard/Indicator Detection (Keep this) ---
@@ -268,16 +270,17 @@ public class PlayerAI : Agent
             }
             else if (hit.CompareTag("FlameWarningMarker"))
             {
-                 if (dist < closestFlameMarkerDist)
-                 {
+                if (dist < closestFlameMarkerDist)
+                {
                     flameMarkerFound = true;
                     relativeFlameMarkerPos = (Vector2)hit.transform.position - (Vector2)transform.position;
                     closestFlameMarkerDist = dist;
-                 }
+                }
             }
         }
 
-        for (int i = hitCount; i < overlapResults.Length; i++) {
+        for (int i = hitCount; i < overlapResults.Length; i++)
+        {
             overlapResults[i] = null;
         }
 
@@ -320,7 +323,8 @@ public class PlayerAI : Agent
 
         var activeProjectilesInfo = projectiles
             .Where(p => p != null && p.activeInHierarchy)
-            .Select(p => new {
+            .Select(p => new
+            {
                 GameObject = p,
                 Distance = Vector2.Distance(transform.position, p.transform.position),
                 Rigidbody = p.GetComponent<Rigidbody2D>()
@@ -361,7 +365,7 @@ public class PlayerAI : Agent
         float jumpDuration = 0f;
         if (rawJumpAction > 0f)
         {
-             jumpDuration = rawJumpAction * maxJumpHoldDuration;
+            jumpDuration = rawJumpAction * maxJumpHoldDuration;
         }
         jumpDuration = Mathf.Clamp(jumpDuration, 0f, maxJumpHoldDuration);
         bool fallThroughPressed = (fallThroughAction == 1);
@@ -381,11 +385,11 @@ public class PlayerAI : Agent
 
         if (playerHealth != null && playerHealth.currentHealth <= 0)
         {
-             isPlayerDead = true;
-             Debug.Log("[PlayerAI] Player Died! Ending Episode.");
-             AddReward(penaltyLose);
-             EpisodeManager.Instance?.RecordEndOfEpisode(bossWon: true);
-             EndEpisode();
+            isPlayerDead = true;
+            Debug.Log("[PlayerAI] Player Died! Ending Episode.");
+            AddReward(penaltyLose);
+            EpisodeManager.Instance?.RecordEndOfEpisode(bossWon: true);
+            EndEpisode();
         }
     }
 
@@ -399,17 +403,17 @@ public class PlayerAI : Agent
     {
         if (isPlayerDead || isBossDefeated) return;
         isBossDefeated = true;
-         Debug.Log("[PlayerAI] Boss Defeated! Ending Episode.");
+        Debug.Log("[PlayerAI] Boss Defeated! Ending Episode.");
         AddReward(rewardWin);
         EpisodeManager.Instance?.RecordEndOfEpisode(bossWon: false);
         EndEpisode();
     }
 
     // --- HEURISTICS ---
-     public override void Heuristic(in ActionBuffers actionsOut)
-     {
-         var discreteActions = actionsOut.DiscreteActions;
-         var continuousActions = actionsOut.ContinuousActions;
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var discreteActions = actionsOut.DiscreteActions;
+        var continuousActions = actionsOut.ContinuousActions;
 
         if (Input.GetKey(KeyCode.A)) discreteActions[0] = 1;
         else if (Input.GetKey(KeyCode.D)) discreteActions[0] = 2;
@@ -418,16 +422,16 @@ public class PlayerAI : Agent
         discreteActions[1] = Input.GetKey(KeyCode.S) ? 1 : 0;
         discreteActions[2] = Input.GetKey(KeyCode.LeftControl) ? 1 : 0;
         continuousActions[0] = Input.GetKey(KeyCode.Space) ? 1.0f : 0.0f;
-     }
+    }
 
     // --- CLEANUP ---
-     void OnDestroy()
-     {
-         if (playerHealth != null) { playerHealth.OnDamaged -= HandlePlayerDamaged; }
-         if (bossHealth != null)
-         {
-             bossHealth.OnBossDamaged -= HandleBossDamaged;
-             bossHealth.OnBossDied -= HandleBossDied;
-         }
-     }
+    void OnDestroy()
+    {
+        if (playerHealth != null) { playerHealth.OnDamaged -= HandlePlayerDamaged; }
+        if (bossHealth != null)
+        {
+            bossHealth.OnBossDamaged -= HandleBossDamaged;
+            bossHealth.OnBossDied -= HandleBossDied;
+        }
+    }
 }

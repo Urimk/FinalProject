@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -106,9 +107,9 @@ public class PlayerMovement : MonoBehaviour
         updateEarsPosition();
         UpdateGravityAndWallInteraction();
         resetExtraJumps();
-        HandleJumpInput(); 
+        HandleJumpInput();
     }
-    
+
 
     private void updateEarsPosition()
     {
@@ -217,18 +218,18 @@ public class PlayerMovement : MonoBehaviour
         );
 
         if (hit.collider != null)
-    {
-        
-        // 4) If it's a falling platform, ignore it.
-            FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
-        if (fallingPlatform != null)
         {
-            return false;
+
+            // 4) If it's a falling platform, ignore it.
+            FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
+            if (fallingPlatform != null)
+            {
+                return false;
+            }
+
+            // 5) Otherwise it really is a horizontal block.
+            return true;
         }
-        
-        // 5) Otherwise it really is a horizontal block.
-        return true;
-    }
 
 
         return false;
@@ -467,14 +468,14 @@ public class PlayerMovement : MonoBehaviour
         facingDirection = -facingDirection;
         jumpCounter--;
     }
-// HAS 2 BUGS!
+    // HAS 2 BUGS!
 
-public bool isGrounded()
-{
-    Vector2 boxCenter = groundCheck.position;
-    Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckHeight); // e.g., width = 1f, height = 0.1f
-    return Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer | obstacleLayer);
-}
+    public bool isGrounded()
+    {
+        Vector2 boxCenter = groundCheck.position;
+        Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckHeight); // e.g., width = 1f, height = 0.1f
+        return Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer | obstacleLayer);
+    }
 
 
 
@@ -515,8 +516,8 @@ public bool isGrounded()
 
     void OnDisable()
     {
-         anim.SetBool("grounded", true);
-         anim.SetBool("running", false);  // Force running to stop
+        anim.SetBool("grounded", true);
+        anim.SetBool("running", false);  // Force running to stop
     }
 
     public int GetFacingDirection()
@@ -553,68 +554,68 @@ public bool isGrounded()
             Destroy(equippedEars);
         }
     }
-    
+
     // Method to be called from the damage dealer
-public void Recoil(Vector2 sourcePosition, Vector2 recoilDirection = default)
-{
-    Vector2 knockbackDirection;
-    
-    // If a specific recoil direction is provided, use it
-    if (recoilDirection != Vector2.zero)
+    public void Recoil(Vector2 sourcePosition, Vector2 recoilDirection = default)
     {
-        knockbackDirection = recoilDirection.normalized;
-    }
-    else
-    {
-        // Calculate direction from damage source to player
-        Vector2 playerPosition = transform.position;
-        knockbackDirection = (playerPosition - sourcePosition).normalized;
-    }
-    
-    // Ensure minimum horizontal knockback (prevent getting stuck)
-    if (Mathf.Abs(knockbackDirection.x) < 0.3f)
-    {
-        knockbackDirection.x = facingDirection == 1 ? 0.5f : -0.5f;
-    }
-    
-    // Apply recoil
-    StartRecoil(knockbackDirection);
-}
+        Vector2 knockbackDirection;
 
-private void StartRecoil(Vector2 direction)
-{
-    isInRecoil = true;
-    recoilTimer = recoilDuration;
-    recoilDirection = direction;
-    
-    // Apply immediate force
-    Vector2 recoilVelocity = new Vector2(
-        direction.x * recoilForce,
-        Mathf.Max(direction.y * recoilForce, recoilVerticalForce) // Ensure some upward movement
-    );
-    
-    body.velocity = recoilVelocity;
-}
-
-// Add this to your Update method (or wherever you handle movement)
-private void HandleRecoil()
-{
-    if (isInRecoil)
-    {
-        recoilTimer -= Time.deltaTime;
-        
-        // Gradually reduce recoil influence
-        float recoilStrength = recoilTimer / recoilDuration;
-        
-        if (recoilTimer <= 0f)
+        // If a specific recoil direction is provided, use it
+        if (recoilDirection != Vector2.zero)
         {
-            isInRecoil = false;
+            knockbackDirection = recoilDirection.normalized;
         }
         else
         {
-            disableMovementTimer = 0.08f;
-            return; // Exit early to prevent normal movement during recoil
+            // Calculate direction from damage source to player
+            Vector2 playerPosition = transform.position;
+            knockbackDirection = (playerPosition - sourcePosition).normalized;
+        }
+
+        // Ensure minimum horizontal knockback (prevent getting stuck)
+        if (Mathf.Abs(knockbackDirection.x) < 0.3f)
+        {
+            knockbackDirection.x = facingDirection == 1 ? 0.5f : -0.5f;
+        }
+
+        // Apply recoil
+        StartRecoil(knockbackDirection);
+    }
+
+    private void StartRecoil(Vector2 direction)
+    {
+        isInRecoil = true;
+        recoilTimer = recoilDuration;
+        recoilDirection = direction;
+
+        // Apply immediate force
+        Vector2 recoilVelocity = new Vector2(
+            direction.x * recoilForce,
+            Mathf.Max(direction.y * recoilForce, recoilVerticalForce) // Ensure some upward movement
+        );
+
+        body.velocity = recoilVelocity;
+    }
+
+    // Add this to your Update method (or wherever you handle movement)
+    private void HandleRecoil()
+    {
+        if (isInRecoil)
+        {
+            recoilTimer -= Time.deltaTime;
+
+            // Gradually reduce recoil influence
+            float recoilStrength = recoilTimer / recoilDuration;
+
+            if (recoilTimer <= 0f)
+            {
+                isInRecoil = false;
+            }
+            else
+            {
+                disableMovementTimer = 0.08f;
+                return; // Exit early to prevent normal movement during recoil
+            }
         }
     }
-}
 }

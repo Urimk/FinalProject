@@ -1,5 +1,5 @@
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine;
 
 public class SelectionArrow : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class SelectionArrow : MonoBehaviour
     private RectTransform rect;
     private int currentPosition;
 
-    private void Awake() 
+    private void Awake()
     {
         rect = GetComponent<RectTransform>();
     }
@@ -38,7 +38,7 @@ public class SelectionArrow : MonoBehaviour
         options[currentPosition].GetComponent<Button>().onClick.Invoke();
     }
 
-    private void ChangePosition(int _change) 
+    private void ChangePosition(int _change)
     {
         currentPosition += _change;
 
@@ -47,7 +47,7 @@ public class SelectionArrow : MonoBehaviour
             SoundManager.instance.PlaySound(changeSound, gameObject);
         }
 
-        if (currentPosition < 0) 
+        if (currentPosition < 0)
         {
             currentPosition = options.Length - 1;
         }

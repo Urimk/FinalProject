@@ -1,5 +1,6 @@
+﻿using System; // Needed for Mathf.Abs
+
 using UnityEngine;
-using System; // Needed for Mathf.Abs
 
 // Manages reward calculation for the Boss AI.
 // Other scripts (Boss Health, Player Health, Projectiles, Episode Manager)
@@ -70,14 +71,14 @@ public class BossRewardManager : MonoBehaviour
         // }
     }
 
-     // Consider adding an Update method if you need to add time-based rewards *per step*
-     // (e.g., small positive reward for surviving, small negative for duration)
-     // void Update()
-     // {
-     //     // Add penalty per decision step (handled in GetTotalRewardAndReset)
-     //     // Add small survival reward per second (optional)
-     //     // currentAccumulatedStepReward += rewardPerSecond * Time.deltaTime;
-     // }
+    // Consider adding an Update method if you need to add time-based rewards *per step*
+    // (e.g., small positive reward for surviving, small negative for duration)
+    // void Update()
+    // {
+    //     // Add penalty per decision step (handled in GetTotalRewardAndReset)
+    //     // Add small survival reward per second (optional)
+    //     // currentAccumulatedStepReward += rewardPerSecond * Time.deltaTime;
+    // }
 
 
     // --- Methods to be called by other game systems (Health, Projectiles, Traps) ---
@@ -137,7 +138,9 @@ public class BossRewardManager : MonoBehaviour
             finalReward += timeBonus; // Add bonus to base reward
 
             //Debug.Log($"Reward Manager: Boss WIN! Duration: {duration:F2}s. Base: {rewardBossWinsBase}, Time Bonus: {timeBonus:F2}, Total: {finalReward:F2}");
-        } else {
+        }
+        else
+        {
             //Debug.Log($"Reward Manager: Boss WIN! Duration: {duration:F2}s. Final Reward: {finalReward:F2}");
         }
 
@@ -168,7 +171,9 @@ public class BossRewardManager : MonoBehaviour
             finalPenalty -= additionalTimePenaltyMagnitude; // Subtract a positive value to make penalty larger magnitude (more negative)
 
             //Debug.Log($"Reward Manager: Boss LOSS! Duration: {duration:F2}s. Base: {penaltyBossLosesBase}, Add. Time Penalty: {-additionalTimePenaltyMagnitude:F2}, Total: {finalPenalty:F2}"); // Log additional penalty as negative
-        } else {
+        }
+        else
+        {
             //Debug.Log($"Reward Manager: Boss LOSS! Duration: {duration:F2}s. Final Penalty: {finalPenalty:F2}");
         }
 
@@ -195,7 +200,7 @@ public class BossRewardManager : MonoBehaviour
         // Note: Recommend keeping these at 0 when using strong terminal rewards.
         if (rewardVeryClose != 0 || rewardModerateDistance != 0 || penaltyTooFar != 0)
         {
-             // AddDistanceReward(ref rewardToReturn); // Uncomment if using distance rewards
+            // AddDistanceReward(ref rewardToReturn); // Uncomment if using distance rewards
         }
 
 
@@ -220,8 +225,8 @@ public class BossRewardManager : MonoBehaviour
     /// </summary>
     private void AddDistanceReward(ref float currentReward)
     {
-       // This requires the bossTransform and playerTransform references to be set.
-       // You might need to uncomment the reference finding logic in Awake() if using this.
+        // This requires the bossTransform and playerTransform references to be set.
+        // You might need to uncomment the reference finding logic in Awake() if using this.
         // if (bossTransform != null && playerTransform != null)
         // {
         //     float distance = Vector2.Distance(bossTransform.position, playerTransform.position);
@@ -236,13 +241,14 @@ public class BossRewardManager : MonoBehaviour
     }
 
 
-     // --- Optional: Check if episode is done (used by DQN logic, might be useful here too) ---
-     // You might have this logic elsewhere (e.g. GameManager checking health)
-     public bool IsEpisodeDone() {
-          // This reward manager doesn't inherently know the episode state,
-          // but the QLearning script might need this for the (s,a,r,s', done) tuple.
-          // The terminalRewardPending flag is set *when* the episode ends.
-          return terminalRewardPending; // Returns true only *after* ReportWin/Loss has been called and before GetTotalRewardAndReset clears the flag
-     }
+    // --- Optional: Check if episode is done (used by DQN logic, might be useful here too) ---
+    // You might have this logic elsewhere (e.g. GameManager checking health)
+    public bool IsEpisodeDone()
+    {
+        // This reward manager doesn't inherently know the episode state,
+        // but the QLearning script might need this for the (s,a,r,s', done) tuple.
+        // The terminalRewardPending flag is set *when* the episode ends.
+        return terminalRewardPending; // Returns true only *after* ReportWin/Loss has been called and before GetTotalRewardAndReset clears the flag
+    }
 
 }

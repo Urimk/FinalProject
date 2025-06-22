@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HealthCollectable : MonoBehaviour
 {
     [SerializeField] private float healthValue;
-    
-    [Header ("Sound")]
+
+    [Header("Sound")]
     [SerializeField] private AudioClip collectSound;
     private bool healthAdded;
 

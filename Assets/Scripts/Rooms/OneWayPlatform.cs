@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class OneWayPlatform : MonoBehaviour
 {
@@ -42,29 +42,29 @@ public class OneWayPlatform : MonoBehaviour
         }
     }
 
-/*    private bool IsPlayerStandingOnMe()
-    {
-        if (playerMovement == null || playerMovement.boxCollider == null) return false;
+    /*    private bool IsPlayerStandingOnMe()
+        {
+            if (playerMovement == null || playerMovement.boxCollider == null) return false;
 
-        // Define a small area at the bottom of the player's collider
-        Bounds playerBounds = playerMovement.boxCollider.bounds;
-        Vector2 checkOrigin = (Vector2)playerBounds.center + Vector2.down * playerBounds.extents.y; // Bottom center of player's collider
-        Vector2 checkSize = new Vector2(playerBounds.size.x * 0.9f, checkDistance); // Check a box slightly less wide than player, height = checkDistance
+            // Define a small area at the bottom of the player's collider
+            Bounds playerBounds = playerMovement.boxCollider.bounds;
+            Vector2 checkOrigin = (Vector2)playerBounds.center + Vector2.down * playerBounds.extents.y; // Bottom center of player's collider
+            Vector2 checkSize = new Vector2(playerBounds.size.x * 0.9f, checkDistance); // Check a box slightly less wide than player, height = checkDistance
 
-        // Perform OverlapBox
-        // IMPORTANT: We only want to check against THIS platform's layer
-        LayerMask thisPlatformLayer = 1 << gameObject.layer; // Create a layer mask with only this object's layer
+            // Perform OverlapBox
+            // IMPORTANT: We only want to check against THIS platform's layer
+            LayerMask thisPlatformLayer = 1 << gameObject.layer; // Create a layer mask with only this object's layer
 
-        Collider2D hit = Physics2D.OverlapBox(
-            checkOrigin + Vector2.down * checkSize.y / 2, // Center of the check box (offset downwards by half its height)
-            checkSize, // Size of the check box
-            0f, // Angle
-            thisPlatformLayer // Check only against THIS platform's layer mask
-        );
+            Collider2D hit = Physics2D.OverlapBox(
+                checkOrigin + Vector2.down * checkSize.y / 2, // Center of the check box (offset downwards by half its height)
+                checkSize, // Size of the check box
+                0f, // Angle
+                thisPlatformLayer // Check only against THIS platform's layer mask
+            );
 
-        // Return true if we hit something AND that something is THIS platform's collider
-        return hit != null && hit == edgeCollider;
-    }*/
+            // Return true if we hit something AND that something is THIS platform's collider
+            return hit != null && hit == edgeCollider;
+        }*/
     // --- END NEW CHECK METHOD ---
 
     // Common method for both player and AI

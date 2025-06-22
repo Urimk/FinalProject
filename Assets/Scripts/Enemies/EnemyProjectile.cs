@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyProjectile : EnemyDamage {
+public class EnemyProjectile : EnemyDamage
+{
     [SerializeField] private float speed;
     [SerializeField] private float size;
     [SerializeField] private float resetTime;
@@ -14,11 +15,11 @@ public class EnemyProjectile : EnemyDamage {
     private float growTimer = 0f;
     private BoxCollider2D boxCollider;
 
-    
+
     // Add field to store direction with default as Vector2.right
     // This maintains backward compatibility with existing enemies
     private Vector2 direction = Vector2.right;
-    
+
     // Flag to determine if we should use directional movement
     private bool useCustomDirection = false;
 
@@ -49,13 +50,13 @@ public class EnemyProjectile : EnemyDamage {
             boxCollider.size = fullColliderSize;
         }
     }
-    
-        // New method to set direction// Updated method to separate sprite rotation from movement direction
-    public void SetDirection(Vector2 newDirection, bool invertMovement = false, bool invertVisual = false, bool invertY = false) 
+
+    // New method to set direction// Updated method to separate sprite rotation from movement direction
+    public void SetDirection(Vector2 newDirection, bool invertMovement = false, bool invertVisual = false, bool invertY = false)
     {
         // Normalize direction to ensure correct movement
         newDirection = newDirection.normalized;
-        
+
 
         // Flip Y component if needed
         if (invertY)
@@ -93,10 +94,10 @@ public class EnemyProjectile : EnemyDamage {
             growTimer += Time.deltaTime;
             float t = Mathf.Clamp01(growTimer / colliderGrowTime);
 
-             // Calculate the new size - grow primarily in the movement direction
+            // Calculate the new size - grow primarily in the movement direction
             Vector2 newSize;
             Vector2 newOffset;
-            
+
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
                 // Horizontal movement - grow horizontally, keep full Y size
@@ -146,10 +147,12 @@ public class EnemyProjectile : EnemyDamage {
             transform.rotation = Quaternion.identity;
         }
     }
-    
+
     // Rest of your methods remain the same
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy") {
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy")
+        {
             return;
         }
 
@@ -157,28 +160,35 @@ public class EnemyProjectile : EnemyDamage {
         base.OnTriggerStay2D(collision);
         collid.enabled = false;
 
-        if (anim != null) {
+        if (anim != null)
+        {
             anim.SetTrigger("explosion");
             anim.SetTrigger("fade");
-        } else {
+        }
+        else
+        {
             gameObject.SetActive(false);
         }
     }
 
-    
-    public void SetDamage(int newDamage) {
+
+    public void SetDamage(int newDamage)
+    {
         damage = newDamage;
     }
-    
-    public void SetSpeed(float newSpeed) {
+
+    public void SetSpeed(float newSpeed)
+    {
         speed = newSpeed;
     }
-    
-    public void SetSize(float newSize) {
+
+    public void SetSize(float newSize)
+    {
         size = newSize;
     }
-    
-    private void Deactivate() {
+
+    private void Deactivate()
+    {
         gameObject.SetActive(false);
         // Reset the custom direction flag when deactivated
         useCustomDirection = false;

@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 public class BossFlameAttack : MonoBehaviour
@@ -7,13 +8,13 @@ public class BossFlameAttack : MonoBehaviour
     [SerializeField] private float warningTime = 1.5f;
     [SerializeField] private float fireActiveTime = 3f;
     [SerializeField] private AudioClip fireSound;
-    
+
     private SpriteRenderer spriteRenderer;
     private bool active = false;
 
     private float timeSinceLastReward = 0f; // Track time since last reward
     private float rewardCooldown = 1.55f; // 1 second cooldown for giving the reward
-    
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -29,14 +30,14 @@ public class BossFlameAttack : MonoBehaviour
     {
         // Show warning color
         spriteRenderer.color = Color.red;
-        
+
         yield return new WaitForSeconds(warningTime);
 
         // Ignite the fire
         SoundManager.instance.PlaySound(fireSound, gameObject);
         spriteRenderer.color = Color.white;
         active = true;
-        
+
         yield return new WaitForSeconds(fireActiveTime);
 
         // Destroy the fire effect after duration

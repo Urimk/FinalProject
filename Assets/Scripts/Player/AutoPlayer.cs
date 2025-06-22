@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 public class AutoPlayer : MonoBehaviour
@@ -8,12 +9,12 @@ public class AutoPlayer : MonoBehaviour
     public float detectionRange = 10f;
     public float fireballDodgeRange = 2f;
     public float fireRate = 1f;
-    
+
     private Rigidbody2D rb;
     [SerializeField] private Transform boss;
     private float fireTimer;
     private bool isGrounded;
-    
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -22,12 +23,12 @@ public class AutoPlayer : MonoBehaviour
     void Update()
     {
         if (boss == null) return;
-        
+
         fireTimer += Time.deltaTime;
 
         MoveAI();
         AvoidFireballs();
-        
+
         if (fireTimer >= fireRate)
         {
             fireTimer = 0;
@@ -74,12 +75,12 @@ public class AutoPlayer : MonoBehaviour
             float jumpSpeed = 5f;  // Adjust to control jump arc
             float jumpForwardBoost = 2f; // Adjust for forward movement
 
-            rb.velocity = new Vector2(bossDirection * jumpForwardBoost, jumpSpeed); 
+            rb.velocity = new Vector2(bossDirection * jumpForwardBoost, jumpSpeed);
             Debug.Log("Jumping over the boss!");
         }
     }
 
-    
+
 
 
     void AvoidFireballs()

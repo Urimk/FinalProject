@@ -1,5 +1,6 @@
+﻿using System.Collections; // Required for Coroutines
+
 using UnityEngine;
-using System.Collections; // Required for Coroutines
 
 public class ArrowTrap : MonoBehaviour
 {
@@ -41,9 +42,9 @@ public class ArrowTrap : MonoBehaviour
         // For this example, I'll assume firepoint.right is the intended "forward" for the arrow.
         // If your arrow needs to shoot "out" from where the firepoint is "looking" (e.g. its local X+):
         Vector2 direction = firepoint.right; // Shoots along the firepoint's local X+ axis
-        // If firepoint is visually oriented so its "up" is the shooting direction:
-        // Vector2 direction = firepoint.up;
-        
+                                             // If firepoint is visually oriented so its "up" is the shooting direction:
+                                             // Vector2 direction = firepoint.up;
+
         var projectile = arrows[idx].GetComponent<EnemyProjectile>();
         projectile.GetComponent<EnemyProjectile>().SetDirection(direction.normalized);
         projectile.SetSpeed(speed); // Or whatever speed you want
@@ -104,9 +105,9 @@ public class ArrowTrap : MonoBehaviour
 
                 // Check if it's a multiple of 180 degrees
                 // (e.g., 180, 360, 540, 720)
-                if (Mathf.Approximately(remainder, 0) && !Mathf.Approximately(absAngle,0)) // Effectively 360, 720 etc. (was a multiple of 360)
+                if (Mathf.Approximately(remainder, 0) && !Mathf.Approximately(absAngle, 0)) // Effectively 360, 720 etc. (was a multiple of 360)
                 {
-                     useAngleLerping = true;
+                    useAngleLerping = true;
                 }
                 else if (Mathf.Approximately(remainder, 180f)) // Effectively 180, 540 etc.
                 {
@@ -118,7 +119,7 @@ public class ArrowTrap : MonoBehaviour
             {
                 // Continuous spin logic using Mathf.Lerp on Euler angles for 180/360 degree multiples
                 float currentAngleZ = firepoint.localEulerAngles.z;
-                
+
                 // Determine the amount to spin in this segment based on rotationAngle and direction
                 float spinAmountThisSegment = rotatingForward ? rotationAngle : -rotationAngle;
                 float targetAngleZ = currentAngleZ + spinAmountThisSegment;

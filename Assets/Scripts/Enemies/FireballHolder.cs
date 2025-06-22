@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FireballHolder : MonoBehaviour
 {
     [SerializeField] private Transform enemy;
 
-    private void Update() 
+    private void Update()
     {
         transform.localScale = enemy.localScale;
     }

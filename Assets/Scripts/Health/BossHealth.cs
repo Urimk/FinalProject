@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -117,7 +118,7 @@ public class BossHealth : MonoBehaviour, IDamageable
             if (healthSlider != null)
             {
                 healthSlider.gameObject.SetActive(false);
-            }    
+            }
             OnBossDied?.Invoke();
             if (!isTraining)
             {

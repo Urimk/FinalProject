@@ -1,27 +1,27 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RangedEnemy : MonoBehaviour
 {
-    [Header ("Attack Parameters")]
+    [Header("Attack Parameters")]
     [SerializeField] private float attackCooldown;
     [SerializeField] private int damage;
     [SerializeField] private float range;
 
-    [Header ("Ranged Attack")]
+    [Header("Ranged Attack")]
     [SerializeField] private Transform firepoint;
     [SerializeField] private GameObject[] fireballs;
 
-    [Header ("Collider Parameters")]
+    [Header("Collider Parameters")]
     [SerializeField] private float colliderDistance;
     [SerializeField] private BoxCollider2D boxCollider;
 
-    [Header ("Player Layer")]
+    [Header("Player Layer")]
     [SerializeField] private LayerMask playerLayer;
 
-    [Header ("Fireball Sound")]
+    [Header("Fireball Sound")]
     [SerializeField] private AudioClip fireballSound;
     private float cooldownTimer = Mathf.Infinity;
-    
+
     private Animator anim;
     private EnemyPatrol enemyPatrol;
 
@@ -34,7 +34,7 @@ public class RangedEnemy : MonoBehaviour
     private void Update()
     {
         cooldownTimer += Time.deltaTime;
-        if(PlayerInSight())
+        if (PlayerInSight())
         {
             if (cooldownTimer >= attackCooldown)
             {
@@ -42,7 +42,7 @@ public class RangedEnemy : MonoBehaviour
                 anim.SetTrigger("rangedAttack");
             }
         }
-        if (enemyPatrol != null) 
+        if (enemyPatrol != null)
         {
             enemyPatrol.enabled = !PlayerInSight();
         }
@@ -53,7 +53,7 @@ public class RangedEnemy : MonoBehaviour
         RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
                                              new Vector2(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y),
                                              0, Vector2.left, 0, playerLayer);
-        
+
         return hit.collider != null;
     }
 
@@ -79,7 +79,7 @@ public class RangedEnemy : MonoBehaviour
             if (!fireballs[i].activeInHierarchy)
             {
                 return i;
-            }    
+            }
         }
         return 0;
     }

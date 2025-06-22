@@ -1,20 +1,21 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 public class FireTrap : MonoBehaviour
 {
 
     [SerializeField] private int damage;
-    [Header ("FireTrap Timers")]
+    [Header("FireTrap Timers")]
     [SerializeField] private float activationDelay;
     [SerializeField] private float activeTime;
-    
+
     [Header("Auto Cycle Settings")]
     [SerializeField] private bool alwaysActive = false; // Flag to enable auto-cycling
     [Tooltip("Time to wait between cycles when in always active mode")]
     [SerializeField] private float cycleWaitTime = 2f;
     [SerializeField] private float cycleStartDelay = 0f;
-    
+
     [Header("Sound")]
     [SerializeField] private AudioClip fireSound;
     private Animator anim;
@@ -23,7 +24,7 @@ public class FireTrap : MonoBehaviour
     private bool active;
     private Health playerHealth;
 
-    private void Awake() 
+    private void Awake()
     {
         anim = GetComponent<Animator>();
         spriteRend = GetComponent<SpriteRenderer>();
@@ -40,9 +41,9 @@ public class FireTrap : MonoBehaviour
 
     private IEnumerator StartAutoCycleWithDelay()
     {
-           Debug.Log($"Starting cycle delay: {cycleStartDelay} seconds");
-    yield return new WaitForSeconds(cycleStartDelay);
-    Debug.Log("Cycle delay finished, starting auto-cycle");
+        Debug.Log($"Starting cycle delay: {cycleStartDelay} seconds");
+        yield return new WaitForSeconds(cycleStartDelay);
+        Debug.Log("Cycle delay finished, starting auto-cycle");
         StartCoroutine(AutoCycleFireTrap());
     }
 
@@ -53,19 +54,19 @@ public class FireTrap : MonoBehaviour
             playerHealth.TakeDamage(damage);
         }
     }
-    
-    private void OnTriggerEnter2D(Collider2D collision) 
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
             playerHealth = collision.GetComponent<Health>();
-            
+
             // Only trigger manually if not in always active mode
             if (!alwaysActive && !triggered)
             {
                 StartCoroutine(ActivateFireTrap());
             }
-            
+
             if (active)
             {
                 collision.GetComponent<Health>().TakeDamage(damage);
@@ -73,7 +74,7 @@ public class FireTrap : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision) 
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
@@ -85,12 +86,12 @@ public class FireTrap : MonoBehaviour
     {
         // Set the trap as triggered and change color to red as a warning signal
         triggered = true;
-        spriteRend.color = Color.red; 
+        spriteRend.color = Color.red;
 
         // Wait for the activation delay, then reset color, mark trap as active, and play activation animation
         yield return new WaitForSeconds(activationDelay);
         SoundManager.instance.PlaySound(fireSound, gameObject);
-        spriteRend.color = Color.white; 
+        spriteRend.color = Color.white;
         active = true;
         anim.SetBool("activated", true);
 

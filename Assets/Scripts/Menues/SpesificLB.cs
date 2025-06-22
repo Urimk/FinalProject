@@ -1,8 +1,11 @@
-using UnityEngine;
-using TMPro;
+﻿using System.Collections.Generic;
+
 using PlayFab;
 using PlayFab.ClientModels;
-using System.Collections.Generic;
+
+using TMPro;
+
+using UnityEngine;
 
 public class SpesificLB : MonoBehaviour
 {
@@ -12,21 +15,21 @@ public class SpesificLB : MonoBehaviour
     [SerializeField] private TMP_Text[] top10Texts;
     [SerializeField] private TMP_Text leaderboardTitle; // Reference to the title TMP_Text
 
-    
+
     private string leaderboardName;
 
     public void SetLeaderboard(string name)
     {
         leaderboardName = name;
 
-    // Format the leaderboard name to "Level X - Difficulty"
-    string[] parts = leaderboardName.Split('_');
-    if (parts.Length == 2)
-    {
-        string level = parts[0].Replace("Level", "Level ");  // Ensure proper formatting (Level 1, Level 2, etc.)
-        string difficulty = parts[1];  // Easy, Normal, Hard
-        leaderboardTitle.text = $"{level} - {difficulty}";  // Update the title text
-    }
+        // Format the leaderboard name to "Level X - Difficulty"
+        string[] parts = leaderboardName.Split('_');
+        if (parts.Length == 2)
+        {
+            string level = parts[0].Replace("Level", "Level ");  // Ensure proper formatting (Level 1, Level 2, etc.)
+            string difficulty = parts[1];  // Easy, Normal, Hard
+            leaderboardTitle.text = $"{level} - {difficulty}";  // Update the title text
+        }
 
         LoadTop10Players();
     }
@@ -66,7 +69,7 @@ public class SpesificLB : MonoBehaviour
                 {
                     var entry = result.Leaderboard[i];
                     string rawName = entry.DisplayName ?? "Unknown";
-                    string displayName = rawName.Split('_')[0]; 
+                    string displayName = rawName.Split('_')[0];
                     int score = entry.StatValue;
                     top10Texts[i].text = $"{i + 1}. {displayName}: {score}";
                 }

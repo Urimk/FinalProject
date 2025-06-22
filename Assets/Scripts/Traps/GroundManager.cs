@@ -1,7 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GroundManager : MonoBehaviour
@@ -50,13 +51,13 @@ public class GroundManager : MonoBehaviour
             StopAllCoroutines();
             currentSortingCoroutine = null;
         }
-        
+
         // Clear the sorting text
-            if (sortingText != null)
-            {
-                sortingText.text = "";
-            }
-        
+        if (sortingText != null)
+        {
+            sortingText.text = "";
+        }
+
         // Optional: Reset any spikes that might be in motion to a consistent state
         if (!isFinishingSequence)
         {
@@ -79,68 +80,68 @@ public class GroundManager : MonoBehaviour
     }
 
     IEnumerator SwapRoutine(int indexA, int indexB)
-{
-    // Check if player is dead before proceeding
-    if (isPlayerDead) yield break;
-
-    SortedSpike spikeA = spikes[indexA];
-    SortedSpike spikeB = spikes[indexB];
-
-    bool isSpikeA = spikeA.IsActive();
-    bool isSpikeB = spikeB.IsActive();
-
-    if (isSpikeA != isSpikeB)
     {
-        // Lower active spike before swapping
-        if (isSpikeA) 
+        // Check if player is dead before proceeding
+        if (isPlayerDead) yield break;
+
+        SortedSpike spikeA = spikes[indexA];
+        SortedSpike spikeB = spikes[indexB];
+
+        bool isSpikeA = spikeA.IsActive();
+        bool isSpikeB = spikeB.IsActive();
+
+        if (isSpikeA != isSpikeB)
         {
-            yield return StartCoroutine(spikeA.MoveSpikeY(-2, spikeMoveTime));
-            if (isPlayerDead) yield break; // Check after each major operation
+            // Lower active spike before swapping
+            if (isSpikeA)
+            {
+                yield return StartCoroutine(spikeA.MoveSpikeY(-2, spikeMoveTime));
+                if (isPlayerDead) yield break; // Check after each major operation
+            }
+            if (isSpikeB)
+            {
+                yield return StartCoroutine(spikeB.MoveSpikeY(-2, spikeMoveTime));
+                if (isPlayerDead) yield break; // Check after each major operation
+            }
         }
-        if (isSpikeB) 
+
+        // Check before swapping positions
+        if (isPlayerDead) yield break;
+
+        // Swap positions
+        Vector3 spikeAnewPos = new Vector3(spikeB.transform.position.x, spikeA.transform.position.y, spikeA.transform.position.z);
+        Vector3 spikeBnewPos = new Vector3(spikeA.transform.position.x, spikeB.transform.position.y, spikeB.transform.position.z);
+
+        spikeA.transform.position = spikeAnewPos;
+        spikeB.transform.position = spikeBnewPos;
+
+        // Swap list order
+        spikes[indexA] = spikeB;
+        spikes[indexB] = spikeA;
+
+        // Check before raising spikes
+        if (isPlayerDead) yield break;
+
+        // Raise active spike after swapping
+        if (isSpikeA != isSpikeB)
         {
-            yield return StartCoroutine(spikeB.MoveSpikeY(-2, spikeMoveTime));
-            if (isPlayerDead) yield break; // Check after each major operation
+            if (isSpikeA)
+            {
+                yield return StartCoroutine(spikeA.MoveSpikeY(2, spikeMoveTime));
+                if (isPlayerDead) yield break; // Check after each major operation
+            }
+            if (isSpikeB)
+            {
+                yield return StartCoroutine(spikeB.MoveSpikeY(2, spikeMoveTime));
+                if (isPlayerDead) yield break; // Check after each major operation
+            }
         }
+
+        // Check before final wait
+        if (isPlayerDead) yield break;
+
+        yield return new WaitForSeconds(swapTime);
     }
-
-    // Check before swapping positions
-    if (isPlayerDead) yield break;
-
-    // Swap positions
-    Vector3 spikeAnewPos = new Vector3(spikeB.transform.position.x, spikeA.transform.position.y, spikeA.transform.position.z);
-    Vector3 spikeBnewPos = new Vector3(spikeA.transform.position.x, spikeB.transform.position.y, spikeB.transform.position.z);
-
-    spikeA.transform.position = spikeAnewPos;
-    spikeB.transform.position = spikeBnewPos;
-
-    // Swap list order
-    spikes[indexA] = spikeB;
-    spikes[indexB] = spikeA;
-
-    // Check before raising spikes
-    if (isPlayerDead) yield break;
-
-    // Raise active spike after swapping
-    if (isSpikeA != isSpikeB)
-    {
-        if (isSpikeA) 
-        {
-            yield return StartCoroutine(spikeA.MoveSpikeY(2, spikeMoveTime));
-            if (isPlayerDead) yield break; // Check after each major operation
-        }
-        if (isSpikeB) 
-        {
-            yield return StartCoroutine(spikeB.MoveSpikeY(2, spikeMoveTime));
-            if (isPlayerDead) yield break; // Check after each major operation
-        }
-    }
-
-    // Check before final wait
-    if (isPlayerDead) yield break;
-
-    yield return new WaitForSeconds(swapTime);
-}
 
     void ShuffleList(List<int> list)
     {
@@ -242,12 +243,12 @@ public class GroundManager : MonoBehaviour
         do
         {
             if (isPlayerDead) yield break;
-            
+
             swapped = false;
             for (int i = 0; i < n - 1; i++)
             {
                 if (isPlayerDead) yield break;
-                
+
                 if (spikes[i].GetIndex() > spikes[i + 1].GetIndex())
                 {
                     yield return StartCoroutine(SwapRoutine(i, i + 1));
@@ -265,13 +266,13 @@ public class GroundManager : MonoBehaviour
         for (int i = 0; i < n - 1; i++)
         {
             if (isPlayerDead) yield break;
-            
+
             int minIndex = i;
 
             for (int j = i + 1; j < n; j++)
             {
                 if (isPlayerDead) yield break;
-                
+
                 if (spikes[j].GetIndex() < spikes[minIndex].GetIndex())
                 {
                     minIndex = j;
@@ -288,14 +289,14 @@ public class GroundManager : MonoBehaviour
     IEnumerator Partition(int low, int high, System.Action<int> callback)
     {
         if (isPlayerDead) yield break;
-        
+
         SortedSpike pivot = spikes[high];
-        int i = low - 1; 
+        int i = low - 1;
 
         for (int j = low; j < high; j++)
         {
             if (isPlayerDead) yield break;
-            
+
             if (spikes[j].GetIndex() <= pivot.GetIndex())
             {
                 i++;
@@ -343,7 +344,7 @@ public class GroundManager : MonoBehaviour
     IEnumerator CountingSort(int exp)
     {
         if (isPlayerDead) yield break;
-        
+
         int n = spikes.Count;
         List<SortedSpike> output = new List<SortedSpike>(new SortedSpike[n]);
         int[] count = new int[10];
@@ -351,7 +352,7 @@ public class GroundManager : MonoBehaviour
         for (int i = 0; i < n; i++)
         {
             if (isPlayerDead) yield break;
-            
+
             int digit = (spikes[i].GetIndex() / exp) % 10;
             count[digit]++;
         }
@@ -364,7 +365,7 @@ public class GroundManager : MonoBehaviour
         for (int i = n - 1; i >= 0; i--)
         {
             if (isPlayerDead) yield break;
-            
+
             int digit = (spikes[i].GetIndex() / exp) % 10;
             output[count[digit] - 1] = spikes[i];
             count[digit]--;
@@ -373,7 +374,7 @@ public class GroundManager : MonoBehaviour
         for (int i = 0; i < n; i++)
         {
             if (isPlayerDead) yield break;
-            
+
             if (spikes[i] != output[i])
             {
                 int targetIndex = spikes.IndexOf(output[i]);
@@ -395,7 +396,7 @@ public class GroundManager : MonoBehaviour
         for (int i = n - 1; i > 0; i--)
         {
             if (isPlayerDead) yield break;
-            
+
             yield return StartCoroutine(SwapRoutine(0, i));
             yield return StartCoroutine(Heapify(i, 0));
         }
@@ -404,7 +405,7 @@ public class GroundManager : MonoBehaviour
     IEnumerator Heapify(int n, int i)
     {
         if (isPlayerDead) yield break;
-        
+
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;

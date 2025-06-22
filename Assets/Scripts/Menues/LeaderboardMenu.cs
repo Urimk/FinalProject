@@ -1,8 +1,11 @@
-using UnityEngine;
-using TMPro; // Make sure to import TextMeshPro
+﻿using System.Collections.Generic;
+
 using PlayFab;
 using PlayFab.ClientModels;
-using System.Collections.Generic;
+
+using TMPro; // Make sure to import TextMeshPro
+
+using UnityEngine;
 
 public class LeaderboardMenu : MonoBehaviour
 {
@@ -88,7 +91,7 @@ public class LeaderboardMenu : MonoBehaviour
         spesificLB.SetActive(true);
     }
 
-    
+
 
 
 

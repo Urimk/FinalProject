@@ -1,8 +1,9 @@
+﻿using System; // Needed for System.DateTime
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System.Linq; // Needed for Linq methods
-using System; // Needed for System.DateTime
+
+using UnityEngine;
 
 // Manages the start and end of training episodes for the Boss vs Player fight.
 // Resets positions, health, and triggers reward manager resets. Logs performance.
@@ -156,14 +157,15 @@ public class EpisodeManager : MonoBehaviour
         {
             if (bossWon) bossRewardManager.ReportBossWin();
             else bossRewardManager.ReportBossLoss();
-        } else { Debug.LogError("[EpisodeManager] BossRewardManager reference missing when reporting win/loss!");}
+        }
+        else { Debug.LogError("[EpisodeManager] BossRewardManager reference missing when reporting win/loss!"); }
 
         // 2. Get Total Reward for the episode and Accumulate (for QL logging)
         float episodeTotalReward = 0f;
         if (bossRewardManager != null)
         {
-             // Get total reward and clear for next QL cycle's accumulation
-             episodeTotalReward = bossRewardManager.GetTotalRewardAndReset();
+            // Get total reward and clear for next QL cycle's accumulation
+            episodeTotalReward = bossRewardManager.GetTotalRewardAndReset();
         }
         accumulatedRewardSinceLastLog += episodeTotalReward;
         episodesSinceLastLog++;
@@ -175,28 +177,28 @@ public class EpisodeManager : MonoBehaviour
         // 4. Logging (Handles Q-Learning specific stats)
         if (logFrequency > 0 && episodesSinceLastLog >= logFrequency)
         {
-             float averageReward = (episodesSinceLastLog > 0) ? accumulatedRewardSinceLastLog / episodesSinceLastLog : 0f;
+            float averageReward = (episodesSinceLastLog > 0) ? accumulatedRewardSinceLastLog / episodesSinceLastLog : 0f;
 
-             // Get state counts from the Q-Learning script (if assigned)
-             int uniqueStates = bossQLearning != null ? bossQLearning.GetUniqueStateCount() : -1;
-             int totalVisitedStates = bossQLearning != null ? bossQLearning.GetTotalStatesVisitedCount() : -1;
-             int revisitedStateCount = bossQLearning != null ? bossQLearning.GetRevisitedStateCount() : -1;
+            // Get state counts from the Q-Learning script (if assigned)
+            int uniqueStates = bossQLearning != null ? bossQLearning.GetUniqueStateCount() : -1;
+            int totalVisitedStates = bossQLearning != null ? bossQLearning.GetTotalStatesVisitedCount() : -1;
+            int revisitedStateCount = bossQLearning != null ? bossQLearning.GetRevisitedStateCount() : -1;
 
 
-             string logMessage = $"--- Batch Summary (Episodes {episodeCount - episodesSinceLastLog + 1} to {episodeCount}) ---" +
-                                 $"\n  Average QL Reward (last {episodesSinceLastLog} episodes): {averageReward:F3}" +
-                                 $"\n  Total Episodes Trained: {episodeCount}" +
-                                 $"\n  Current Epsilon: {(bossQLearning != null ? bossQLearning.epsilon : -1f):F3}" +
-                                 $"\n  Unique States in Q-Table: {uniqueStates}" +
-                                 $"\n  Total Unique States Visited (All Time): {totalVisitedStates}" +
-                                 $"\n  States Visited More Than Once: {revisitedStateCount}";
+            string logMessage = $"--- Batch Summary (Episodes {episodeCount - episodesSinceLastLog + 1} to {episodeCount}) ---" +
+                                $"\n  Average QL Reward (last {episodesSinceLastLog} episodes): {averageReward:F3}" +
+                                $"\n  Total Episodes Trained: {episodeCount}" +
+                                $"\n  Current Epsilon: {(bossQLearning != null ? bossQLearning.epsilon : -1f):F3}" +
+                                $"\n  Unique States in Q-Table: {uniqueStates}" +
+                                $"\n  Total Unique States Visited (All Time): {totalVisitedStates}" +
+                                $"\n  States Visited More Than Once: {revisitedStateCount}";
 
-             Debug.Log($"[EpisodeManager QL Log]\n{logMessage}");
-             LogToFile(logMessage); // Log to file
+            Debug.Log($"[EpisodeManager QL Log]\n{logMessage}");
+            LogToFile(logMessage); // Log to file
 
-             // Reset accumulators after logging
-             accumulatedRewardSinceLastLog = 0f;
-             episodesSinceLastLog = 0;
+            // Reset accumulators after logging
+            accumulatedRewardSinceLastLog = 0f;
+            episodesSinceLastLog = 0;
         }
 
         // 5. Reset the Q-Learning agent's internal state for its *next* decision cycle
@@ -207,7 +209,7 @@ public class EpisodeManager : MonoBehaviour
         }
         else
         {
-             // Debug.LogWarning("[EpisodeManager] BossQLearning reference missing. Cannot reset QL state.");
+            // Debug.LogWarning("[EpisodeManager] BossQLearning reference missing. Cannot reset QL state.");
         }
 
         // DO NOT call StartEpisode() here. The ML-Agents system will call PlayerAI.OnEpisodeBegin
@@ -228,10 +230,12 @@ public class EpisodeManager : MonoBehaviour
         // This ensures rewards start accumulating from zero for the new ML-Agents episode.
         if (bossRewardManager != null)
         {
-             bossRewardManager.StartNewEpisode(); // Resets timers and pending rewards
-        } else {
-             Debug.LogError("[EpisodeManager] Cannot reset environment: BossRewardManager reference missing!");
-             // Consider returning or disabling if critical
+            bossRewardManager.StartNewEpisode(); // Resets timers and pending rewards
+        }
+        else
+        {
+            Debug.LogError("[EpisodeManager] Cannot reset environment: BossRewardManager reference missing!");
+            // Consider returning or disabling if critical
         }
 
         // --- Reset Boss ---
@@ -258,27 +262,30 @@ public class EpisodeManager : MonoBehaviour
             if (bossRb != null) bossRb.velocity = Vector2.zero;
 
             // Use the AIBoss script for its specific reset logic
-            if (aiBoss != null) {
-                 if(!aiBoss.enabled) aiBoss.enabled = true;
-                 aiBoss.DeactivateFlameAndWarning(); // Assuming this exists
-                 aiBoss.ResetAbilityStates(); // Assuming this exists
+            if (aiBoss != null)
+            {
+                if (!aiBoss.enabled) aiBoss.enabled = true;
+                aiBoss.DeactivateFlameAndWarning(); // Assuming this exists
+                aiBoss.ResetAbilityStates(); // Assuming this exists
             }
-            if (boss != null) {
-                if(!boss.enabled) boss.enabled = true;
-                boss.ResetState(); // Assuming this exists
-            
-             }
+            if (boss != null)
+            {
+                if (!boss.enabled) boss.enabled = true;
+                boss.ResetState(); // Assuming this exists
+
+            }
 
             if (bossHealth != null) bossHealth.ResetHealth(); // Reset health
 
             // Ensure collider/physics/visuals are re-enabled if disabled on death
             Collider2D bossCol = bossGameObject.GetComponent<Collider2D>();
-            if(bossCol != null && !bossCol.enabled) bossCol.enabled = true;
-            if(bossRb != null && bossRb.isKinematic) bossRb.isKinematic = false;
+            if (bossCol != null && !bossCol.enabled) bossCol.enabled = true;
+            if (bossRb != null && bossRb.isKinematic) bossRb.isKinematic = false;
             Renderer bossRenderer = bossGameObject.GetComponent<Renderer>();
             if (bossRenderer != null) bossRenderer.enabled = true;
 
-        } else { Debug.LogError("[EpisodeManager] Boss GameObject reference missing during reset!"); }
+        }
+        else { Debug.LogError("[EpisodeManager] Boss GameObject reference missing during reset!"); }
     }
 
     // Removed ResetPlayerState() - PlayerAI handles its own reset in OnEpisodeBegin
@@ -297,11 +304,11 @@ public class EpisodeManager : MonoBehaviour
         // AIBoss should deactivate its flames/warnings etc.
         if (aiBoss != null)
         {
-             aiBoss.DeactivateFlameAndWarning(); // Ensure this covers all necessary boss hazards
+            aiBoss.DeactivateFlameAndWarning(); // Ensure this covers all necessary boss hazards
         }
         if (boss != null)
         {
-             //boss.DeactivateFlameAndWarning(); // Ensure this covers all necessary boss hazards
+            //boss.DeactivateFlameAndWarning(); // Ensure this covers all necessary boss hazards
         }
     }
 
@@ -325,26 +332,26 @@ public class EpisodeManager : MonoBehaviour
     }
 
     // --- Reference Validation --- (Keep existing ValidateReferences method)
-     private void ValidateReferences()
-     {
-         // Use ?. operator for slightly cleaner checks where appropriate
-         if (playerGameObject == null) Debug.LogError("[EpisodeManager] Player GameObject not assigned!");
-         if (bossGameObject == null) Debug.LogError("[EpisodeManager] Boss GameObject not assigned!");
+    private void ValidateReferences()
+    {
+        // Use ?. operator for slightly cleaner checks where appropriate
+        if (playerGameObject == null) Debug.LogError("[EpisodeManager] Player GameObject not assigned!");
+        if (bossGameObject == null) Debug.LogError("[EpisodeManager] Boss GameObject not assigned!");
 
-         // Optional/Warning level if component is missing but GO is assigned
-         if (aiBoss == null && bossGameObject != null) Debug.LogWarning($"[EpisodeManager] AIBoss component not assigned on {bossGameObject.name} (needed for reset).");
-         if (bossHealth == null && bossGameObject != null) Debug.LogWarning($"[EpisodeManager] BossHealth component not assigned on {bossGameObject.name} (needed for reset).");
-         if (playerHealth == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] Player Health component not assigned on {playerGameObject.name} (needed for reset).");
-         if (playerMovement == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] PlayerMovement component not assigned on {playerGameObject.name} (needed for reset).");
-         if (playerAttack == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] PlayerAttack component not assigned on {playerGameObject.name} (needed for reset).");
+        // Optional/Warning level if component is missing but GO is assigned
+        if (aiBoss == null && bossGameObject != null) Debug.LogWarning($"[EpisodeManager] AIBoss component not assigned on {bossGameObject.name} (needed for reset).");
+        if (bossHealth == null && bossGameObject != null) Debug.LogWarning($"[EpisodeManager] BossHealth component not assigned on {bossGameObject.name} (needed for reset).");
+        if (playerHealth == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] Player Health component not assigned on {playerGameObject.name} (needed for reset).");
+        if (playerMovement == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] PlayerMovement component not assigned on {playerGameObject.name} (needed for reset).");
+        if (playerAttack == null && playerGameObject != null) Debug.LogWarning($"[EpisodeManager] PlayerAttack component not assigned on {playerGameObject.name} (needed for reset).");
 
 
-         // Critical errors - RewardManager is essential for ML-Agents Player rewards
-         if (bossRewardManager == null) Debug.LogError("[EpisodeManager] BossRewardManager reference not assigned! Rewards/Learning will fail.");
-         // QL is optional if only training ML-Agents Player
-         if (bossQLearning == null) Debug.LogWarning("[EpisodeManager] BossQLearning reference not assigned (optional for QL logging).");
+        // Critical errors - RewardManager is essential for ML-Agents Player rewards
+        if (bossRewardManager == null) Debug.LogError("[EpisodeManager] BossRewardManager reference not assigned! Rewards/Learning will fail.");
+        // QL is optional if only training ML-Agents Player
+        if (bossQLearning == null) Debug.LogWarning("[EpisodeManager] BossQLearning reference not assigned (optional for QL logging).");
 
-     }
+    }
 
     // Public getter for episode count (useful for logging in other scripts)
     public int GetTotalEpisodeCount()

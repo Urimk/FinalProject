@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlatformMover : MonoBehaviour
@@ -31,11 +31,11 @@ public class PlatformMover : MonoBehaviour
         // Movement setup
         startPos = transform.position;
         Vector3 dir = isVertical ? Vector3.up : Vector3.right;
-        
+
         // Apply negative direction if isNegative is true
         if (isNegative)
             dir = -dir;
-        
+
         targetPos = startFromPositive ? startPos - dir * moveDistance : startPos + dir * moveDistance;
         movingPositive = !startFromPositive;
 
@@ -65,11 +65,11 @@ public class PlatformMover : MonoBehaviour
         {
             movingPositive = !movingPositive;
             Vector3 dir = isVertical ? Vector3.up : Vector3.right;
-            
+
             // Apply negative direction if isNegative is true
             if (isNegative)
                 dir = -dir;
-                
+
             targetPos = movingPositive ? startPos + dir * moveDistance : startPos - dir * moveDistance;
         }
 
@@ -77,7 +77,7 @@ public class PlatformMover : MonoBehaviour
         HandleAttachment();
     }
 
-     private void HandleAttachment()
+    private void HandleAttachment()
     {
         if (playerTransform == null)
             return;
@@ -90,19 +90,19 @@ public class PlatformMover : MonoBehaviour
         if (distanceToPlayer <= attachDistance && playerTransform.position.y > (transform.position.y + 1.2f) && pm != null && pm.isGrounded())
         {
             // Create or find an intermediate parent with neutral scale
-                Transform intermediateParent = transform.Find("PlayerAttachPoint");
-                if (intermediateParent == null)
-                {
-                    GameObject attachPoint = new GameObject("PlayerAttachPoint");
-                    attachPoint.transform.SetParent(transform);
-                    attachPoint.transform.localPosition = Vector3.zero;
-                    attachPoint.transform.localRotation = Quaternion.identity;
-                    attachPoint.transform.localScale = Vector3.one;
-                    intermediateParent = attachPoint.transform;
-                }
-                
-                playerTransform.SetParent(intermediateParent, true);
-                currentPlatformParent = transform;
+            Transform intermediateParent = transform.Find("PlayerAttachPoint");
+            if (intermediateParent == null)
+            {
+                GameObject attachPoint = new GameObject("PlayerAttachPoint");
+                attachPoint.transform.SetParent(transform);
+                attachPoint.transform.localPosition = Vector3.zero;
+                attachPoint.transform.localRotation = Quaternion.identity;
+                attachPoint.transform.localScale = Vector3.one;
+                intermediateParent = attachPoint.transform;
+            }
+
+            playerTransform.SetParent(intermediateParent, true);
+            currentPlatformParent = transform;
         }
         else if (currentPlatformParent == transform && pm != null && !pm.isGrounded())
         {

@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 // This script handles the boss's mechanics, state, and execution of actions requested by the Q-learning agent.
@@ -82,26 +83,30 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
-        if (player == null) {
+        if (player == null)
+        {
             Debug.LogError("[AIBoss] Player Transform not assigned!");
             // Try finding player by tag if not assigned
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if(playerObj != null) player = playerObj.transform;
+            if (playerObj != null) player = playerObj.transform;
             else this.enabled = false; // Disable if player missing
         }
-        if (player != null) {
+        if (player != null)
+        {
             playerMovement = player.GetComponent<PlayerMovement>();
             // Optional: Check if playerMovement is null and log warning
         }
 
-        if (rm == null) {
+        if (rm == null)
+        {
             Debug.LogError("[AIBoss] BossRewardManager (rm) not assigned! Learning will fail.");
             this.enabled = false;
         }
         if (bossHealth == null) bossHealth = GetComponent<BossHealth>();
-        if (bossHealth == null) {
+        if (bossHealth == null)
+        {
             Debug.LogError("[AIBoss] BossHealth component not found!");
-             this.enabled = false;
+            this.enabled = false;
         }
 
         currentEnergy = maxEnergy; // Start with full energy
@@ -132,36 +137,37 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         HandlePhaseTransition();
 
         // Sprite flipping (only if not charging or dashing)
-        if (!isChargingDash && !isDashing) {
+        if (!isChargingDash && !isDashing)
+        {
             HandleSpriteFlip();
         }
     }
 
-   private void HandlePhaseTransition()
-    {
-        if (!isPhase2 && bossHealth != null)
-        {
-            float healthPercentage = bossHealth.GetHealthPercentage();
-            if (healthPercentage <= 0.5f) // Enter phase 2 at 50% health
+    private void HandlePhaseTransition()
+    {
+        if (!isPhase2 && bossHealth != null)
+        {
+            float healthPercentage = bossHealth.GetHealthPercentage();
+            if (healthPercentage <= 0.5f) // Enter phase 2 at 50% health
             {
-                EnterPhase2();
-            }
-        }
-    }
+                EnterPhase2();
+            }
+        }
+    }
 
-    private void HandleSpriteFlip()
-    {
-        if (player == null || isChargingDash) return; // Don't flip during dash
+    private void HandleSpriteFlip()
+    {
+        if (player == null || isChargingDash) return; // Don't flip during dash
         if (player.position.x < transform.position.x)
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        else
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        else
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         // Ensure fireball holder matches boss direction if needed
         if (fireballHolder != null)
-        {
-            fireballHolder.localScale = transform.localScale;
-        }
-    }
+        {
+            fireballHolder.localScale = transform.localScale;
+        }
+    }
 
     /// <summary>
     /// Handles movement requests based on the learned action type.
@@ -426,7 +432,8 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
 
         // Apply clamping between walls (using your existing logic)
-        if (leftWall != null && rightWall != null) {
+        if (leftWall != null && rightWall != null)
+        {
             placementPosition.x = Mathf.Clamp(placementPosition.x, leftWall.position.x + 2f, rightWall.position.x - 2f); // Add buffer from wall edge
         }
 
@@ -497,11 +504,15 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         dashTarget = dashTargetCalculated;
 
         // Activate target marker (using your existing logic)
-        if (targetIconPrefab != null) {
-            if (targetIconInstance == null) {
+        if (targetIconPrefab != null)
+        {
+            if (targetIconInstance == null)
+            {
                 targetIconInstance = Instantiate(targetIconPrefab, dashTarget, Quaternion.identity);
                 targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            } else {
+            }
+            else
+            {
                 targetIconInstance.transform.position = dashTarget;
                 targetIconInstance.SetActive(true);
             }
@@ -542,7 +553,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     public bool IsFlameTrapReady()
     {
-         // Optional: Energy Check: && currentEnergy >= flameTrapEnergyCost;
+        // Optional: Energy Check: && currentEnergy >= flameTrapEnergyCost;
         return fireAttackTimer >= fireAttackCooldown;
     }
 
@@ -595,22 +606,24 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // --- Coroutines and Internal Logic ---
     private int FindFireball() // Helper for object pooling
     {
-        for (int i = 0; i < fireballs.Length; i++)
-        {
+        for (int i = 0; i < fireballs.Length; i++)
+        {
             // Check if the GameObject itself is active in the hierarchy
             if (!fireballs[i].activeInHierarchy)
-            {
-                return i;
-            }
-        }
-        return -1; // No inactive fireball found
+            {
+                return i;
+            }
+        }
+        return -1; // No inactive fireball found
     }
 
-    private IEnumerator MarkAreaAndSpawnFire(Vector2 targetPosition) { /* ... slight modification needed ... */
+    private IEnumerator MarkAreaAndSpawnFire(Vector2 targetPosition)
+    { /* ... slight modification needed ... */
         if (isDead) yield break;
 
         GameObject marker = null;
-        if (areaMarkerPrefab != null) {
+        if (areaMarkerPrefab != null)
+        {
             marker = Instantiate(areaMarkerPrefab, targetPosition, Quaternion.identity);
             // Removed marker.SetActive(true); - Instantiate already makes it active
         }
@@ -618,27 +631,34 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         yield return new WaitForSeconds(1.5f);
 
         // Check if boss died *during* the wait
-        if (isDead) {
-             if (marker != null) Destroy(marker); // Clean up marker if boss died
-             yield break;
+        if (isDead)
+        {
+            if (marker != null) Destroy(marker); // Clean up marker if boss died
+            yield break;
         }
 
         if (marker != null) Destroy(marker); // Destroy normally if boss alive
 
         // Spawn flame only if boss is still alive after the wait
-        if (flame != null) {
-             flame.transform.position = targetPosition;
-             flame.SetActive(true);
+        if (flame != null)
+        {
+            flame.transform.position = targetPosition;
+            flame.SetActive(true);
 
-             BossFlameAttack flameAttack = flame.GetComponent<BossFlameAttack>();
-             if (flameAttack != null) {
-                 flameAttack.Activate(targetPosition);
-                 StartCoroutine(DeactivateAfterDuration(flame, 3f));
-             } else {
-                 Debug.LogError("[AIBoss] Flame object missing BossFlameAttack script!");
-                 flame.SetActive(false); // Deactivate if script missing
-             }
-        } else {
+            BossFlameAttack flameAttack = flame.GetComponent<BossFlameAttack>();
+            if (flameAttack != null)
+            {
+                flameAttack.Activate(targetPosition);
+                StartCoroutine(DeactivateAfterDuration(flame, 3f));
+            }
+            else
+            {
+                Debug.LogError("[AIBoss] Flame object missing BossFlameAttack script!");
+                flame.SetActive(false); // Deactivate if script missing
+            }
+        }
+        else
+        {
             Debug.LogError("[AIBoss] Flame prefab reference not set!");
         }
     }
@@ -646,35 +666,35 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     // Coroutine to deactivate the flame trap after a duration and report miss if needed
     private IEnumerator DeactivateAfterDuration(GameObject obj, float delay)
-    {
-        isFlameDeactivationCanceled = false; // Reset cancel flag for this instance
+    {
+        isFlameDeactivationCanceled = false; // Reset cancel flag for this instance
         float timer = 0f;
-        while (timer < delay)
-        {
-            if (isDead) // If boss dies during the flame duration
+        while (timer < delay)
+        {
+            if (isDead) // If boss dies during the flame duration
             {
-                if (obj != null) obj.SetActive(false); // Immediately deactivate
+                if (obj != null) obj.SetActive(false); // Immediately deactivate
                 isFlameDeactivationCanceled = true; // Mark as canceled due to death
                 yield break; // Exit coroutine
             }
-            timer += Time.deltaTime;
-            yield return null;
-        }
+            timer += Time.deltaTime;
+            yield return null;
+        }
         // Timer finished, check if not canceled and object still exists
         if (!isFlameDeactivationCanceled && obj != null)
-        {
-            obj.SetActive(false); // Deactivate normally
+        {
+            obj.SetActive(false); // Deactivate normally
             if (rm != null)
-            {
-                if (flameMissed) // Check if the flameMissed flag (set by BossFlameAttack) indicates a miss
+            {
+                if (flameMissed) // Check if the flameMissed flag (set by BossFlameAttack) indicates a miss
                 {
-                    rm.ReportAttackMissed(); // Report the miss
+                    rm.ReportAttackMissed(); // Report the miss
                 }
                 // Reset flag for the next attack regardless of hit/miss status
                 flameMissed = true;
-            }
-        }
-    }
+            }
+        }
+    }
 
     private IEnumerator PerformDashAttack()
     {
@@ -714,7 +734,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
             // if (hit.collider != null) break;
 
             // Check if approximately reached target
-             if (Vector2.Distance(transform.position, dashTarget) < 1.0f) break;
+            if (Vector2.Distance(transform.position, dashTarget) < 1.0f) break;
 
 
             dashTimer += Time.deltaTime;
@@ -769,10 +789,10 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         // Add checks for hitting walls/ground during dash if needed
         else if (isDashing && (other.gameObject.layer == LayerMask.NameToLayer("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Walls")))
         {
-             // Stop dash if hitting obstacles during movement phase
-             //Debug.Log("[AIBoss] Dash hit obstacle: " + other.name);
-             isDashing = false;
-             rb.velocity = Vector2.zero;
+            // Stop dash if hitting obstacles during movement phase
+            //Debug.Log("[AIBoss] Dash hit obstacle: " + other.name);
+            isDashing = false;
+            rb.velocity = Vector2.zero;
         }
     }
 
@@ -792,7 +812,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         rb.isKinematic = true;
         // Safely disable collider
         Collider2D col = GetComponent<Collider2D>();
-        if(col != null) col.enabled = false;
+        if (col != null) col.enabled = false;
 
         if (anim != null) anim.SetTrigger("Die");
 

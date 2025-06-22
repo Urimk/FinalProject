@@ -1,7 +1,9 @@
+﻿using System.Collections.Generic;
+
 using PlayFab;
 using PlayFab.ClientModels;
+
 using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayFabTestPlayers : MonoBehaviour
 {
@@ -36,10 +38,10 @@ public class PlayFabTestPlayers : MonoBehaviour
     void SetDisplayName(string customId)
     {
         string displayName = customId;
-        
+
         var updateRequest = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
-        PlayFabClientAPI.UpdateUserTitleDisplayName(updateRequest, 
-            result => Debug.Log($"Display name set to: {displayName}"), 
+        PlayFabClientAPI.UpdateUserTitleDisplayName(updateRequest,
+            result => Debug.Log($"Display name set to: {displayName}"),
             error => Debug.LogError("Failed to set display name: " + error.GenerateErrorReport()));
     }
 

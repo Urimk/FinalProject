@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SwordPickup : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class SwordPickup : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {   
+    {
         float distance = Vector2.Distance(transform.position, collision.transform.position);
         if (collision.CompareTag("Player"))
         {

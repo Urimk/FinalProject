@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BossProjectile : EnemyDamage {
+public class BossProjectile : EnemyDamage
+{
     [SerializeField] private float speed;
     [SerializeField] private float size;
     [SerializeField] private float resetTime;
@@ -13,12 +14,14 @@ public class BossProjectile : EnemyDamage {
 
     private Vector2 direction; // Stores movement direction
 
-    private void Awake() {
+    private void Awake()
+    {
         anim = GetComponent<Animator>();
         collid = GetComponent<BoxCollider2D>();
     }
 
-    public void ActivateProjectile() {
+    public void ActivateProjectile()
+    {
         hit = false;
         lifeTime = 0;
         gameObject.SetActive(true);
@@ -32,7 +35,7 @@ public class BossProjectile : EnemyDamage {
         hit = false;
         lifeTime = 0;
 
-        transform.localScale = new Vector3(size, size, 1f); 
+        transform.localScale = new Vector3(size, size, 1f);
         transform.position = startPosition;
         this.speed = speed;
         direction = (targetPosition - startPosition).normalized;
@@ -44,15 +47,17 @@ public class BossProjectile : EnemyDamage {
         collid.enabled = true;
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (hit) return;
         // Move the projectile
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
-        
+
         // Handle lifetime
         lifeTime += Time.deltaTime;
-        if (lifeTime > resetTime) {
+        if (lifeTime > resetTime)
+        {
             if (rm != null)
             {
                 rm.ReportAttackMissed();
@@ -61,9 +66,11 @@ public class BossProjectile : EnemyDamage {
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
-        
-        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy") {
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy")
+        {
             return;
         }
         bool hitPlayer = collision.tag == "Player";
@@ -71,9 +78,12 @@ public class BossProjectile : EnemyDamage {
         // Notify the boss that the fireball hit something
         if (rm != null)
         {
-            if (hitPlayer) {
+            if (hitPlayer)
+            {
                 rm.ReportHitPlayer(); // Pass hit result
-            } else {
+            }
+            else
+            {
                 rm.ReportAttackMissed(); // Pass hit result
             }
         }
@@ -81,26 +91,33 @@ public class BossProjectile : EnemyDamage {
         base.OnTriggerStay2D(collision);
         collid.enabled = false;
 
-        if (anim != null) {
+        if (anim != null)
+        {
             anim.SetTrigger("explosion");
-        } else {
+        }
+        else
+        {
             Deactivate();
         }
     }
 
-    public void SetDamage(int newDamage) {
+    public void SetDamage(int newDamage)
+    {
         damage = newDamage;
     }
 
-    public void SetSpeed(float newSpeed) {
+    public void SetSpeed(float newSpeed)
+    {
         speed = newSpeed;
     }
 
-    public void SetSize(float newSize) {
+    public void SetSize(float newSize)
+    {
         size = newSize;
     }
 
-    private void Deactivate() {
+    private void Deactivate()
+    {
         gameObject.SetActive(false);
         transform.rotation = Quaternion.identity;
     }

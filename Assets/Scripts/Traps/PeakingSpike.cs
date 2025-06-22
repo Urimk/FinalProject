@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PeakingSpike : MonoBehaviour
 {
@@ -9,14 +9,14 @@ public class PeakingSpike : MonoBehaviour
     public float lowHoldTime = 1f;           // Time to stay at low position
     public float moveSpeed = 5f;             // Speed of movement between positions
     public float initialDelay = 0f;          // Delay before starting the loop
-    
+
     private Vector3 startPos;
     private Vector3 targetPos;
     private float timer;
     private bool isAtBase = true;
     private bool isMoving = false;
     private bool hasStarted = false;
-    
+
     void Start()
     {
         // Store the initial position and set base position
@@ -25,11 +25,11 @@ public class PeakingSpike : MonoBehaviour
         transform.position = startPos;
         basePosition = startPos.y;
         lowPosition = basePosition - 1.7f;
-        
+
         // Set initial timer to the delay value
         timer = initialDelay;
     }
-    
+
     void Update()
     {
         if (!hasStarted)
@@ -43,12 +43,12 @@ public class PeakingSpike : MonoBehaviour
             }
             return;
         }
-        
+
         if (!isMoving)
         {
             // Count down the hold timer
             timer -= Time.deltaTime;
-            
+
             if (timer <= 0f)
             {
                 // Start moving to the other position
@@ -61,11 +61,11 @@ public class PeakingSpike : MonoBehaviour
             MoveToTarget();
         }
     }
-    
+
     void StartMovement()
     {
         isMoving = true;
-        
+
         if (isAtBase)
         {
             // Moving from base to low position
@@ -79,19 +79,19 @@ public class PeakingSpike : MonoBehaviour
             targetPos.y = basePosition;
         }
     }
-    
+
     void MoveToTarget()
     {
         // Move towards target position
         transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-        
+
         // Check if we've reached the target
         if (Vector3.Distance(transform.position, targetPos) < 0.01f)
         {
             transform.position = targetPos;
             isMoving = false;
             isAtBase = !isAtBase;
-            
+
             // Set the appropriate hold time
             timer = isAtBase ? baseHoldTime : lowHoldTime;
         }

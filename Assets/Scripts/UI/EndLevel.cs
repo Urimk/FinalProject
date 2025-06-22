@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelEndTrigger : MonoBehaviour
@@ -40,34 +40,34 @@ public class LevelEndTrigger : MonoBehaviour
         }
     }
 
-private void DisplayResults()
-{
-    int score = ScoreManager.Instance.score;
-    int healthBonus = (int)playerHealth.currentHealth * playerHealth.getFirstHealth() * HealthBonusValue;
-    int timeBonus = Mathf.FloorToInt(TimerManager.Instance.GetRemainingTime()) * TimeBonusValue;
-
-    totalScore = score + healthBonus + timeBonus; // Calculate total score
-
-    if (winScoreText != null)
+    private void DisplayResults()
     {
-        winScoreText.text = "Score: " + score;
-    }
+        int score = ScoreManager.Instance.score;
+        int healthBonus = (int)playerHealth.currentHealth * playerHealth.getFirstHealth() * HealthBonusValue;
+        int timeBonus = Mathf.FloorToInt(TimerManager.Instance.GetRemainingTime()) * TimeBonusValue;
 
-    if (healthBonusText != null)
-    {
-        healthBonusText.text = "Health Bonus: " + healthBonus;
-    }
+        totalScore = score + healthBonus + timeBonus; // Calculate total score
 
-    if (timeBonusText != null)
-    {
-        timeBonusText.text = "Time Bonus: " + timeBonus;
-    }
+        if (winScoreText != null)
+        {
+            winScoreText.text = "Score: " + score;
+        }
 
-    if (totalScoreText != null)
-    {
-        totalScoreText.text = "Total: " + totalScore; // Set the total score text
+        if (healthBonusText != null)
+        {
+            healthBonusText.text = "Health Bonus: " + healthBonus;
+        }
+
+        if (timeBonusText != null)
+        {
+            timeBonusText.text = "Time Bonus: " + timeBonus;
+        }
+
+        if (totalScoreText != null)
+        {
+            totalScoreText.text = "Total: " + totalScore; // Set the total score text
+        }
     }
-}
     private void Update()
     {
         if (isWinScreenActive && Input.GetKeyDown(KeyCode.Return))
@@ -76,7 +76,7 @@ private void DisplayResults()
         }
     }
 
-        private void ShowUsernameInputScreen()
+    private void ShowUsernameInputScreen()
     {
         winScreen.SetActive(false);
         usernameInputScreen.SetActive(true);

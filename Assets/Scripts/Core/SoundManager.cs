@@ -1,9 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance { get; private set; }
-    
+
     private AudioSource soundSource;
     private AudioSource musicSource;
 
@@ -12,11 +12,11 @@ public class SoundManager : MonoBehaviour
 
 
 
-    private void Awake() 
+    private void Awake()
     {
         soundSource = GetComponent<AudioSource>();
         musicSource = transform.GetChild(0).GetComponent<AudioSource>();
-        if (instance == null) 
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -41,14 +41,14 @@ public class SoundManager : MonoBehaviour
     {
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return false;
-        
+
         // Check the object itself
         SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
         if (spriteRenderer != null && spriteRenderer.isVisible)
         {
             return true;
         }
-        
+
         // Check all children
         SpriteRenderer[] childRenderers = obj.GetComponentsInChildren<SpriteRenderer>();
         foreach (SpriteRenderer childRenderer in childRenderers)
@@ -58,7 +58,7 @@ public class SoundManager : MonoBehaviour
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -79,10 +79,10 @@ public class SoundManager : MonoBehaviour
         currentVolume += change;
 
         // Ensure it wraps around between 0 and 1
-        if (currentVolume > 1) 
+        if (currentVolume > 1)
         {
             currentVolume = 0;
-        } 
+        }
         else if (currentVolume < 0)
         {
             currentVolume = 1;
@@ -113,4 +113,3 @@ public class SoundManager : MonoBehaviour
     }
 
 }
-

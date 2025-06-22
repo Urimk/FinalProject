@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -19,47 +20,47 @@ public class Projectile : MonoBehaviour
     }
 
     // 1) In Projectile.cs, let lifetime continue (even when hit),
-//    and/or deactivate immediately on hit:
-private void Update()
-{
-    // Always update lifetime so we eventually Despawn()
-    lifetime += Time.deltaTime;
-
-    if (lifetime > 5f)
+    //    and/or deactivate immediately on hit:
+    private void Update()
     {
-        Deactivate();
-        return;
+        // Always update lifetime so we eventually Despawn()
+        lifetime += Time.deltaTime;
+
+        if (lifetime > 5f)
+        {
+            Deactivate();
+            return;
+        }
+
+        if (hit)
+            return;
+
+        float movement = speed * Time.deltaTime * direction;
+        transform.Translate(movement, 0, 0);
     }
 
-    if (hit)
-        return;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.name == "Door" || other.gameObject.tag == "NoCollision" || other.gameObject.tag == "Player") return;
 
-    float movement = speed * Time.deltaTime * direction;
-    transform.Translate(movement, 0, 0);
-}
+        hit = true;
+        boxCollider.enabled = false;
+        anim.SetTrigger("explosion");
 
-private void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.gameObject.name == "Door" || other.gameObject.tag == "NoCollision" || other.gameObject.tag == "Player") return;
+        if (other.TryGetComponent<IDamageable>(out var dmg) && other.gameObject.tag != "Player")
+            dmg.TakeDamage(1);
 
-    hit = true;
-    boxCollider.enabled = false;
-    anim.SetTrigger("explosion");
-
-    if (other.TryGetComponent<IDamageable>(out var dmg) && other.gameObject.tag != "Player")
-        dmg.TakeDamage(1);
-
-    //deactivates in the animation end
-}
+        //deactivates in the animation end
+    }
 
 
-// common Deactivate helper
-private void Deactivate()
-{
-    hit = false;
-    boxCollider.enabled = true;
-    gameObject.SetActive(false);
-}
+    // common Deactivate helper
+    private void Deactivate()
+    {
+        hit = false;
+        boxCollider.enabled = true;
+        gameObject.SetActive(false);
+    }
 
 
     public void SetDirection(float _direction)

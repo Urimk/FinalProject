@@ -1,10 +1,13 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 using PlayFab;
 using PlayFab.ClientModels;
+
 using TMPro;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UsernameInputMenu : MonoBehaviour
 {
@@ -14,7 +17,7 @@ public class UsernameInputMenu : MonoBehaviour
 
     private bool isSubmitting = false; // Prevent multiple submissions
     private static readonly Regex validCharacters = new Regex("^[a-zA-Z0-9]*$"); // Only allow letters & numbers
-    string leaderboardName; 
+    string leaderboardName;
 
     private void Start()
     {
@@ -112,8 +115,8 @@ public class UsernameInputMenu : MonoBehaviour
     private void SetDisplayName(string username)
     {
         var updateRequest = new UpdateUserTitleDisplayNameRequest { DisplayName = username };
-        PlayFabClientAPI.UpdateUserTitleDisplayName(updateRequest, 
-            result => Debug.Log($"Display name set to: {username}"), 
+        PlayFabClientAPI.UpdateUserTitleDisplayName(updateRequest,
+            result => Debug.Log($"Display name set to: {username}"),
             error => Debug.LogError("Failed to set display name: " + error.GenerateErrorReport()));
     }
 

@@ -5,7 +5,9 @@
         "Assembly-CSharp",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Game" 
+        "Game",
+        "PlayFab",
+        "SPUM" 
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

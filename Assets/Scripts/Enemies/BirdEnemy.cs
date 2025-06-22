@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 public class EggLayingBird : MonoBehaviour
@@ -41,7 +42,7 @@ public class EggLayingBird : MonoBehaviour
         egg.GetComponent<EnemyProjectile>().SetDirection(Vector2.down);
         egg.transform.rotation = Quaternion.identity;  // keep the sprite upright
         egg.GetComponent<EnemyProjectile>().ActivateProjectile();
-        
+
 
     }
 
@@ -57,10 +58,12 @@ public class EggLayingBird : MonoBehaviour
         return 0; // fallback
     }
 
-    public void PerformCrash() {
+    public void PerformCrash()
+    {
         StartCoroutine(Crash());
     }
-    private IEnumerator Crash() {
+    private IEnumerator Crash()
+    {
         Vector3 startPos = transform.position;
         bool movingRight = transform.localScale.x > 0f;
         Vector3 endPos = startPos + new Vector3(movingRight ? 1f : -1f, -2f, 0f);

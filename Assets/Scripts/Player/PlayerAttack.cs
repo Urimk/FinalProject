@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -30,35 +31,35 @@ public class PlayerAttack : MonoBehaviour
 
     // For Testing
     public bool IsGamePausedForTest { get; set; }
-    public float AttackCooldown 
+    public float AttackCooldown
     {
         get => attackCooldown;
         set => attackCooldown = value;
     }
 
-    public bool HasSword 
+    public bool HasSword
     {
         get => hasSword;
         set => hasSword = value;
     }
-    
-    public Transform FirePoint 
+
+    public Transform FirePoint
     {
         get => firePoint;
         set => firePoint = value;
     }
-    public GameObject[] Fireballs 
+    public GameObject[] Fireballs
     {
         get => fireballs;
         set => fireballs = value;
     }
-        public float CooldownTimer 
+    public float CooldownTimer
     {
         get => cooldownTimer;
         set => cooldownTimer = value;
     }
 
-    public void testAttack() 
+    public void testAttack()
     {
         if (cooldownTimer >= attackCooldown)
         {
@@ -76,27 +77,27 @@ public class PlayerAttack : MonoBehaviour
         playerSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-private void Update()
-{
-    if (UIManager.instance.IsGamePaused())
+    private void Update()
     {
-        return;
-    }
-
-    if (!isAIControlled)
-    {
-        if (Input.GetKey(KeyCode.LeftControl) && cooldownTimer > attackCooldown && playerMovement.canAttack())
+        if (UIManager.instance.IsGamePaused())
         {
-            Attack();
+            return;
         }
+
+        if (!isAIControlled)
+        {
+            if (Input.GetKey(KeyCode.LeftControl) && cooldownTimer > attackCooldown && playerMovement.canAttack())
+            {
+                Attack();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && hasSword)
+        {
+            ToggleWeapon();
+        }
+        UpdateSwordPosition();
+        cooldownTimer += Time.deltaTime;
     }
-    if (Input.GetKeyDown(KeyCode.LeftShift) && hasSword)
-    {
-        ToggleWeapon();
-    }
-    UpdateSwordPosition();
-    cooldownTimer += Time.deltaTime;
-}
 
     // AI can trigger attacks using this method
     public void SetAIAttack(bool attackPressed)
@@ -110,7 +111,7 @@ private void Update()
 
     private void Attack()
     {
-        
+
         cooldownTimer = 0;
         if (currentWeapon == WeaponType.Fireball)
         {
@@ -212,7 +213,7 @@ private void Update()
             if (!fireballs[i].activeInHierarchy)
             {
                 return i;
-            }    
+            }
         }
         return -1;
     }
@@ -232,7 +233,7 @@ private void Update()
         equippedWeaponObject.transform.localPosition = Vector3.zero; // adjust if needed
     }
 
-        public void UnequipWeapon()
+    public void UnequipWeapon()
     {
         currentWeapon = WeaponType.Fireball;
 
@@ -285,22 +286,21 @@ private void Update()
 
             weaponHolder.localPosition = newPosition;
         }
+    }
+
+    public float IsAttackReady()
+    {
+        if (cooldownTimer >= attackCooldown)
+            return 1.0f;
+        else
+            return 0.0f;
+    }
+
+    public void ResetCooldown()
+    {
+        cooldownTimer = 0;
+    }
+
+
+
 }
-
-public float IsAttackReady()
-{
-    if (cooldownTimer >= attackCooldown)
-        return 1.0f;
-    else
-        return 0.0f;
-}
-
-public void ResetCooldown()
-{
-    cooldownTimer = 0;
-}
-
-
-
-}
-

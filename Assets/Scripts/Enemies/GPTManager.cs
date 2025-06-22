@@ -1,10 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+using Newtonsoft.Json;
+
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Text;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.IO;
 
 public class GPTManager : MonoBehaviour
 {
@@ -47,7 +49,7 @@ public class GPTManager : MonoBehaviour
     {
         var requestData = new
         {
-            model = "gpt-3.5-turbo",  
+            model = "gpt-3.5-turbo",
             messages = new[]
             {
                 new { role = "system", content = "You are a game AI that asks and evaluates questions." },
@@ -80,10 +82,10 @@ public class GPTManager : MonoBehaviour
             {
                 string responseJson = request.downloadHandler.text;
                 Debug.Log("Raw API Response: " + responseJson);
-                
+
                 // Use structured deserialization
                 ApiResponse response = JsonConvert.DeserializeObject<ApiResponse>(responseJson);
-                
+
                 if (response != null && response.choices != null && response.choices.Count > 0)
                 {
                     Debug.Log("Choices count: " + response.choices.Count);
@@ -140,5 +142,3 @@ public class GPTManager : MonoBehaviour
         public Dictionary<string, object> usage;
     }
 }
-
-

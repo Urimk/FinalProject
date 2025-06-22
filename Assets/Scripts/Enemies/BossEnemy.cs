@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+
 using UnityEngine;
 
 // Manages the Boss's behavior, attacks, and state.
@@ -70,7 +71,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         anim = GetComponent<Animator>();
 
         initialBossPosition = gameObject.transform.position;
-        
+
         // If bossHealth wasn't set in inspector, try to get it
         if (bossHealth == null)
         {
@@ -83,7 +84,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         rb = GetComponent<Rigidbody2D>();
         if (playerHealth != null)
         {
-             playerHealth.OnDamaged += HandlePlayerDeath;
+            playerHealth.OnDamaged += HandlePlayerDeath;
         }
 
     }
@@ -196,13 +197,14 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
 
         // Update all cooldown timers
-        if (!isChargingDash) {
+        if (!isChargingDash)
+        {
             cooldownTimer += Time.deltaTime;
             fireAttackTimer += Time.deltaTime;
             dashCooldownTimer += Time.deltaTime;
         }
 
-        
+
 
         // --- Movement Logic (Hardcoded - Consider removing for Q-Learning) ---
         // In a Q-Learning setup, the QL agent should call AIRequestMove
@@ -210,7 +212,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         // This hardcoded logic is here based on your request but may conflict with QL training.
         if (!isChargingDash && detectedPlayer) // Only move if not busy and outside attack range
         {
-                        // Calculate direction towards the player
+            // Calculate direction towards the player
             Vector3 fixPlayerPosition = player.position;
             fixPlayerPosition.y -= 0.75f;
             Vector2 directionToPlayer = (fixPlayerPosition - transform.position).normalized;
@@ -302,7 +304,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (player != null)
         {
             bossProjectile.Launch(firepoint.position, player.transform.position, projectileSpeed); // Launch towards calculated target!
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("[BossEnemy] Player transform is null, cannot launch fireball.");
             return; // Abort if player is null
         }
@@ -385,7 +389,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             // Stop existing deactivate coroutine if any
             // if (deactivateFlameCoroutine != null) StopCoroutine(deactivateFlameCoroutine); // Example if you track it
             // deactivateFlameCoroutine = StartCoroutine(DeactivateAfterDuration(flame, 3f)); // Track the coroutine
-             StartCoroutine(DeactivateAfterDuration(flame, 3f));
+            StartCoroutine(DeactivateAfterDuration(flame, 3f));
         }
         else
         {
@@ -418,13 +422,13 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     }
 
     // Method to initiate Charge Dash Attack (can be called by QL agent)
-     public void AIRequestChargeDashAttack()
-     {
-         // Check if boss is dead, already busy, or dash is on cooldown, or not in phase 2
-         if (isDead || isChargingDash || isDashing || dashCooldownTimer < dashCooldown || !isPhase2) return;
+    public void AIRequestChargeDashAttack()
+    {
+        // Check if boss is dead, already busy, or dash is on cooldown, or not in phase 2
+        if (isDead || isChargingDash || isDashing || dashCooldownTimer < dashCooldown || !isPhase2) return;
 
-         ChargeDashAttack(); // Perform the attack logic
-     }
+        ChargeDashAttack(); // Perform the attack logic
+    }
 
 
     // Charge Dash Attack sequence
@@ -438,29 +442,31 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         // Set dash target with the player's position but change the Y to -1 (or adjust as needed)
         if (player != null)
         {
-             dashTarget = new Vector3(player.position.x, player.position.y - 1.2f, player.position.z);
-        } else {
-             Debug.LogWarning("[BossEnemy] Player transform is null, cannot set dash target.");
-             isChargingDash = false; // Cancel charge if player is null
-             return;
+            dashTarget = new Vector3(player.position.x, player.position.y - 1.2f, player.position.z);
+        }
+        else
+        {
+            Debug.LogWarning("[BossEnemy] Player transform is null, cannot set dash target.");
+            isChargingDash = false; // Cancel charge if player is null
+            return;
         }
 
 
         // Instantiate or reuse the target icon
         if (targetIconInstance == null)
         {
-             // Instantiate at the calculated dashTarget position (adjust Y for visual)
-             targetIconInstance = Instantiate(targetIconPrefab, new Vector3(dashTarget.x, dashTarget.y + 0.7f), Quaternion.identity); // Adjust Y for visual placement
-             targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-             targetIconInstance.tag = "DashTargetIndicator"; // <-- Assign specific tag
+            // Instantiate at the calculated dashTarget position (adjust Y for visual)
+            targetIconInstance = Instantiate(targetIconPrefab, new Vector3(dashTarget.x, dashTarget.y + 0.7f), Quaternion.identity); // Adjust Y for visual placement
+            targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            targetIconInstance.tag = "DashTargetIndicator"; // <-- Assign specific tag
 
         }
         else
         {
-             // Reuse and set position to the calculated dashTarget (adjust Y for visual)
-             targetIconInstance.transform.position = new Vector3(dashTarget.x, dashTarget.y + 0.7f); // Adjust Y for visual placement
-             targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-             targetIconInstance.SetActive(true);
+            // Reuse and set position to the calculated dashTarget (adjust Y for visual)
+            targetIconInstance.transform.position = new Vector3(dashTarget.x, dashTarget.y + 0.7f); // Adjust Y for visual placement
+            targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            targetIconInstance.SetActive(true);
             targetIconInstance.tag = "DashTargetIndicator"; // <-- Ensure tag is set even on reuse
 
         }

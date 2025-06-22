@@ -1,5 +1,6 @@
+﻿using System.Collections;
+
 using UnityEngine;
-using System.Collections;
 
 public class SpikeHead : EnemyDamage
 {

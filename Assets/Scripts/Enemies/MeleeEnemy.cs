@@ -1,24 +1,25 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+
 using UnityEngine;
 
 public class MeleeEnemy : MonoBehaviour
 {
-    [Header ("Attack Parameters")]
+    [Header("Attack Parameters")]
     [SerializeField] private float attackCooldown;
     [SerializeField] private int damage;
     [SerializeField] private float range;
 
-    [Header ("Collider Parameters")]
+    [Header("Collider Parameters")]
     [SerializeField] private float colliderDistance;
     [SerializeField] private BoxCollider2D boxCollider;
 
-    [Header ("Player Layer")]
+    [Header("Player Layer")]
     [SerializeField] private LayerMask playerLayer;
 
-    [Header ("Attack Sound")]
+    [Header("Attack Sound")]
     [SerializeField] private AudioClip attackSound;
     private float cooldownTimer = Mathf.Infinity;
-    
+
     private Animator anim;
     private Health playerHealth;
     private EnemyPatrol enemyPatrol;
@@ -32,7 +33,7 @@ public class MeleeEnemy : MonoBehaviour
     private void Update()
     {
         cooldownTimer += Time.deltaTime;
-        if(PlayerInSight())
+        if (PlayerInSight())
         {
             if (cooldownTimer >= attackCooldown && playerHealth.currentHealth > 0)
             {
@@ -41,7 +42,7 @@ public class MeleeEnemy : MonoBehaviour
                 SoundManager.instance.PlaySound(attackSound, gameObject);
             }
         }
-        if (enemyPatrol != null) 
+        if (enemyPatrol != null)
         {
             enemyPatrol.enabled = !PlayerInSight();
         }
@@ -56,7 +57,7 @@ public class MeleeEnemy : MonoBehaviour
         {
             playerHealth = hit.transform.GetComponent<Health>();
         }
-        
+
         return hit.collider != null;
     }
 

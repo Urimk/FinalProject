@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
@@ -276,7 +276,7 @@ public class CameraController : MonoBehaviour
     {
         chaseSpeed = newChaseSpeed;
     }
-    
+
     public void SetChaseStart(float offSet)
     {
         transform.position = new Vector3(transform.position.x - offSet, transform.position.y, transform.position.z);
