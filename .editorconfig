@@ -226,3 +226,6 @@ dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 dotnet_naming_style.camel_case_with_underscore.required_prefix = _
 dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case
+
+
+dotnet_diagnostic.stylecop.json = ./Assets/Analyzer/stylecop.json

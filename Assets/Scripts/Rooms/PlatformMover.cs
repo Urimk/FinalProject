@@ -4,73 +4,73 @@
 public class PlatformMover : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float moveDistance = 3f;
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private bool startFromPositive = false;
-    [SerializeField] private bool isVertical = true;
-    [SerializeField] private bool isNegative = false;
+    [SerializeField] private float _moveDistance = 3f;
+    [SerializeField] private float _moveSpeed = 2f;
+    [SerializeField] private bool _startFromPositive = false;
+    [SerializeField] private bool _isVertical = true;
+    [SerializeField] private bool _isNegative = false;
 
     [Header("Attachment Settings")]
-    [SerializeField] private string playerTag = "Player";
+    [SerializeField] private string _playerTag = "Player";
 
     [Tooltip("Distance threshold for attaching when player is on ground and close enough.")]
-    [SerializeField] private float attachDistance = 2f;
+    [SerializeField] private float _attachDistance = 2f;
     [Tooltip("LayerMask to filter ground/platform checks (should include this platform's layer).")]
 
-    private Vector3 startPos;
-    private Vector3 targetPos;
-    private bool movingPositive;
-    private GameObject player;
-    private Transform playerTransform;
-    private Transform currentPlatformParent;
+    private Vector3 _startPos;
+    private Vector3 _targetPos;
+    private bool _movingPositive;
+    private GameObject _player;
+    private Transform _playerTransform;
+    private Transform _currentPlatformParent;
 
-    private Rigidbody2D rb;
+    private Rigidbody2D _rigidbody2D;
 
     private void Start()
     {
         // Movement setup
-        startPos = transform.position;
-        Vector3 dir = isVertical ? Vector3.up : Vector3.right;
+        _startPos = transform.position;
+        Vector3 dir = _isVertical ? Vector3.up : Vector3.right;
 
-        // Apply negative direction if isNegative is true
-        if (isNegative)
+        // Apply negative direction if _isNegative is true
+        if (_isNegative)
             dir = -dir;
 
-        targetPos = startFromPositive ? startPos - dir * moveDistance : startPos + dir * moveDistance;
-        movingPositive = !startFromPositive;
+        _targetPos = _startFromPositive ? _startPos - dir * _moveDistance : _startPos + dir * _moveDistance;
+        _movingPositive = !_startFromPositive;
 
         // Rigidbody setup for trigger/collision events
-        rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
 
         // Find the player and its feet check
-        player = GameObject.FindGameObjectWithTag(playerTag);
-        if (player != null)
+        _player = GameObject.FindGameObjectWithTag(_playerTag);
+        if (_player != null)
         {
-            playerTransform = player.transform;
+            _playerTransform = _player.transform;
         }
         else
         {
-            Debug.LogWarning("Player with tag '" + playerTag + "' not found in scene.");
+            Debug.LogWarning("Player with tag '" + _playerTag + "' not found in scene.");
         }
     }
 
     private void Update()
     {
         // Platform movement
-        float step = moveSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
+        float step = _moveSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, _targetPos, step);
 
-        if (Vector3.Distance(transform.position, targetPos) < 0.01f)
+        if (Vector3.Distance(transform.position, _targetPos) < 0.01f)
         {
-            movingPositive = !movingPositive;
-            Vector3 dir = isVertical ? Vector3.up : Vector3.right;
+            _movingPositive = !_movingPositive;
+            Vector3 dir = _isVertical ? Vector3.up : Vector3.right;
 
-            // Apply negative direction if isNegative is true
-            if (isNegative)
+            // Apply negative direction if _isNegative is true
+            if (_isNegative)
                 dir = -dir;
 
-            targetPos = movingPositive ? startPos + dir * moveDistance : startPos - dir * moveDistance;
+            _targetPos = _movingPositive ? _startPos + dir * _moveDistance : _startPos - dir * _moveDistance;
         }
 
         // Attachment logic
@@ -79,15 +79,15 @@ public class PlatformMover : MonoBehaviour
 
     private void HandleAttachment()
     {
-        if (playerTransform == null)
+        if (_playerTransform == null)
             return;
 
         // Calculate distance between player and platform centers (or choose axis-specific)
-        float distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
+        float distanceToPlayer = Vector3.Distance(_playerTransform.position, transform.position);
 
         // Check if close enough and player is on ground
-        var pm = player.GetComponent<PlayerMovement>();
-        if (distanceToPlayer <= attachDistance && playerTransform.position.y > (transform.position.y + 1.2f) && pm != null && pm.isGrounded())
+        var pm = _player.GetComponent<PlayerMovement>();
+        if (distanceToPlayer <= _attachDistance && _playerTransform.position.y > (transform.position.y + 1.2f) && pm != null && pm.IsGrounded())
         {
             // Create or find an intermediate parent with neutral scale
             Transform intermediateParent = transform.Find("PlayerAttachPoint");
@@ -101,14 +101,14 @@ public class PlatformMover : MonoBehaviour
                 intermediateParent = attachPoint.transform;
             }
 
-            playerTransform.SetParent(intermediateParent, true);
-            currentPlatformParent = transform;
+            _playerTransform.SetParent(intermediateParent, true);
+            _currentPlatformParent = transform;
         }
-        else if (currentPlatformParent == transform && pm != null && !pm.isGrounded())
+        else if (_currentPlatformParent == transform && pm != null && !pm.IsGrounded())
         {
             // No longer close or on ground, detach
-            playerTransform.SetParent(null);
-            currentPlatformParent = null;
+            _playerTransform.SetParent(null);
+            _currentPlatformParent = null;
         }
     }
 }

@@ -3,56 +3,56 @@
 public class RangedEnemy : MonoBehaviour
 {
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown;
-    [SerializeField] private int damage;
-    [SerializeField] private float range;
+    [SerializeField] private float _attackCooldown;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _range;
 
     [Header("Ranged Attack")]
-    [SerializeField] private Transform firepoint;
-    [SerializeField] private GameObject[] fireballs;
+    [SerializeField] private Transform _firepoint;
+    [SerializeField] private GameObject[] _fireballs;
 
     [Header("Collider Parameters")]
-    [SerializeField] private float colliderDistance;
-    [SerializeField] private BoxCollider2D boxCollider;
+    [SerializeField] private float _colliderDistance;
+    [SerializeField] private BoxCollider2D _boxCollider;
 
     [Header("Player Layer")]
-    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private LayerMask _playerLayer;
 
     [Header("Fireball Sound")]
-    [SerializeField] private AudioClip fireballSound;
-    private float cooldownTimer = Mathf.Infinity;
+    [SerializeField] private AudioClip _fireballSound;
+    private float _cooldownTimer = Mathf.Infinity;
 
-    private Animator anim;
-    private EnemyPatrol enemyPatrol;
+    private Animator _animator;
+    private EnemyPatrol _enemyPatrol;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        _animator = GetComponent<Animator>();
+        _enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
     private void Update()
     {
-        cooldownTimer += Time.deltaTime;
+        _cooldownTimer += Time.deltaTime;
         if (PlayerInSight())
         {
-            if (cooldownTimer >= attackCooldown)
+            if (_cooldownTimer >= _attackCooldown)
             {
-                cooldownTimer = 0;
-                anim.SetTrigger("rangedAttack");
+                _cooldownTimer = 0;
+                _animator.SetTrigger("rangedAttack");
             }
         }
-        if (enemyPatrol != null)
+        if (_enemyPatrol != null)
         {
-            enemyPatrol.enabled = !PlayerInSight();
+            _enemyPatrol.enabled = !PlayerInSight();
         }
     }
 
     private bool PlayerInSight()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
-                                             new Vector2(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y),
-                                             0, Vector2.left, 0, playerLayer);
+        RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+                                             new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y),
+                                             0, Vector2.left, 0, _playerLayer);
 
         return hit.collider != null;
     }
@@ -60,23 +60,23 @@ public class RangedEnemy : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
-                             new Vector2(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y));
+        Gizmos.DrawWireCube(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+                             new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y));
     }
 
     private void RangedAttack()
     {
-        SoundManager.instance.PlaySound(fireballSound, gameObject);
-        cooldownTimer = 0;
-        fireballs[FindFireball()].transform.position = firepoint.position;
-        fireballs[FindFireball()].GetComponent<EnemyProjectile>().ActivateProjectile();
+        SoundManager.instance.PlaySound(_fireballSound, gameObject);
+        _cooldownTimer = 0;
+        _fireballs[FindFireball()].transform.position = _firepoint.position;
+        _fireballs[FindFireball()].GetComponent<EnemyProjectile>().ActivateProjectile();
     }
 
     private int FindFireball()
     {
-        for (int i = 0; i < fireballs.Length; i++)
+        for (int i = 0; i < _fireballs.Length; i++)
         {
-            if (!fireballs[i].activeInHierarchy)
+            if (!_fireballs[i].activeInHierarchy)
             {
                 return i;
             }

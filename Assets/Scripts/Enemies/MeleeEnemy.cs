@@ -5,57 +5,56 @@ using UnityEngine;
 public class MeleeEnemy : MonoBehaviour
 {
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown;
-    [SerializeField] private int damage;
-    [SerializeField] private float range;
+    [SerializeField] private float _attackCooldown;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _range;
 
     [Header("Collider Parameters")]
-    [SerializeField] private float colliderDistance;
-    [SerializeField] private BoxCollider2D boxCollider;
+    [SerializeField] private float _colliderDistance;
+    [SerializeField] private BoxCollider2D _boxCollider;
 
     [Header("Player Layer")]
-    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private LayerMask _playerLayer;
 
     [Header("Attack Sound")]
-    [SerializeField] private AudioClip attackSound;
-    private float cooldownTimer = Mathf.Infinity;
-
-    private Animator anim;
-    private Health playerHealth;
-    private EnemyPatrol enemyPatrol;
+    [SerializeField] private AudioClip _attackSound;
+    private float _cooldownTimer = Mathf.Infinity;
+    private Health _playerHealth;
+    private EnemyPatrol _enemyPatrol;
+    private Animator _animator;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        _animator = GetComponent<Animator>();
+        _enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
     private void Update()
     {
-        cooldownTimer += Time.deltaTime;
+        _cooldownTimer += Time.deltaTime;
         if (PlayerInSight())
         {
-            if (cooldownTimer >= attackCooldown && playerHealth.currentHealth > 0)
+            if (_cooldownTimer >= _attackCooldown && _playerHealth.currentHealth > 0)
             {
-                cooldownTimer = 0;
-                anim.SetTrigger("meleeAttack");
-                SoundManager.instance.PlaySound(attackSound, gameObject);
+                _cooldownTimer = 0;
+                _animator.SetTrigger("meleeAttack");
+                SoundManager.instance.PlaySound(_attackSound, gameObject);
             }
         }
-        if (enemyPatrol != null)
+        if (_enemyPatrol != null)
         {
-            enemyPatrol.enabled = !PlayerInSight();
+            _enemyPatrol.enabled = !PlayerInSight();
         }
     }
 
     private bool PlayerInSight()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
-                                             new Vector2(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y),
-                                             0, Vector2.left, 0, playerLayer);
+        RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+                                             new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y),
+                                             0, Vector2.left, 0, _playerLayer);
         if (hit.collider != null)
         {
-            playerHealth = hit.transform.GetComponent<Health>();
+            _playerHealth = hit.transform.GetComponent<Health>();
         }
 
         return hit.collider != null;
@@ -64,8 +63,8 @@ public class MeleeEnemy : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
-                             new Vector2(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y));
+        Gizmos.DrawWireCube(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+                             new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y));
     }
 
     private void DamagePlayer()
@@ -73,7 +72,7 @@ public class MeleeEnemy : MonoBehaviour
         // Checks if the player is still in sight
         if (PlayerInSight())
         {
-            playerHealth.TakeDamage(damage);
+            _playerHealth.TakeDamage(_damage);
         }
     }
 }

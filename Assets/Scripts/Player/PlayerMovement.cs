@@ -16,11 +16,11 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     [SerializeField] private float groundCheckWidth = 1.0f;
     [SerializeField] private float groundCheckHeight = 0.1f;
-    private SpriteRenderer playerSpriteRenderer;
-    private int facingDirection = 1;
+    private SpriteRenderer _playerSpriteRenderer;
+    private int _facingDirection = 1;
 
 
-    private GameObject equippedEars;
+    private GameObject _equippedEars;
 
 
 
@@ -33,33 +33,33 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Multiple Jumps")]
     [SerializeField] private int baseExtraJumps;
-    private int extraJumps;
-    private float jumpPower;
-    private bool hasPowerUp = false;
-    private int jumpCounter;
+    private int _extraJumps;
+    private float _jumpPower;
+    private bool _hasPowerUp = false;
+    private int _jumpCounter;
     public float normalGrav = 2f;
     public float maxFallSpeed = 100f;
 
     public static PlayerMovement instance; // Singleton instance
-    private Rigidbody2D body;
-    private Animator anim;
-    private BoxCollider2D boxCollider;
+    private Rigidbody2D _rigidbody2D;
+    private Animator _animator;
+    private BoxCollider2D _boxCollider;
 
     // Movement and state tracking variables
-    private float horizontalInput;
-    private float coyoteCounter;
-    private float wallJumpCooldown;
-    private float disableMovementTimer;
-    private float timeSinceGrounded;
+    private float _horizontalInput;
+    private float _coyoteCounter;
+    private float _wallJumpCooldown;
+    private float _disableMovementTimer;
+    private float _timeSinceGrounded;
     // Add these fields to your PlayerMovement class
     [Header("Recoil Settings")]
     public float recoilForce = 10f;
     public float recoilDuration = 0.3f;
     public float recoilVerticalForce = 5f; // Optional upward force during recoil
 
-    private bool isInRecoil = false;
-    private float recoilTimer = 0f;
-    private Vector2 recoilDirection;
+    private bool _isInRecoil = false;
+    private float _recoilTimer = 0f;
+    private Vector2 _recoilDirection;
 
     // For Testing
     public float Speed
@@ -70,8 +70,8 @@ public class PlayerMovement : MonoBehaviour
 
     public float JumpPower
     {
-        get => jumpPower;
-        set => jumpPower = value;
+        get => _jumpPower;
+        set => _jumpPower = value;
     }
 
     public LayerMask GroundLayer
@@ -83,8 +83,8 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        jumpPower = baseJumpPower;
-        extraJumps = baseExtraJumps;
+        _jumpPower = baseJumpPower;
+        _extraJumps = baseExtraJumps;
         InitializeComponents();
     }
 
@@ -92,10 +92,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void InitializeComponents()
     {
-        body = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        playerSpriteRenderer = GetComponent<SpriteRenderer>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _boxCollider = GetComponent<BoxCollider2D>();
+        _playerSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -104,18 +104,18 @@ public class PlayerMovement : MonoBehaviour
         HandleRecoil();
         HandleMovementInput();
         UpdateAnimationParameters();
-        updateEarsPosition();
+        UpdateEarsPosition();
         UpdateGravityAndWallInteraction();
-        resetExtraJumps();
+        ResetExtraJumps();
         HandleJumpInput();
     }
 
 
-    private void updateEarsPosition()
+    private void UpdateEarsPosition()
     {
-        if (playerSpriteRenderer.sprite != null)
+        if (_playerSpriteRenderer.sprite != null)
         {
-            string spriteName = playerSpriteRenderer.sprite.name;
+            string spriteName = _playerSpriteRenderer.sprite.name;
 
             Vector3 newPosition;
 
@@ -142,36 +142,36 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateTimers()
     {
         // Reduce disable movement timer
-        if (disableMovementTimer > 0)
+        if (_disableMovementTimer > 0)
         {
-            disableMovementTimer -= Time.deltaTime;
+            _disableMovementTimer -= Time.deltaTime;
         }
 
         // Track time since player was grounded
-        timeSinceGrounded = isGrounded() ? 0 : timeSinceGrounded + Time.deltaTime;
+        _timeSinceGrounded = IsGrounded() ? 0 : _timeSinceGrounded + Time.deltaTime;
     }
 
     private void HandleMovementInput()
     {
-        if (!isAIControlled && disableMovementTimer <= 0)
+        if (!isAIControlled && _disableMovementTimer <= 0)
         {
-            horizontalInput = Input.GetAxis("Horizontal");
+            _horizontalInput = Input.GetAxis("Horizontal");
         }
 
-        // Only allow horizontal movement if disableMovementTimer is over and not blocked
-        if (disableMovementTimer <= 0 && !IsHorizontallyBlocked())
+        // Only allow horizontal movement if _disableMovementTimer is over and not blocked
+        if (_disableMovementTimer <= 0 && !IsHorizontallyBlocked())
         {
-            if (Mathf.Abs(horizontalInput) > 0.01f)
+            if (Mathf.Abs(_horizontalInput) > 0.01f)
             {
                 // Slightly lift the player to help with small bumps
                 transform.position += new Vector3(0f, 0.001f, 0f);
             }
-            body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
+            _rigidbody2D.velocity = new Vector2(_horizontalInput * speed, _rigidbody2D.velocity.y);
         }
-        else if (IsHorizontallyBlocked() && !isGrounded())
+        else if (IsHorizontallyBlocked() && !IsGrounded())
         {
             // If blocked horizontally and not grounded, ensure falling
-            body.velocity = new Vector2(0f, body.velocity.y);
+            _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
         }
 
         // Flips the player sprite when moving left and right
@@ -181,31 +181,31 @@ public class PlayerMovement : MonoBehaviour
     // AI can set movement input using this method
     public void SetAIInput(float moveDirection)
     {
-        if (isAIControlled && disableMovementTimer <= 0)
+        if (isAIControlled && _disableMovementTimer <= 0)
         {
-            horizontalInput = moveDirection;
+            _horizontalInput = moveDirection;
         }
     }
 
     private bool IsHorizontallyBlocked()
     {
         // Don't check for blocking during recoil (let recoil push through briefly)
-        if (isInRecoil && recoilTimer > recoilDuration * 0.7f) // Only for first 70% of recoil
+        if (_isInRecoil && _recoilTimer > recoilDuration * 0.7f) // Only for first 70% of recoil
         {
             return false;
         }
-        // 1) Don’t even raycast if you're not trying to move horizontally.
-        if (Mathf.Approximately(horizontalInput, 0f))
+        // 1) Don't even raycast if you're not trying to move horizontally.
+        if (Mathf.Approximately(_horizontalInput, 0f))
             return false;
 
-        // 2) Decide “forward” based on which way the player is facing.
+        // 2) Decide "forward" based on which way the player is facing.
         //    If you already flip your sprite via localScale.x, you can use that:
-        Vector2 checkDirection = facingDirection == 1 ? Vector2.right : Vector2.left;
+        Vector2 checkDirection = _facingDirection == 1 ? Vector2.right : Vector2.left;
 
-        Vector2 size = boxCollider.bounds.size;
+        Vector2 size = _boxCollider.bounds.size;
         size.y += 0.015f; // increase height a little
 
-        Vector2 center = boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
+        Vector2 center = _boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
 
         // 3) Perform the short box-cast in front of the player only.
         RaycastHit2D hit = Physics2D.BoxCast(
@@ -237,84 +237,84 @@ public class PlayerMovement : MonoBehaviour
 
     private void FlipSprite()
     {
-        if (horizontalInput > 0.01f)
+        if (_horizontalInput > 0.01f)
         {
             transform.localScale = Vector3.one;
-            facingDirection = 1;
+            _facingDirection = 1;
         }
-        else if (horizontalInput < -0.01f)
+        else if (_horizontalInput < -0.01f)
         {
             transform.localScale = new Vector3(-1, 1, 1);
-            facingDirection = -1;
+            _facingDirection = -1;
         }
     }
 
     private void UpdateAnimationParameters()
     {
-        anim.SetBool("running", horizontalInput != 0);
-        anim.SetBool("grounded", isGrounded());
+        _animator.SetBool("running", _horizontalInput != 0);
+        _animator.SetBool("grounded", IsGrounded());
     }
 
     private void UpdateGravityAndWallInteraction()
     {
-        if (wallJumpCooldown > 0.24f)
+        if (_wallJumpCooldown > 0.24f)
         {
             HandleWallInteraction();
         }
         else
         {
-            wallJumpCooldown += Time.deltaTime;
+            _wallJumpCooldown += Time.deltaTime;
         }
-        if (body.velocity.y < -maxFallSpeed)
+        if (_rigidbody2D.velocity.y < -maxFallSpeed)
         {
-            body.velocity = new Vector2(body.velocity.x, -maxFallSpeed);
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, -maxFallSpeed);
         }
     }
 
-    private void resetExtraJumps()
+    private void ResetExtraJumps()
     {
-        if (isGrounded() && body.velocity.y == 0)
+        if (IsGrounded() && _rigidbody2D.velocity.y == 0)
         {
-            jumpCounter = extraJumps + 1;
+            _jumpCounter = _extraJumps + 1;
             //Move frome here
-            wallJumpCooldown = 0;
+            _wallJumpCooldown = 0;
         }
     }
 
     private void HandleWallInteraction()
     {
-        wallJumpCooldown += Time.deltaTime;
-        if (onWall() && horizontalInput != 0 && !isGrounded())
+        _wallJumpCooldown += Time.deltaTime;
+        if (OnWall() && _horizontalInput != 0 && !IsGrounded())
         {
-            if (timeSinceGrounded > groundedGraceTime)
+            if (_timeSinceGrounded > groundedGraceTime)
             {
                 // Stick to the wall
-                body.gravityScale = 5;
-                body.velocity = Vector2.zero;
+                _rigidbody2D.gravityScale = 5;
+                _rigidbody2D.velocity = Vector2.zero;
             }
             else
             {
                 // Within grace time, apply normal gravity and stop horizontal movement
-                body.gravityScale = normalGrav;
-                body.velocity = new Vector2(0, body.velocity.y);
+                _rigidbody2D.gravityScale = normalGrav;
+                _rigidbody2D.velocity = new Vector2(0, _rigidbody2D.velocity.y);
             }
         }
         else
         {
-            body.gravityScale = normalGrav;
+            _rigidbody2D.gravityScale = normalGrav;
             ManageCoyoteTime();
         }
     }
 
     private void ManageCoyoteTime()
     {
-        if (isGrounded())
+        if (IsGrounded())
         {
-            coyoteCounter = coyoteTime;
+            _coyoteCounter = coyoteTime;
         }
-        else if (coyoteCounter > 0) // Prevent coyoteCounter from going negative
+        else if (_coyoteCounter > 0) // Prevent coyoteCounter from going negative
         {
-            coyoteCounter -= Time.deltaTime;
+            _coyoteCounter -= Time.deltaTime;
         }
     }
 
@@ -327,7 +327,7 @@ public class PlayerMovement : MonoBehaviour
                 AttemptJump();
             }
 
-            if (Input.GetKeyUp(KeyCode.Space) && body.velocity.y > 0)
+            if (Input.GetKeyUp(KeyCode.Space) && _rigidbody2D.velocity.y > 0)
             {
                 AdjustJumpHeight();
             }
@@ -335,19 +335,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // In PlayerMovement.cs
-    private Coroutine currentAIJumpRoutine = null;
+    private Coroutine _currentAIJumpRoutine = null;
 
     public void SetAIJump(float jumpDuration)
     {
         if (isAIControlled)
         {
             // Stop any previous jump hold simulation if a new jump command comes
-            if (currentAIJumpRoutine != null || jumpDuration <= 0)
+            if (_currentAIJumpRoutine != null || jumpDuration <= 0)
             {
                 return; // No jump requested
             }
             // Start the new jump hold simulation
-            currentAIJumpRoutine = StartCoroutine(AIJumpRoutine(jumpDuration));
+            _currentAIJumpRoutine = StartCoroutine(AIJumpRoutine(jumpDuration));
         }
     }
 
@@ -358,21 +358,21 @@ public class PlayerMovement : MonoBehaviour
         {
             yield return new WaitForSeconds(jumpDuration); // Simulate holding the button
             // Check velocity *after* the wait
-            if (body.velocity.y > 0)
+            if (_rigidbody2D.velocity.y > 0)
             {
                 AdjustJumpHeight(); // Simulate releasing the jump button early
             }
-            currentAIJumpRoutine = null; // Mark the routine as finished 
+            _currentAIJumpRoutine = null; // Mark the routine as finished 
         }
     }
 
     // Add ResetState method if you don't have one, to clear the coroutine reference on episode reset
     public void ResetState()
     {
-        if (currentAIJumpRoutine != null)
+        if (_currentAIJumpRoutine != null)
         {
-            StopCoroutine(currentAIJumpRoutine);
-            currentAIJumpRoutine = null;
+            StopCoroutine(_currentAIJumpRoutine);
+            _currentAIJumpRoutine = null;
         }
         // ... other reset logic ...
     }
@@ -387,7 +387,7 @@ public class PlayerMovement : MonoBehaviour
         bool wasGroundJump = Jump();
 
         // Play jump sound when grounded
-        if (isGrounded())
+        if (IsGrounded())
         {
             SoundManager.instance.PlaySound(jumpSound, gameObject);
         }
@@ -398,19 +398,19 @@ public class PlayerMovement : MonoBehaviour
     // Handles adjustable jump height
     private void AdjustJumpHeight()
     {
-        body.velocity = new Vector2(body.velocity.x, body.velocity.y / 2);
-        coyoteCounter = 0;
+        _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _rigidbody2D.velocity.y / 2);
+        _coyoteCounter = 0;
     }
 
 
     private bool Jump()
     {
-        if (coyoteCounter <= 0 && !onWall() && jumpCounter <= 0)
+        if (_coyoteCounter <= 0 && !OnWall() && _jumpCounter <= 0)
         {
             return false;
         }
 
-        if (isGrounded())
+        if (IsGrounded())
         {
             PerformGroundJump();
             return true;
@@ -424,30 +424,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformGroundJump()
     {
-        body.velocity = new Vector2(body.velocity.x, jumpPower);
-        coyoteCounter = 0;
-        anim.SetTrigger("jump");
-        jumpCounter--;
+        _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpPower);
+        _coyoteCounter = 0;
+        _animator.SetTrigger("jump");
+        _jumpCounter--;
     }
 
     private void PerformWallOrAirJump()
     {
-        if (onWall() && !isGrounded() && timeSinceGrounded > groundedGraceTime && wallJumpCooldown > 0.05f)
+        if (OnWall() && !IsGrounded() && _timeSinceGrounded > groundedGraceTime && _wallJumpCooldown > 0.05f)
         {
             PerformWallJump();
         }
-        else if (coyoteCounter > 0) // Fix: Allow coyote jump only if counter is positive
+        else if (_coyoteCounter > 0) // Fix: Allow coyote jump only if counter is positive
         {
-            body.velocity = new Vector2(body.velocity.x, jumpPower);
-            coyoteCounter = 0; // Reset after using
-            jumpCounter--;
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpPower);
+            _coyoteCounter = 0; // Reset after using
+            _jumpCounter--;
         }
         else
         {
-            if (jumpCounter > 0)
+            if (_jumpCounter > 0)
             {
-                body.velocity = new Vector2(body.velocity.x, jumpPower);
-                jumpCounter--;
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpPower);
+                _jumpCounter--;
             }
         }
     }
@@ -455,22 +455,22 @@ public class PlayerMovement : MonoBehaviour
     private void PerformWallJump()
     {
         // Start cooldown for wall jump and disable movement
-        wallJumpCooldown = 0;
-        disableMovementTimer = 0.24f;
-        body.gravityScale = 6;
+        _wallJumpCooldown = 0;
+        _disableMovementTimer = 0.24f;
+        _rigidbody2D.gravityScale = 6;
 
         // Apply wall jump force (away from the wall)
-        horizontalInput = 0;
-        body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 12);
+        _horizontalInput = 0;
+        _rigidbody2D.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 10, 12);
         Vector3 s = transform.localScale;
         s.x = -s.x;
         transform.localScale = s;
-        facingDirection = -facingDirection;
-        jumpCounter--;
+        _facingDirection = -_facingDirection;
+        _jumpCounter--;
     }
     // HAS 2 BUGS!
 
-    public bool isGrounded()
+    public bool IsGrounded()
     {
         Vector2 boxCenter = groundCheck.position;
         Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckHeight); // e.g., width = 1f, height = 0.1f
@@ -480,13 +480,13 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    public bool onWall()
+    public bool OnWall()
     {
-        Vector2 size = boxCollider.bounds.size;
+        Vector2 size = _boxCollider.bounds.size;
         size.y += 0.025f; // increase height a little
 
         // Shift the center up by half of the added height
-        Vector2 center = boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
+        Vector2 center = _boxCollider.bounds.center + new Vector3(0, 0.025f / 2f, 0);
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(
             center,
@@ -499,59 +499,59 @@ public class PlayerMovement : MonoBehaviour
         return raycastHit.collider != null;
     }
 
-    public bool canAttack()
+    public bool CanAttack()
     {
-        return !onWall();
+        return !OnWall();
     }
 
     public void ResetCoyoteCounter()
     {
-        coyoteCounter = 0;
+        _coyoteCounter = 0;
     }
 
     public Vector2 GetVelocity()
     {
-        return GetComponent<Rigidbody2D>().velocity;
+        return _rigidbody2D.velocity;
     }
 
     void OnDisable()
     {
-        anim.SetBool("grounded", true);
-        anim.SetBool("running", false);  // Force running to stop
+        _animator.SetBool("grounded", true);
+        _animator.SetBool("running", false);  // Force running to stop
     }
 
     public int GetFacingDirection()
     {
-        return facingDirection;
+        return _facingDirection;
     }
 
     public void ActivatePowerUp(int bonusJumps, float bonusJumpPower)
     {
-        if (!hasPowerUp)
+        if (!_hasPowerUp)
         {
-            extraJumps += bonusJumps;
-            jumpPower += bonusJumpPower;
-            hasPowerUp = true;
+            _extraJumps += bonusJumps;
+            _jumpPower += bonusJumpPower;
+            _hasPowerUp = true;
         }
         // Spawn the ears and attach to the player
         if (earsSlot != null && earsPrefab != null)
         {
-            equippedEars = Instantiate(earsPrefab, earsSlot.position, Quaternion.identity, earsSlot);
+            _equippedEars = Instantiate(earsPrefab, earsSlot.position, Quaternion.identity, earsSlot);
         }
     }
 
     public void LosePowerUp()
     {
-        if (hasPowerUp)
+        if (_hasPowerUp)
         {
-            extraJumps = baseExtraJumps;
-            jumpPower = baseJumpPower;
-            hasPowerUp = false;
+            _extraJumps = baseExtraJumps;
+            _jumpPower = baseJumpPower;
+            _hasPowerUp = false;
         }
         // Remove the ears
-        if (equippedEars != null)
+        if (_equippedEars != null)
         {
-            Destroy(equippedEars);
+            Destroy(_equippedEars);
         }
     }
 
@@ -575,7 +575,7 @@ public class PlayerMovement : MonoBehaviour
         // Ensure minimum horizontal knockback (prevent getting stuck)
         if (Mathf.Abs(knockbackDirection.x) < 0.3f)
         {
-            knockbackDirection.x = facingDirection == 1 ? 0.5f : -0.5f;
+            knockbackDirection.x = _facingDirection == 1 ? 0.5f : -0.5f;
         }
 
         // Apply recoil
@@ -584,9 +584,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartRecoil(Vector2 direction)
     {
-        isInRecoil = true;
-        recoilTimer = recoilDuration;
-        recoilDirection = direction;
+        _isInRecoil = true;
+        _recoilTimer = recoilDuration;
+        _recoilDirection = direction;
 
         // Apply immediate force
         Vector2 recoilVelocity = new Vector2(
@@ -594,26 +594,26 @@ public class PlayerMovement : MonoBehaviour
             Mathf.Max(direction.y * recoilForce, recoilVerticalForce) // Ensure some upward movement
         );
 
-        body.velocity = recoilVelocity;
+        _rigidbody2D.velocity = recoilVelocity;
     }
 
     // Add this to your Update method (or wherever you handle movement)
     private void HandleRecoil()
     {
-        if (isInRecoil)
+        if (_isInRecoil)
         {
-            recoilTimer -= Time.deltaTime;
+            _recoilTimer -= Time.deltaTime;
 
             // Gradually reduce recoil influence
-            float recoilStrength = recoilTimer / recoilDuration;
+            float recoilStrength = _recoilTimer / recoilDuration;
 
-            if (recoilTimer <= 0f)
+            if (_recoilTimer <= 0f)
             {
-                isInRecoil = false;
+                _isInRecoil = false;
             }
             else
             {
-                disableMovementTimer = 0.08f;
+                _disableMovementTimer = 0.08f;
                 return; // Exit early to prevent normal movement during recoil
             }
         }

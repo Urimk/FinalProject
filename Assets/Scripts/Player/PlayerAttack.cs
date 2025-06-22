@@ -19,15 +19,15 @@ public class PlayerAttack : MonoBehaviour
 
 
 
-    private GameObject equippedWeaponObject;
+    private GameObject _equippedWeaponObject;
     private enum WeaponType { Fireball, Sword }
-    private WeaponType currentWeapon = WeaponType.Fireball;
-    private bool hasSword = false;
+    private WeaponType _currentWeapon = WeaponType.Fireball;
+    private bool _hasSword = false;
 
-    private Animator anim;
-    private PlayerMovement playerMovement;
-    private SpriteRenderer playerSpriteRenderer;
-    private float cooldownTimer = Mathf.Infinity;
+    private Animator _animator;
+    private PlayerMovement _playerMovement;
+    private SpriteRenderer _playerSpriteRenderer;
+    private float _cooldownTimer = Mathf.Infinity;
 
     // For Testing
     public bool IsGamePausedForTest { get; set; }
@@ -39,8 +39,8 @@ public class PlayerAttack : MonoBehaviour
 
     public bool HasSword
     {
-        get => hasSword;
-        set => hasSword = value;
+        get => _hasSword;
+        set => _hasSword = value;
     }
 
     public Transform FirePoint
@@ -55,26 +55,26 @@ public class PlayerAttack : MonoBehaviour
     }
     public float CooldownTimer
     {
-        get => cooldownTimer;
-        set => cooldownTimer = value;
+        get => _cooldownTimer;
+        set => _cooldownTimer = value;
     }
 
-    public void testAttack()
+    public void TestAttack()
     {
-        if (cooldownTimer >= attackCooldown)
+        if (_cooldownTimer >= attackCooldown)
         {
             // Attack logic here
             fireballs[FindFireballs()].transform.position = firePoint.position;
             fireballs[FindFireballs()].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
-            cooldownTimer = 0; // Reset cooldown after attack
+            _cooldownTimer = 0; // Reset cooldown after attack
         }
     }
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        playerMovement = GetComponent<PlayerMovement>();
-        playerSpriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
+        _playerMovement = GetComponent<PlayerMovement>();
+        _playerSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -86,23 +86,23 @@ public class PlayerAttack : MonoBehaviour
 
         if (!isAIControlled)
         {
-            if (Input.GetKey(KeyCode.LeftControl) && cooldownTimer > attackCooldown && playerMovement.canAttack())
+            if (Input.GetKey(KeyCode.LeftControl) && _cooldownTimer > attackCooldown && _playerMovement.CanAttack())
             {
                 Attack();
             }
         }
-        if (Input.GetKeyDown(KeyCode.LeftShift) && hasSword)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _hasSword)
         {
             ToggleWeapon();
         }
         UpdateSwordPosition();
-        cooldownTimer += Time.deltaTime;
+        _cooldownTimer += Time.deltaTime;
     }
 
     // AI can trigger attacks using this method
     public void SetAIAttack(bool attackPressed)
     {
-        if (isAIControlled && attackPressed && cooldownTimer > attackCooldown && playerMovement.canAttack())
+        if (isAIControlled && attackPressed && _cooldownTimer > attackCooldown && _playerMovement.CanAttack())
         {
             Attack();
         }
@@ -112,17 +112,17 @@ public class PlayerAttack : MonoBehaviour
     private void Attack()
     {
 
-        cooldownTimer = 0;
-        if (currentWeapon == WeaponType.Fireball)
+        _cooldownTimer = 0;
+        if (_currentWeapon == WeaponType.Fireball)
         {
             SoundManager.instance.PlaySound(fireballSound, gameObject);
-            anim.SetTrigger("attack");
+            _animator.SetTrigger("attack");
             int idx = FindFireballs();
             if (idx < 0) return;  // pool exhausted—skip shot (or expand pool)
             fireballs[idx].transform.position = firePoint.position;
             fireballs[idx].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
         }
-        else if (currentWeapon == WeaponType.Sword)
+        else if (_currentWeapon == WeaponType.Sword)
         {
             // Sword swing logic (melee)
             // You could do an animation trigger + detect enemies in a short radius
@@ -220,55 +220,48 @@ public class PlayerAttack : MonoBehaviour
 
     public void EquipWeapon()
     {
-        currentWeapon = WeaponType.Sword;
+        _currentWeapon = WeaponType.Sword;
 
         // Destroy any existing weapon object
-        if (equippedWeaponObject != null)
+        if (_equippedWeaponObject != null)
         {
-            Destroy(equippedWeaponObject);
+            Destroy(_equippedWeaponObject);
         }
 
         // Instantiate the sword in the weapon holder
-        equippedWeaponObject = Instantiate(swordPrefab, weaponHolder);
-        equippedWeaponObject.transform.localPosition = Vector3.zero; // adjust if needed
+        _equippedWeaponObject = Instantiate(swordPrefab, weaponHolder);
+        _equippedWeaponObject.transform.localPosition = Vector3.zero; // adjust if needed
     }
 
     public void UnequipWeapon()
     {
-        currentWeapon = WeaponType.Fireball;
+        _currentWeapon = WeaponType.Fireball;
 
         // Destroy the equipped weapon object
-        if (equippedWeaponObject != null)
+        if (_equippedWeaponObject != null)
         {
-            Destroy(equippedWeaponObject);
-            equippedWeaponObject = null;
+            Destroy(_equippedWeaponObject);
+            _equippedWeaponObject = null;
         }
     }
 
     private void ToggleWeapon()
     {
-        if (currentWeapon == WeaponType.Fireball)
+        if (_currentWeapon == WeaponType.Fireball)
         {
-            EquipWeapon(); // Equip the sword
+            EquipWeapon();
         }
         else
         {
-            // Switch to fireball
-            currentWeapon = WeaponType.Fireball;
-
-            if (equippedWeaponObject != null)
-            {
-                Destroy(equippedWeaponObject);
-            }
+            UnequipWeapon();
         }
     }
 
     private void UpdateSwordPosition()
     {
-        if (hasSword && playerSpriteRenderer.sprite != null)
+        if (hasSword && _playerSpriteRenderer.sprite != null)
         {
-            string spriteName = playerSpriteRenderer.sprite.name;
-
+            string spriteName = _playerSpriteRenderer.sprite.name;
             Vector3 newPosition;
 
             if (spriteName == "walk_04")

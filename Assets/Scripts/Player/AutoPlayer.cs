@@ -4,34 +4,37 @@ using UnityEngine;
 
 public class AutoPlayer : MonoBehaviour
 {
+    // This script seems to be a prototype or a specialized AI.
+    // Consider integrating its logic into PlayerMovement and PlayerAttack,
+    // and using the isAIControlled flag to enable AI behavior.
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
     public float detectionRange = 10f;
     public float fireballDodgeRange = 2f;
     public float fireRate = 1f;
 
-    private Rigidbody2D rb;
+    private Rigidbody2D _rigidbody2D;
     [SerializeField] private Transform boss;
-    private float fireTimer;
-    private bool isGrounded;
+    private float _fireTimer;
+    private bool _isGrounded;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
         if (boss == null) return;
 
-        fireTimer += Time.deltaTime;
+        _fireTimer += Time.deltaTime;
 
         MoveAI();
         AvoidFireballs();
 
-        if (fireTimer >= fireRate)
+        if (_fireTimer >= fireRate)
         {
-            fireTimer = 0;
+            _fireTimer = 0;
             ShootBoss();
         }
     }
@@ -70,12 +73,12 @@ public class AutoPlayer : MonoBehaviour
 
     void JumpOverBoss(float bossDirection)
     {
-        if (isGrounded) // Only jump if on the ground
+        if (_isGrounded) // Only jump if on the ground
         {
             float jumpSpeed = 5f;  // Adjust to control jump arc
             float jumpForwardBoost = 2f; // Adjust for forward movement
 
-            rb.velocity = new Vector2(bossDirection * jumpForwardBoost, jumpSpeed);
+            _rigidbody2D.velocity = new Vector2(bossDirection * jumpForwardBoost, jumpSpeed);
             Debug.Log("Jumping over the boss!");
         }
     }
@@ -104,21 +107,21 @@ public class AutoPlayer : MonoBehaviour
     void MoveTowards(float targetX)
     {
         float direction = targetX > transform.position.x ? 1 : -1;
-        rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+        _rigidbody2D.velocity = new Vector2(direction * moveSpeed, _rigidbody2D.velocity.y);
     }
 
     void MoveAwayFrom(float targetX)
     {
         float direction = targetX > transform.position.x ? -1 : 1;
-        rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+        _rigidbody2D.velocity = new Vector2(direction * moveSpeed, _rigidbody2D.velocity.y);
     }
 
     void Jump()
     {
-        if (isGrounded)
+        if (_isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            isGrounded = false;
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, jumpForce);
+            _isGrounded = false;
         }
     }
 
@@ -132,7 +135,7 @@ public class AutoPlayer : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            isGrounded = true;
+            _isGrounded = true;
         }
     }
 }

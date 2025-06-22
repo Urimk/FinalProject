@@ -9,63 +9,63 @@ public class PlayerRespawn : MonoBehaviour
     [SerializeField] private int lives = 3; // Set the number of lives in the Inspector
     [SerializeField] private Transform initialRoom;
 
-    private Transform currentCheckpoint;
-    private Health playerHealth;
-    private Transform currentRoom; // Tracks the currently active room
-    private UIManager uiManager;
+    private Transform _currentCheckpoint;
+    private Health _playerHealth;
+    private Transform _currentRoom; // Tracks the currently active room
+    private UIManager _uiManager;
 
-    private int scoreAtCheckpoint;
-    private float timeAtCheckpoint = 600f;
+    private int _scoreAtCheckpoint;
+    private float _timeAtCheckpoint = 600f;
 
     // List of rooms visited since the last checkpoint was activated
-    private List<Transform> roomsSinceCheckpoint = new List<Transform>();
+    private List<Transform> _roomsSinceCheckpoint = new List<Transform>();
 
     private void Awake()
     {
-        playerHealth = GetComponent<Health>();
-        uiManager = FindObjectOfType<UIManager>();
+        _playerHealth = GetComponent<Health>();
+        _uiManager = FindObjectOfType<UIManager>();
 
         // Set the initial checkpoint to the player's starting position
         GameObject initialCheckpoint = new GameObject("InitialCheckpoint");
         initialCheckpoint.transform.position = transform.position;
-        currentRoom = initialRoom;
+        _currentRoom = initialRoom;
 
         // Assign to starting room if provided
-        if (currentRoom != null)
+        if (_currentRoom != null)
         {
-            initialCheckpoint.transform.parent = currentRoom;
+            initialCheckpoint.transform.parent = _currentRoom;
         }
-        currentCheckpoint = initialCheckpoint.transform;
+        _currentCheckpoint = initialCheckpoint.transform;
     }
 
     // Called by Room or CameraController when the player enters a new room
     public void SetCurrentRoom(Transform newRoom)
     {
-        currentRoom = newRoom;
+        _currentRoom = newRoom;
 
         // Track rooms entered since the checkpoint
-        if (currentCheckpoint != null && newRoom != currentCheckpoint.parent)
+        if (_currentCheckpoint != null && newRoom != _currentCheckpoint.parent)
         {
-            if (!roomsSinceCheckpoint.Contains(newRoom))
-                roomsSinceCheckpoint.Add(newRoom);
+            if (!_roomsSinceCheckpoint.Contains(newRoom))
+                _roomsSinceCheckpoint.Add(newRoom);
         }
     }
 
     public void Respawn()
     {
-        playerHealth.setFirstHealth(0);
+        _playerHealth.SetFirstHealth(0);
         if (lives <= 0)
         {
-            uiManager.GameOver();
+            _uiManager.GameOver();
             return;
         }
 
         // Move player to the checkpoint
-        Transform respawnRoom = currentCheckpoint.parent;
-        transform.position = currentCheckpoint.position;
+        Transform respawnRoom = _currentCheckpoint.parent;
+        transform.position = _currentCheckpoint.position;
 
         // Reset all rooms visited since the checkpoint
-        foreach (var roomTransform in roomsSinceCheckpoint)
+        foreach (var roomTransform in _roomsSinceCheckpoint)
         {
             var roomComp = roomTransform.GetComponent<Room>();
             if (roomComp != null)
@@ -81,7 +81,7 @@ public class PlayerRespawn : MonoBehaviour
         }
 
         // Clear the visited rooms list
-        roomsSinceCheckpoint.Clear();
+        _roomsSinceCheckpoint.Clear();
 
         // Enter the respawn room
         if (respawnRoom != null)
@@ -90,9 +90,9 @@ public class PlayerRespawn : MonoBehaviour
         }
 
         // Respawn player health and restore state
-        playerHealth.HRespawn();
-        ScoreManager.Instance.SetScore(scoreAtCheckpoint);
-        TimerManager.Instance.SetRemainingTime(timeAtCheckpoint);
+        _playerHealth.Respawn();
+        ScoreManager.Instance.SetScore(_scoreAtCheckpoint);
+        TimerManager.Instance.SetRemainingTime(_timeAtCheckpoint);
 
         // Handle camera and room activation
         if (respawnRoom != null)
@@ -100,11 +100,11 @@ public class PlayerRespawn : MonoBehaviour
             groundManager?.OnPlayerRespawn();
             Camera.main.GetComponent<CameraController>().MoveToNewRoom(respawnRoom);
 
-            if (currentRoom != respawnRoom)
+            if (_currentRoom != respawnRoom)
             {
-                currentRoom?.GetComponent<Room>()?.ActivateRoom(false);
+                _currentRoom?.GetComponent<Room>()?.ActivateRoom(false);
                 respawnRoom.GetComponent<Room>().ActivateRoom(true);
-                currentRoom = respawnRoom;
+                _currentRoom = respawnRoom;
             }
         }
         else
@@ -123,15 +123,15 @@ public class PlayerRespawn : MonoBehaviour
             {
                 checkpoint.isActivated = true;
 
-                currentCheckpoint = collision.transform;
+                _currentCheckpoint = collision.transform;
                 SoundManager.instance.PlaySound(checkpointSound, gameObject);
-                scoreAtCheckpoint = ScoreManager.Instance.GetScore();
-                timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
+                _scoreAtCheckpoint = ScoreManager.Instance.GetScore();
+                _timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
 
                 // Clear the list of rooms visited since this new checkpoint
-                roomsSinceCheckpoint.Clear();
+                _roomsSinceCheckpoint.Clear();
 
-                Transform respawnRoom = currentCheckpoint.parent;
+                Transform respawnRoom = _currentCheckpoint.parent;
                 var roomComponent = respawnRoom.GetComponent<Room>();
                 roomComponent.RemoveCollectedDiamonds();
 

@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": true
+    },
+    "documentationRules": {
+      "companyName": "YourCompany",
+      "documentExposedElements": true,
+      "documentInternalElements": false
+    }
+  }
+}

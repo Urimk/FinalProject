@@ -1,21 +1,20 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEditor;
 
 using UnityEngine;
 public class Room : MonoBehaviour
 {
-    [SerializeField] private GameObject[] enemies;
-    [SerializeField] private GameObject[] Traps;
-    [SerializeField] private GameObject[] Collectables;
-    [SerializeField] private CameraController cam;
-    [SerializeField] private PlayerMovement pm;
-    [SerializeField] private PlayerRespawn pr;
-    private Vector3[] initialEnemyPositions;
-    private Quaternion[] initialEnemyRotations;
-    private Vector3[] initialTrapPositions;
-    private Vector3[] initialCollectablePositions;
+    [SerializeField] private GameObject[] _enemies;
+    [SerializeField] private GameObject[] _traps;
+    [SerializeField] private GameObject[] _collectables;
+    [SerializeField] private CameraController _cameraController;
+    [SerializeField] private PlayerMovement _playerMovement;
+    [SerializeField] private PlayerRespawn _playerRespawn;
+    private Vector3[] _initialEnemyPositions;
+    private Quaternion[] _initialEnemyRotations;
+    private Vector3[] _initialTrapPositions;
+    private Vector3[] _initialCollectablePositions;
 
 
     [Header("Room Settings")]
@@ -34,81 +33,81 @@ public class Room : MonoBehaviour
     public void EnterRoom()
     {
         // 1) Camera
-        cam.MoveToNewRoom(transform);
-        cam.SetCameraXFreeze(freezeCamX, xFreezeValue);
-        cam.SetChaseMode(isChase);
-        cam.SetChaseSpeed(chaseSpeed);
-        cam.SetChaseStart(chaseStartOffSet);
+        _cameraController.MoveToNewRoom(transform);
+        _cameraController.SetCameraXFreeze(freezeCamX, xFreezeValue);
+        _cameraController.SetChaseMode(isChase);
+        _cameraController.SetChaseSpeed(chaseSpeed);
+        _cameraController.SetChaseStart(chaseStartOffSet);
 
         // 2) Y-offset
         if (freezeCamY)
         {
-            cam.SetCameraYFreeze(yFreezeValue);
+            _cameraController.SetCameraYFreeze(yFreezeValue);
         }
         else
         {
-            cam.SetFollowPlayerY(yOffsetValue);
+            _cameraController.SetFollowPlayerY(yOffsetValue);
         }
 
 
 
         // 3) Gravity
-        pm.normalGrav = gravScaleValue;
-        pm.maxFallSpeed = maxFallSpeedValue;
+        _playerMovement.defaultGravityScale = gravScaleValue;
+        _playerMovement.maxFallSpeed = maxFallSpeedValue;
 
         // 4) Activate rooms
-        pr.SetCurrentRoom(transform);
+        _playerRespawn.SetCurrentRoom(transform);
     }
 
     private void Awake()
     {
         // Enemies
-        initialEnemyPositions = new Vector3[enemies.Length];
-        initialEnemyRotations = new Quaternion[enemies.Length];
-        for (int i = 0; i < enemies.Length; i++)
+        _initialEnemyPositions = new Vector3[_enemies.Length];
+        _initialEnemyRotations = new Quaternion[_enemies.Length];
+        for (int i = 0; i < _enemies.Length; i++)
         {
-            if (enemies[i] != null)
-                initialEnemyPositions[i] = enemies[i].transform.position;
-            initialEnemyRotations[i] = enemies[i].transform.rotation;
+            if (_enemies[i] != null)
+                _initialEnemyPositions[i] = _enemies[i].transform.position;
+            _initialEnemyRotations[i] = _enemies[i].transform.rotation;
 
         }
 
         // Traps
-        initialTrapPositions = new Vector3[Traps.Length];
-        for (int i = 0; i < Traps.Length; i++)
+        _initialTrapPositions = new Vector3[_traps.Length];
+        for (int i = 0; i < _traps.Length; i++)
         {
-            if (Traps[i] != null)
-                initialTrapPositions[i] = Traps[i].transform.position;
+            if (_traps[i] != null)
+                _initialTrapPositions[i] = _traps[i].transform.position;
         }
 
         // Collectables
-        initialCollectablePositions = new Vector3[Collectables.Length];
-        for (int i = 0; i < Collectables.Length; i++)
+        _initialCollectablePositions = new Vector3[_collectables.Length];
+        for (int i = 0; i < _collectables.Length; i++)
         {
-            if (Collectables[i] != null)
-                initialCollectablePositions[i] = Collectables[i].transform.position;
+            if (_collectables[i] != null)
+                _initialCollectablePositions[i] = _collectables[i].transform.position;
         }
     }
 
     public void ActivateRoom(bool _status)
     {
-        for (int i = 0; i < enemies.Length; i++)
+        for (int i = 0; i < _enemies.Length; i++)
         {
-            if (enemies[i] != null && enemies[i].GetComponent<Health>().getHealth() != 0f)
+            if (_enemies[i] != null && _enemies[i].GetComponent<Health>().GetHealth() != 0f)
             {
-                enemies[i].SetActive(_status);
+                _enemies[i].SetActive(_status);
 
                 if (_status)
                 {
                     // Reset enemy position when activating the room
-                    enemies[i].transform.position = initialEnemyPositions[i];
-                    enemies[i].transform.rotation = initialEnemyRotations[i];
+                    _enemies[i].transform.position = _initialEnemyPositions[i];
+                    _enemies[i].transform.rotation = _initialEnemyRotations[i];
 
                 }
                 else
                 {
                     // Deactivate all projectiles associated with the enemy
-                    EnemyProjectile[] projectiles = enemies[i].GetComponentsInChildren<EnemyProjectile>(true);
+                    EnemyProjectile[] projectiles = _enemies[i].GetComponentsInChildren<EnemyProjectile>(true);
                     foreach (var projectile in projectiles)
                     {
                         projectile.gameObject.SetActive(false);
@@ -121,35 +120,35 @@ public class Room : MonoBehaviour
     public void ResetRoom()
     {
         // Reset enemies
-        for (int i = 0; i < enemies.Length; i++)
+        for (int i = 0; i < _enemies.Length; i++)
         {
-            if (enemies[i] != null)
+            if (_enemies[i] != null)
             {
-                enemies[i].SetActive(true);
-                enemies[i].GetComponent<Health>().reEnableComponents();
-                enemies[i].GetComponent<Health>().ResetHealth();
-                enemies[i].transform.position = initialEnemyPositions[i];
-                enemies[i].transform.rotation = initialEnemyRotations[i];
+                _enemies[i].SetActive(true);
+                _enemies[i].GetComponent<Health>().ReEnableComponents();
+                _enemies[i].GetComponent<Health>().ResetHealth();
+                _enemies[i].transform.position = _initialEnemyPositions[i];
+                _enemies[i].transform.rotation = _initialEnemyRotations[i];
             }
         }
 
         // Reset traps
-        for (int i = 0; i < Traps.Length; i++)
+        for (int i = 0; i < _traps.Length; i++)
         {
-            if (Traps[i] != null)
+            if (_traps[i] != null)
             {
-                Traps[i].SetActive(true);
-                Traps[i].transform.position = initialTrapPositions[i];
+                _traps[i].SetActive(true);
+                _traps[i].transform.position = _initialTrapPositions[i];
             }
         }
 
         // Reset collectables
-        for (int i = 0; i < Collectables.Length; i++)
+        for (int i = 0; i < _collectables.Length; i++)
         {
-            if (Collectables[i] != null)
+            if (_collectables[i] != null)
             {
-                Collectables[i].SetActive(true);
-                Collectables[i].transform.position = initialCollectablePositions[i];
+                _collectables[i].SetActive(true);
+                _collectables[i].transform.position = _initialCollectablePositions[i];
             }
         }
     }
@@ -159,17 +158,17 @@ public class Room : MonoBehaviour
         List<GameObject> activeCollectables = new List<GameObject>();
         List<Vector3> activePositions = new List<Vector3>();
 
-        for (int i = 0; i < Collectables.Length; i++)
+        for (int i = 0; i < _collectables.Length; i++)
         {
-            if (Collectables[i] != null && Collectables[i].activeInHierarchy)
+            if (_collectables[i] != null && _collectables[i].activeInHierarchy)
             {
-                activeCollectables.Add(Collectables[i]);
-                activePositions.Add(initialCollectablePositions[i]);
+                activeCollectables.Add(_collectables[i]);
+                activePositions.Add(_initialCollectablePositions[i]);
             }
         }
 
-        Collectables = activeCollectables.ToArray();
-        initialCollectablePositions = activePositions.ToArray();
+        _collectables = activeCollectables.ToArray();
+        _initialCollectablePositions = activePositions.ToArray();
     }
 
 

@@ -5,52 +5,52 @@ using UnityEngine;
 public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private GroundManager groundManager;
-    [SerializeField] private PlayerAttack playerAttack;
+    [SerializeField] private PlayerAttack _playerAttack;
     [Header("Health")]
     [SerializeField] public float startingHealth;
     public float currentHealth { get; private set; }
-    private Animator anim;
+    private Animator _animator;
     public bool dead;
 
     [Header("iFrames")]
-    [SerializeField] private float iFramesDuration;
-    [SerializeField] private int numberOfFlashes;
-    private SpriteRenderer spriteRend;
+    [SerializeField] private float _iFramesDuration;
+    [SerializeField] private int _numberOfFlashes;
+    private SpriteRenderer _spriteRenderer;
 
     [Header("Components")]
-    [SerializeField] private Behaviour[] components;
+    [SerializeField] private Behaviour[] _components;
 
     [Header("Sounds")]
-    [SerializeField] private AudioClip deathSound;
-    [SerializeField] private AudioClip hurtSound;
+    [SerializeField] private AudioClip _deathSound;
+    [SerializeField] private AudioClip _hurtSound;
     public bool invulnerable;
-    private int isFirstHealth = 1;
-    private PlayerAI playerAI; // Reference to PlayerAI
-    private PlayerMovement player; // Reference to PlayerAI
+    private int _isFirstHealth = 1;
+    private PlayerAI _playerAI; // Reference to PlayerAI
+    private PlayerMovement _player; // Reference to PlayerAI
     [Header("Score")]
     [SerializeField] private int scoreValue = 100;
 
 
 
-    private float maxDamageThisFrame;
-    private bool isDamageQueued;
+    private float _maxDamageThisFrame;
+    private bool _isDamageQueued;
 
     private void Awake()
     {
         currentHealth = startingHealth;
-        playerAI = GetComponent<PlayerAI>(); // Get PlayerAI component
-        player = GetComponent<PlayerMovement>(); // Get PlayerAI component
-        anim = GetComponent<Animator>();
-        spriteRend = GetComponent<SpriteRenderer>();
+        _playerAI = GetComponent<PlayerAI>(); // Get PlayerAI component
+        _player = GetComponent<PlayerMovement>(); // Get PlayerAI component
+        _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void LateUpdate()
     {
-        if (isDamageQueued)
+        if (_isDamageQueued)
         {
-            ApplyDamage(maxDamageThisFrame);
-            maxDamageThisFrame = 0;
-            isDamageQueued = false;
+            ApplyDamage(_maxDamageThisFrame);
+            _maxDamageThisFrame = 0;
+            _isDamageQueued = false;
         }
     }
 
@@ -61,10 +61,10 @@ public class Health : MonoBehaviour, IDamageable
             return;
         }
         // Only queue the highest damage this frame
-        if (!isDamageQueued || damage > maxDamageThisFrame)
+        if (!_isDamageQueued || damage > _maxDamageThisFrame)
         {
-            maxDamageThisFrame = damage;
-            isDamageQueued = true;
+            _maxDamageThisFrame = damage;
+            _isDamageQueued = true;
             StartCoroutine(Invulnerability());
         }
     }
@@ -73,18 +73,18 @@ public class Health : MonoBehaviour, IDamageable
     {
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, startingHealth);
 
-        if (player != null)
+        if (_player != null)
         {
-            player.LosePowerUp();
+            _player.LosePowerUp();
         }
         if (currentHealth > 0)
         {
-            if (playerAI != null)
+            if (_playerAI != null)
             {
                 OnDamaged?.Invoke(damage); // Notify AI of damage
             }
-            anim.SetTrigger("hurt");
-            SoundManager.instance.PlaySound(hurtSound, gameObject);
+            _animator.SetTrigger("hurt");
+            SoundManager.instance.PlaySound(_hurtSound, gameObject);
 
         }
         else
@@ -92,12 +92,12 @@ public class Health : MonoBehaviour, IDamageable
             if (!dead)
             {
                 dead = true;
-                anim.SetTrigger("die");
+                _animator.SetTrigger("die");
                 if (groundManager != null)
                 {
                     groundManager.OnPlayerDeath();
                 }
-                foreach (Behaviour component in components)
+                foreach (Behaviour component in _components)
                 {
                     component.enabled = false;
                 }
@@ -105,12 +105,12 @@ public class Health : MonoBehaviour, IDamageable
                 {
                     ScoreManager.Instance.AddScore(scoreValue);
                 }
-                if (player != null)
+                if (_player != null)
                 {
-                    playerAttack.UnequipWeapon();
+                    _playerAttack.UnequipWeapon();
                 }
                 OnDamaged?.Invoke(damage); // Notify AI of damage
-                SoundManager.instance.PlaySound(deathSound, gameObject);
+                SoundManager.instance.PlaySound(_deathSound, gameObject);
             }
         }
     }
@@ -129,12 +129,12 @@ public class Health : MonoBehaviour, IDamageable
     {
         invulnerable = true;
         Physics2D.IgnoreLayerCollision(8, 9, true);
-        for (int i = 0; i < numberOfFlashes; i++)
+        for (int i = 0; i < _numberOfFlashes; i++)
         {
-            spriteRend.color = new Color(1, 0, 0, 0.5f);
-            yield return new WaitForSeconds(iFramesDuration / (numberOfFlashes * 2));
-            spriteRend.color = Color.white;
-            yield return new WaitForSeconds(iFramesDuration / (numberOfFlashes * 2));
+            _spriteRenderer.color = new Color(1, 0, 0, 0.5f);
+            yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
+            _spriteRenderer.color = Color.white;
+            yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
         }
         Physics2D.IgnoreLayerCollision(8, 9, false);
         invulnerable = false;
@@ -144,14 +144,14 @@ public class Health : MonoBehaviour, IDamageable
         gameObject.SetActive(false);
     }
 
-    public void HRespawn()
+    public void Respawn()
     {
         dead = false;
         AddHealth(startingHealth);
-        anim.ResetTrigger("die");
-        anim.Play("idle");
+        _animator.ResetTrigger("die");
+        _animator.Play("idle");
         StartCoroutine(Invulnerability());
-        foreach (Behaviour component in components)
+        foreach (Behaviour component in _components)
         {
             component.enabled = true;
         }
@@ -162,26 +162,26 @@ public class Health : MonoBehaviour, IDamageable
         dead = false;
     }
 
-    public void setFirstHealth(int firstHealth)
+    public void SetFirstHealth(int firstHealth)
     {
-        isFirstHealth = firstHealth;
+        _isFirstHealth = firstHealth;
     }
 
-    public int getFirstHealth()
+    public int GetFirstHealth()
     {
-        return isFirstHealth;
+        return _isFirstHealth;
     }
 
-    public void reEnableComponents()
+    public void ReEnableComponents()
     {
-        foreach (Behaviour component in components)
+        foreach (Behaviour component in _components)
         {
             component.enabled = true;
         }
         scoreValue = 0;
     }
 
-    public float getHealth()
+    public float GetHealth()
     {
         return currentHealth;
     }

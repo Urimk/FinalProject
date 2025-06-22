@@ -6,36 +6,36 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float speed;
-    private float direction;
-    private bool hit;
-    private float lifetime;
+    private float _direction;
+    private bool _hit;
+    private float _lifetime;
 
-    private BoxCollider2D boxCollider;
-    private Animator anim;
+    private BoxCollider2D _boxCollider;
+    private Animator _animator;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        _animator = GetComponent<Animator>();
+        _boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    // 1) In Projectile.cs, let lifetime continue (even when hit),
+    // 1) In Projectile.cs, let _lifetime continue (even when hit),
     //    and/or deactivate immediately on hit:
     private void Update()
     {
-        // Always update lifetime so we eventually Despawn()
-        lifetime += Time.deltaTime;
+        // Always update _lifetime so we eventually Despawn()
+        _lifetime += Time.deltaTime;
 
-        if (lifetime > 5f)
+        if (_lifetime > 5f)
         {
             Deactivate();
             return;
         }
 
-        if (hit)
+        if (_hit)
             return;
 
-        float movement = speed * Time.deltaTime * direction;
+        float movement = speed * Time.deltaTime * _direction;
         transform.Translate(movement, 0, 0);
     }
 
@@ -43,9 +43,9 @@ public class Projectile : MonoBehaviour
     {
         if (other.gameObject.name == "Door" || other.gameObject.tag == "NoCollision" || other.gameObject.tag == "Player") return;
 
-        hit = true;
-        boxCollider.enabled = false;
-        anim.SetTrigger("explosion");
+        _hit = true;
+        _boxCollider.enabled = false;
+        _animator.SetTrigger("explosion");
 
         if (other.TryGetComponent<IDamageable>(out var dmg) && other.gameObject.tag != "Player")
             dmg.TakeDamage(1);
@@ -57,26 +57,26 @@ public class Projectile : MonoBehaviour
     // common Deactivate helper
     private void Deactivate()
     {
-        hit = false;
-        boxCollider.enabled = true;
+        _hit = false;
+        _boxCollider.enabled = true;
         gameObject.SetActive(false);
     }
 
 
-    public void SetDirection(float _direction)
+    public void SetDirection(float direction)
     {
-        lifetime = 0;
-        direction = _direction;
+        _lifetime = 0;
+        _direction = direction;
         gameObject.SetActive(true);
-        hit = false;
+        _hit = false;
         // Check if the BoxCollider2D exists before enabling it
-        if (boxCollider != null)
+        if (_boxCollider != null)
         {
-            boxCollider.enabled = true; // Enable the collider if it exists
+            _boxCollider.enabled = true; // Enable the collider if it exists
         }
 
         float localScaleX = transform.localScale.x;
-        if (Mathf.Sign(localScaleX) != _direction)
+        if (Mathf.Sign(localScaleX) != direction)
         {
             localScaleX = -localScaleX;
         }

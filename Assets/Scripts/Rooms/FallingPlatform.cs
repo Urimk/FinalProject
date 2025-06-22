@@ -10,23 +10,23 @@ public class FallingPlatform : MonoBehaviour
     public GroundManager groundManager;
     public string playerTag = "Player"; // Tag of the player GameObject
 
-    private Vector3 originalPosition;
-    private bool isFalling = false;
-    private Transform playerOnPlatform = null;
-    private Vector3 lastPlatformPosition;
+    private Vector3 _originalPosition;
+    private bool _isFalling = false;
+    private Transform _playerOnPlatform = null;
+    private Vector3 _lastPlatformPosition;
 
     void Start()
     {
-        originalPosition = transform.position;
+        _originalPosition = transform.position;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(playerTag))
         {
-            playerOnPlatform = collision.transform;
+            _playerOnPlatform = collision.transform;
 
-            if (!isFalling)
+            if (!_isFalling)
             {
                 StartCoroutine(FallRoutine());
             }
@@ -35,44 +35,44 @@ public class FallingPlatform : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag(playerTag) && collision.transform == playerOnPlatform)
+        if (collision.CompareTag(playerTag) && collision.transform == _playerOnPlatform)
         {
-            playerOnPlatform = null;
+            _playerOnPlatform = null;
         }
     }
 
     IEnumerator FallRoutine()
     {
-        isFalling = true;
+        _isFalling = true;
         Vector3 startPosition = transform.position;
-        Vector3 targetPosition = originalPosition + Vector3.down * fallDistance;
+        Vector3 targetPosition = _originalPosition + Vector3.down * fallDistance;
         float elapsedTime = 0f;
 
-        lastPlatformPosition = startPosition;
+        _lastPlatformPosition = startPosition;
 
         while (elapsedTime < fallTime)
         {
             Vector3 currentTargetPos = Vector3.Lerp(startPosition, targetPosition, elapsedTime / fallTime);
-            Vector3 deltaMovement = currentTargetPos - lastPlatformPosition;
+            Vector3 deltaMovement = currentTargetPos - _lastPlatformPosition;
 
             transform.position = currentTargetPos;
 
-            if (playerOnPlatform != null)
+            if (_playerOnPlatform != null)
             {
-                playerOnPlatform.position += deltaMovement;
+                _playerOnPlatform.position += deltaMovement;
             }
 
-            lastPlatformPosition = transform.position;
+            _lastPlatformPosition = transform.position;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        Vector3 finalDelta = targetPosition - lastPlatformPosition;
+        Vector3 finalDelta = targetPosition - _lastPlatformPosition;
         transform.position = targetPosition;
 
-        if (playerOnPlatform != null)
+        if (_playerOnPlatform != null)
         {
-            playerOnPlatform.position += finalDelta;
+            _playerOnPlatform.position += finalDelta;
         }
 
         yield return new WaitForSeconds(stayTime);
@@ -88,9 +88,9 @@ public class FallingPlatform : MonoBehaviour
     // ✅ Add this method to reset the platform
     public void ResetPlatform()
     {
-        isFalling = false;
-        playerOnPlatform = null;
-        transform.position = originalPosition;
+        _isFalling = false;
+        _playerOnPlatform = null;
+        transform.position = _originalPosition;
         gameObject.SetActive(true);
     }
 }
