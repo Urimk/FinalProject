@@ -2441,7 +2441,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -9709,7 +9709,7 @@ MonoBehaviour:
   rb: {fileID: 0}
   movementSpeed: 0.5
   doRestHealth: 0
-  playerHealth: {fileID: 0}
+  playerHealth: {fileID: 1393604982}
   attackCooldown: 5
   fireballDamage: 1
   projectileSpeed: 2.5
@@ -10116,7 +10116,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 406f839c71f008241b369ea71dbd9c4c, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.15
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
