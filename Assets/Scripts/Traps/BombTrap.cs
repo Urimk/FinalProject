@@ -2,25 +2,25 @@
 // BombTrap.cs
 public class BombTrap : MonoBehaviour
 {
-    public GameObject explosionPrefab;
-    public float delayBeforeExplosion = 1.5f;
+    public GameObject ExplosionPrefab;
+    public float DelayBeforeExplosion = 1.5f;
 
-    private bool triggered = false;
+    private bool _triggered = false;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!triggered && other.CompareTag("Player"))
+        if (!_triggered && other.CompareTag("Player"))
         {
-            triggered = true;
+            _triggered = true;
             GetComponent<Animator>().SetTrigger("TriggerBomb");
         }
     }
 
     void Explode()
     {
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
         GetComponent<Animator>().SetTrigger("hide");
         gameObject.SetActive(false);
-        triggered = false;
+        _triggered = false;
     }
 }

@@ -11,34 +11,34 @@ using UnityEngine.SceneManagement;
 
 public class UsernameInputMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject usernameInputScreen; // The menu itself
-    [SerializeField] private TMP_InputField usernameInputField;
-    [SerializeField] private TextMeshProUGUI errorText; // Display errors if submission fails
+    [SerializeField] private GameObject _usernameInputScreen; // The menu itself
+    [SerializeField] private TMP_InputField _usernameInputField;
+    [SerializeField] private TextMeshProUGUI _errorText; // Display errors if submission fails
 
-    private bool isSubmitting = false; // Prevent multiple submissions
-    private static readonly Regex validCharacters = new Regex("^[a-zA-Z0-9]*$"); // Only allow letters & numbers
-    string leaderboardName;
+    private bool _isSubmitting = false; // Prevent multiple submissions
+    private static readonly Regex ValidCharacters = new Regex("^[a-zA-Z0-9]*$"); // Only allow letters & numbers
+    private string _leaderboardName;
 
     private void Start()
     {
-        leaderboardName = PlayerPrefs.GetString("LeaderboardName", "Level1_Normal");
+        _leaderboardName = PlayerPrefs.GetString("LeaderboardName", "Level1_Normal");
         Time.timeScale = 0; // Pause game
 
         // Set the character limit directly in TMP_InputField
-        usernameInputField.characterLimit = 12;
+        _usernameInputField.characterLimit = 12;
 
         // Ensure input field is selected and ready to type
-        usernameInputField.Select();
-        usernameInputField.ActivateInputField();
+        _usernameInputField.Select();
+        _usernameInputField.ActivateInputField();
 
         // Add listener to enforce only letters/numbers
-        usernameInputField.onValueChanged.AddListener(ValidateInput);
+        _usernameInputField.onValueChanged.AddListener(ValidateInput);
     }
 
     private void ValidateInput(string input)
     {
         // Remove invalid characters
-        usernameInputField.text = Regex.Replace(input, "[^a-zA-Z0-9]", "");
+        _usernameInputField.text = Regex.Replace(input, "[^a-zA-Z0-9]", "");
     }
 
     private void Update()
@@ -50,7 +50,7 @@ public class UsernameInputMenu : MonoBehaviour
         }
 
         // Check for Enter key submission
-        if (Input.GetKeyDown(KeyCode.Return) && !isSubmitting)
+        if (Input.GetKeyDown(KeyCode.Return) && !_isSubmitting)
         {
             SubmitScore();
         }
@@ -58,11 +58,11 @@ public class UsernameInputMenu : MonoBehaviour
 
     private void SubmitScore()
     {
-        string username = usernameInputField.text.Trim();
+        string username = _usernameInputField.text.Trim();
 
         if (string.IsNullOrEmpty(username))
         {
-            errorText.text = "Username cannot be empty!";
+            _errorText.text = "Username cannot be empty!";
             return;
         }
 
@@ -107,8 +107,8 @@ public class UsernameInputMenu : MonoBehaviour
         error =>
         {
             Debug.LogError("PlayFab Login Failed: " + error.GenerateErrorReport());
-            errorText.text = "Login failed!";
-            isSubmitting = false;
+            _errorText.text = "Login failed!";
+            _isSubmitting = false;
         });
     }
 
@@ -126,10 +126,10 @@ public class UsernameInputMenu : MonoBehaviour
         {
             Statistics = new List<StatisticUpdate>
             {
-                new StatisticUpdate { StatisticName = leaderboardName, Value = score }
+                new StatisticUpdate { StatisticName = _leaderboardName, Value = score }
             }
         };
-        Debug.Log("Submitting score to leaderboard: " + leaderboardName);
+        Debug.Log("Submitting score to leaderboard: " + _leaderboardName);
 
 
         PlayFabClientAPI.UpdatePlayerStatistics(request,
@@ -141,8 +141,8 @@ public class UsernameInputMenu : MonoBehaviour
             error =>
             {
                 Debug.LogError("Error submitting score: " + error.GenerateErrorReport());
-                errorText.text = "Submission failed!";
-                isSubmitting = false;
+                _errorText.text = "Submission failed!";
+                _isSubmitting = false;
             });
     }
 

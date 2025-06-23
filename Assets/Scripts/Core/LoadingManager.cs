@@ -7,7 +7,7 @@ public class LoadingManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            SceneManager.LoadScene(1);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         }
     }
 }

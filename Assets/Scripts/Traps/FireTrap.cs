@@ -4,36 +4,35 @@ using UnityEngine;
 
 public class FireTrap : MonoBehaviour
 {
-
-    [SerializeField] private int damage;
+    [SerializeField] private int _damage;
     [Header("FireTrap Timers")]
-    [SerializeField] private float activationDelay;
-    [SerializeField] private float activeTime;
+    [SerializeField] private float _activationDelay;
+    [SerializeField] private float _activeTime;
 
     [Header("Auto Cycle Settings")]
-    [SerializeField] private bool alwaysActive = false; // Flag to enable auto-cycling
+    [SerializeField] private bool _alwaysActive = false; // Flag to enable auto-cycling
     [Tooltip("Time to wait between cycles when in always active mode")]
-    [SerializeField] private float cycleWaitTime = 2f;
-    [SerializeField] private float cycleStartDelay = 0f;
+    [SerializeField] private float _cycleWaitTime = 2f;
+    [SerializeField] private float _cycleStartDelay = 0f;
 
     [Header("Sound")]
-    [SerializeField] private AudioClip fireSound;
-    private Animator anim;
-    private SpriteRenderer spriteRend;
-    private bool triggered; // when the trap is triggered (can be still inactive)
-    private bool active;
-    private Health playerHealth;
+    [SerializeField] private AudioClip _fireSound;
+    private Animator _anim;
+    private SpriteRenderer _spriteRend;
+    private bool _triggered; // when the trap is triggered (can be still inactive)
+    private bool _active;
+    private Health _playerHealth;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        spriteRend = GetComponent<SpriteRenderer>();
+        _anim = GetComponent<Animator>();
+        _spriteRend = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
     {
         // If always active mode is enabled, start the auto-cycle after delay
-        if (alwaysActive)
+        if (_alwaysActive)
         {
             StartCoroutine(StartAutoCycleWithDelay());
         }
@@ -41,17 +40,17 @@ public class FireTrap : MonoBehaviour
 
     private IEnumerator StartAutoCycleWithDelay()
     {
-        Debug.Log($"Starting cycle delay: {cycleStartDelay} seconds");
-        yield return new WaitForSeconds(cycleStartDelay);
+        Debug.Log($"Starting cycle delay: {_cycleStartDelay} seconds");
+        yield return new WaitForSeconds(_cycleStartDelay);
         Debug.Log("Cycle delay finished, starting auto-cycle");
         StartCoroutine(AutoCycleFireTrap());
     }
 
     private void Update()
     {
-        if (playerHealth != null && active)
+        if (_playerHealth != null && _active)
         {
-            playerHealth.TakeDamage(damage);
+            _playerHealth.TakeDamage(_damage);
         }
     }
 
@@ -59,17 +58,17 @@ public class FireTrap : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            playerHealth = collision.GetComponent<Health>();
+            _playerHealth = collision.GetComponent<Health>();
 
             // Only trigger manually if not in always active mode
-            if (!alwaysActive && !triggered)
+            if (!_alwaysActive && !_triggered)
             {
                 StartCoroutine(ActivateFireTrap());
             }
 
-            if (active)
+            if (_active)
             {
-                collision.GetComponent<Health>().TakeDamage(damage);
+                collision.GetComponent<Health>().TakeDamage(_damage);
             }
         }
     }
@@ -78,49 +77,49 @@ public class FireTrap : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            playerHealth = null;
+            _playerHealth = null;
         }
     }
 
     private IEnumerator ActivateFireTrap()
     {
         // Set the trap as triggered and change color to red as a warning signal
-        triggered = true;
-        spriteRend.color = Color.red;
+        _triggered = true;
+        _spriteRend.color = Color.red;
 
         // Wait for the activation delay, then reset color, mark trap as active, and play activation animation
-        yield return new WaitForSeconds(activationDelay);
-        SoundManager.instance.PlaySound(fireSound, gameObject);
-        spriteRend.color = Color.white;
-        active = true;
-        anim.SetBool("activated", true);
+        yield return new WaitForSeconds(_activationDelay);
+        SoundManager.instance.PlaySound(_fireSound, gameObject);
+        _spriteRend.color = Color.white;
+        _active = true;
+        _anim.SetBool("activated", true);
 
         // Wait for the active duration, then deactivate trap, reset triggered, and stop activation animation
-        yield return new WaitForSeconds(activeTime);
-        active = false;
-        triggered = false;
-        anim.SetBool("activated", false);
+        yield return new WaitForSeconds(_activeTime);
+        _active = false;
+        _triggered = false;
+        _anim.SetBool("activated", false);
     }
 
     private IEnumerator AutoCycleFireTrap()
     {
-        while (alwaysActive)
+        while (_alwaysActive)
         {
             // Warning phase (red color)
-            spriteRend.color = Color.red;
-            yield return new WaitForSeconds(activationDelay);
+            _spriteRend.color = Color.red;
+            yield return new WaitForSeconds(_activationDelay);
 
             // Active phase
-            SoundManager.instance.PlaySound(fireSound, gameObject);
-            spriteRend.color = Color.white;
-            active = true;
-            anim.SetBool("activated", true);
-            yield return new WaitForSeconds(activeTime);
+            SoundManager.instance.PlaySound(_fireSound, gameObject);
+            _spriteRend.color = Color.white;
+            _active = true;
+            _anim.SetBool("activated", true);
+            yield return new WaitForSeconds(_activeTime);
 
             // Inactive phase
-            active = false;
-            anim.SetBool("activated", false);
-            yield return new WaitForSeconds(cycleWaitTime);
+            _active = false;
+            _anim.SetBool("activated", false);
+            yield return new WaitForSeconds(_cycleWaitTime);
         }
     }
 }

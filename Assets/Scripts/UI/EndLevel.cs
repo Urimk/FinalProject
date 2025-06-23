@@ -3,21 +3,18 @@ using UnityEngine.UI;
 
 public class LevelEndTrigger : MonoBehaviour
 {
-
-    [SerializeField] private GameObject usernameInputScreen; // Reference to the username input screen
-    [SerializeField] private GameObject winScreen;  // Reference to the WinScreen object
-    [SerializeField] private Text winScoreText;     // Reference to the Text component for the score
-    [SerializeField] private Text healthBonusText;  // Reference to the Text component for health bonus
-    [SerializeField] private Text timeBonusText;    // Reference to the Text component for time bonus
-    [SerializeField] private Health playerHealth;   // Reference to the player's health script
-    [SerializeField] private Text totalScoreText;  // Reference to the total score Text component
-
+    [SerializeField] private GameObject _usernameInputScreen; // Reference to the username input screen
+    [SerializeField] private GameObject _winScreen;  // Reference to the WinScreen object
+    [SerializeField] private Text _winScoreText;     // Reference to the Text component for the score
+    [SerializeField] private Text _healthBonusText;  // Reference to the Text component for health bonus
+    [SerializeField] private Text _timeBonusText;    // Reference to the Text component for time bonus
+    [SerializeField] private Health _playerHealth;   // Reference to the player's health script
+    [SerializeField] private Text _totalScoreText;  // Reference to the total score Text component
 
     private const int HealthBonusValue = 500; // Points per heart
     private const int TimeBonusValue = 5;     // Points per second left
-    private bool isWinScreenActive = false;   // Track if the win screen is active=
-    private int totalScore; // Store total score
-
+    private bool _isWinScreenActive = false;   // Track if the win screen is active=
+    private int _totalScore; // Store total score
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -31,9 +28,8 @@ public class LevelEndTrigger : MonoBehaviour
 
             // Activate the WinScreen
             Time.timeScale = 0;
-            winScreen.SetActive(true);
-            isWinScreenActive = true; // Set this so Enter key works
-
+            _winScreen.SetActive(true);
+            _isWinScreenActive = true; // Set this so Enter key works
 
             // Display results
             DisplayResults();
@@ -43,34 +39,34 @@ public class LevelEndTrigger : MonoBehaviour
     private void DisplayResults()
     {
         int score = ScoreManager.Instance.score;
-        int healthBonus = (int)playerHealth.currentHealth * playerHealth.getFirstHealth() * HealthBonusValue;
+        int healthBonus = (int)_playerHealth.currentHealth * _playerHealth.getFirstHealth() * HealthBonusValue;
         int timeBonus = Mathf.FloorToInt(TimerManager.Instance.GetRemainingTime()) * TimeBonusValue;
+        _totalScore = score + healthBonus + timeBonus; // Calculate total score
 
-        totalScore = score + healthBonus + timeBonus; // Calculate total score
-
-        if (winScoreText != null)
+        if (_winScoreText != null)
         {
-            winScoreText.text = "Score: " + score;
+            _winScoreText.text = "Score: " + score;
         }
 
-        if (healthBonusText != null)
+        if (_healthBonusText != null)
         {
-            healthBonusText.text = "Health Bonus: " + healthBonus;
+            _healthBonusText.text = "Health Bonus: " + healthBonus;
         }
 
-        if (timeBonusText != null)
+        if (_timeBonusText != null)
         {
-            timeBonusText.text = "Time Bonus: " + timeBonus;
+            _timeBonusText.text = "Time Bonus: " + timeBonus;
         }
 
-        if (totalScoreText != null)
+        if (_totalScoreText != null)
         {
-            totalScoreText.text = "Total: " + totalScore; // Set the total score text
+            _totalScoreText.text = "Total: " + _totalScore; // Set the total score text
         }
     }
+
     private void Update()
     {
-        if (isWinScreenActive && Input.GetKeyDown(KeyCode.Return))
+        if (_isWinScreenActive && Input.GetKeyDown(KeyCode.Return))
         {
             ShowUsernameInputScreen();
         }
@@ -78,14 +74,13 @@ public class LevelEndTrigger : MonoBehaviour
 
     private void ShowUsernameInputScreen()
     {
-        winScreen.SetActive(false);
-        usernameInputScreen.SetActive(true);
-        isWinScreenActive = false;
+        _winScreen.SetActive(false);
+        _usernameInputScreen.SetActive(true);
+        _isWinScreenActive = false;
     }
 
     public int GetTotalScore()
     {
-        return totalScore;
+        return _totalScore;
     }
-
 }

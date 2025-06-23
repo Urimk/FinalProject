@@ -4,18 +4,16 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance { get; private set; }
 
-    private AudioSource soundSource;
-    private AudioSource musicSource;
+    private AudioSource _soundSource;
+    private AudioSource _musicSource;
 
-    [SerializeField] public AudioClip menuMusic;  // Serialized for Inspector
-    [SerializeField] public AudioClip level1Music; // Serialized for Inspector
-
-
+    [SerializeField] public AudioClip _menuMusic;  // Serialized for Inspector
+    [SerializeField] public AudioClip _level1Music; // Serialized for Inspector
 
     private void Awake()
     {
-        soundSource = GetComponent<AudioSource>();
-        musicSource = transform.GetChild(0).GetComponent<AudioSource>();
+        _soundSource = GetComponent<AudioSource>();
+        _musicSource = transform.GetChild(0).GetComponent<AudioSource>();
         if (instance == null)
         {
             instance = this;
@@ -33,7 +31,7 @@ public class SoundManager : MonoBehaviour
     {
         if (IsObjectVisible(caller))
         {
-            soundSource.PlayOneShot(sound);
+            _soundSource.PlayOneShot(sound);
         }
     }
 
@@ -64,11 +62,11 @@ public class SoundManager : MonoBehaviour
 
     public void ChangeSoundVolume(float _change)
     {
-        ChangeSourceVolume(1, "soundVolume", _change, soundSource);
+        ChangeSourceVolume(1, "soundVolume", _change, _soundSource);
     }
     public void ChangeMusicVolume(float _change)
     {
-        ChangeSourceVolume(0.3f, "musicVolume", _change, musicSource);
+        ChangeSourceVolume(0.3f, "musicVolume", _change, _musicSource);
     }
     private void ChangeSourceVolume(float baseVolume, string volumeName, float change, AudioSource source)
     {
@@ -106,10 +104,9 @@ public class SoundManager : MonoBehaviour
 
     public void ChangeMusic(AudioClip newClip)
     {
-        if (musicSource.clip == newClip) return; // Prevent restarting same music
+        if (_musicSource.clip == newClip) return; // Prevent restarting same music
 
-        musicSource.clip = newClip;
-        musicSource.Play();
+        _musicSource.clip = newClip;
+        _musicSource.Play();
     }
-
 }

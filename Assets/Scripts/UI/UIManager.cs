@@ -3,51 +3,51 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
-    private bool isGamePaused = false;
+    public static UIManager Instance;
+    private bool _isGamePaused = false;
     [Header("Game Over")]
-    [SerializeField] private GameObject gameOverScreen;
-    [SerializeField] private AudioClip gameOverSound;
+    [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private AudioClip _gameOverSound;
     [Header("Pause")]
-    [SerializeField] private GameObject pauseScreen;
-    [SerializeField] private GameObject winScreen; // Reference to WinScreen
+    [SerializeField] private GameObject _pauseScreen;
+    [SerializeField] private GameObject _winScreen; // Reference to WinScreen
 
     // For testing
     public GameObject GameOverScreen
     {
-        get { return gameOverScreen; }
-        set { gameOverScreen = value; }
+        get { return _gameOverScreen; }
+        set { _gameOverScreen = value; }
     }
 
     public GameObject PauseScreen
     {
-        get { return pauseScreen; }
-        set { pauseScreen = value; }
+        get { return _pauseScreen; }
+        set { _pauseScreen = value; }
     }
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
         else
         {
             Destroy(gameObject);
         }
-        gameOverScreen.SetActive(false);
-        pauseScreen.SetActive(false);
-        winScreen.SetActive(false); // Make sure WinScreen starts disabled
+        _gameOverScreen.SetActive(false);
+        _pauseScreen.SetActive(false);
+        _winScreen.SetActive(false); // Make sure WinScreen starts disabled
     }
 
     private void Update()
     {
         // Only listen for Esc key if WinScreen is not active
-        if (winScreen.activeInHierarchy) return;
+        if (_winScreen.activeInHierarchy) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (pauseScreen.activeInHierarchy)
+            if (_pauseScreen.activeInHierarchy)
             {
                 PauseGame(false);
             }
@@ -61,8 +61,8 @@ public class UIManager : MonoBehaviour
     #region Game Over
     public void GameOver()
     {
-        gameOverScreen.SetActive(true);
-        SoundManager.instance.PlaySound(gameOverSound, gameObject);
+        _gameOverScreen.SetActive(true);
+        SoundManager.instance.PlaySound(_gameOverSound, gameObject);
     }
 
     public void Restart()
@@ -88,8 +88,8 @@ public class UIManager : MonoBehaviour
     #region Pause
     public void PauseGame(bool status)
     {
-        pauseScreen.SetActive(status);
-        isGamePaused = status;
+        _pauseScreen.SetActive(status);
+        _isGamePaused = status;
         if (status)
         {
             Time.timeScale = 0;
@@ -102,7 +102,7 @@ public class UIManager : MonoBehaviour
 
     public bool IsGamePaused()
     {
-        return isGamePaused;
+        return _isGamePaused;
     }
 
     public void SoundVolume()

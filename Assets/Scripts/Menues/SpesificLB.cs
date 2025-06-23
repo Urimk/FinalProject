@@ -9,44 +9,39 @@ using UnityEngine;
 
 public class SpesificLB : MonoBehaviour
 {
-    [SerializeField] private AudioClip buttonClickSound;
-    [SerializeField] private GameObject leaderboards;
-    [SerializeField] private GameObject spesificLB; // Assign the spesificLB GameObject in the Inspector
-    [SerializeField] private TMP_Text[] top10Texts;
-    [SerializeField] private TMP_Text leaderboardTitle; // Reference to the title TMP_Text
+    [SerializeField] private AudioClip _buttonClickSound;
+    [SerializeField] private GameObject _leaderboards;
+    [SerializeField] private GameObject _spesificLB;
+    [SerializeField] private TMP_Text[] _top10Texts;
+    [SerializeField] private TMP_Text _leaderboardTitle;
 
-
-    private string leaderboardName;
+    private string _leaderboardName;
 
     public void SetLeaderboard(string name)
     {
-        leaderboardName = name;
-
-        // Format the leaderboard name to "Level X - Difficulty"
-        string[] parts = leaderboardName.Split('_');
+        _leaderboardName = name;
+        string[] parts = _leaderboardName.Split('_');
         if (parts.Length == 2)
         {
-            string level = parts[0].Replace("Level", "Level ");  // Ensure proper formatting (Level 1, Level 2, etc.)
-            string difficulty = parts[1];  // Easy, Normal, Hard
-            leaderboardTitle.text = $"{level} - {difficulty}";  // Update the title text
+            string level = parts[0].Replace("Level", "Level ");
+            string difficulty = parts[1];
+            _leaderboardTitle.text = $"{level} - {difficulty}";
         }
-
         LoadTop10Players();
     }
 
-
     public void BackToLeadearboards()
     {
-        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
-        spesificLB.SetActive(false);
-        leaderboards.SetActive(true);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
+        _spesificLB.SetActive(false);
+        _leaderboards.SetActive(true);
     }
 
     private void LoadTop10Players()
     {
         var request = new GetLeaderboardRequest
         {
-            StatisticName = leaderboardName,
+            StatisticName = _leaderboardName,
             StartPosition = 0,
             MaxResultsCount = 10
         };
@@ -55,15 +50,15 @@ public class SpesificLB : MonoBehaviour
         {
             if (result.Leaderboard == null || result.Leaderboard.Count == 0)
             {
-                Debug.LogError($"Leaderboard '{leaderboardName}' not found or has no entries.");
-                foreach (var text in top10Texts)
+                Debug.LogError($"Leaderboard '{_leaderboardName}' not found or has no entries.");
+                foreach (var text in _top10Texts)
                 {
                     text.text = "Leaderboard not found or empty";
                 }
                 return;
             }
 
-            for (int i = 0; i < top10Texts.Length; i++)
+            for (int i = 0; i < _top10Texts.Length; i++)
             {
                 if (i < result.Leaderboard.Count)
                 {
@@ -71,18 +66,18 @@ public class SpesificLB : MonoBehaviour
                     string rawName = entry.DisplayName ?? "Unknown";
                     string displayName = rawName.Split('_')[0];
                     int score = entry.StatValue;
-                    top10Texts[i].text = $"{i + 1}. {displayName}: {score}";
+                    _top10Texts[i].text = $"{i + 1}. {displayName}: {score}";
                 }
                 else
                 {
-                    top10Texts[i].text = (i + 1) + ". No score";
+                    _top10Texts[i].text = (i + 1) + ". No score";
                 }
             }
         },
         error =>
         {
-            Debug.LogError($"Error fetching leaderboard {leaderboardName}: {error.GenerateErrorReport()}");
-            foreach (var text in top10Texts)
+            Debug.LogError($"Error fetching leaderboard {_leaderboardName}: {error.GenerateErrorReport()}");
+            foreach (var text in _top10Texts)
             {
                 text.text = "Error loading leaderboard";
             }

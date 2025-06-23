@@ -12,27 +12,25 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     public float currentHealth { get; private set; }
 
-    [SerializeField] private Slider healthSlider;
-    [SerializeField] private GameObject spumPrefabObject;
-    [SerializeField] private Transform boss;  // Reference to the boss Transform
-    [SerializeField] private BossRewardManager rm;
-    [SerializeField] private bool isTraining;
-    [SerializeField] private GameObject trophy;
+    [SerializeField] private Slider _healthSlider;
+    [SerializeField] private GameObject _spumPrefabObject;
+    [SerializeField] private Transform _boss;  // Reference to the boss Transform
+    [SerializeField] private BossRewardManager _rm;
+    [SerializeField] private bool _isTraining;
+    [SerializeField] private GameObject _trophy;
 
-
-    private SPUM_Prefabs spumPrefabs;
-    private bool isDying = false;
+    private SPUM_Prefabs _spumPrefabs;
+    private bool _isDying = false;
 
     // Reference to BossEnemy script to access flame and warning marker
-    [SerializeField] private List<MonoBehaviour> bossScriptObjects; // Drag any boss component here (AIBoss or BossEnemy)
-    private List<IBoss> bossScripts = new List<IBoss>();
-
+    [SerializeField] private List<MonoBehaviour> _bossScriptObjects; // Drag any boss component here (AIBoss or BossEnemy)
+    private List<IBoss> _bossScripts = new List<IBoss>();
 
     private void Awake()
     {
-        if (spumPrefabObject != null)
+        if (_spumPrefabObject != null)
         {
-            spumPrefabs = spumPrefabObject.GetComponent<SPUM_Prefabs>();
+            _spumPrefabs = _spumPrefabObject.GetComponent<SPUM_Prefabs>();
         }
         else
         {
@@ -42,13 +40,13 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     void LateUpdate()
     {
-        if (healthSlider != null && boss != null)
+        if (_healthSlider != null && _boss != null)
         {
-            // Follow the boss’s position
-            healthSlider.transform.position = boss.transform.position + new Vector3(0, 2.6f, 0);
+            // Follow the boss's position
+            _healthSlider.transform.position = _boss.transform.position + new Vector3(0, 2.6f, 0);
 
             // Keep rotation fixed
-            healthSlider.transform.rotation = Quaternion.identity;
+            _healthSlider.transform.rotation = Quaternion.identity;
         }
     }
 
@@ -56,10 +54,10 @@ public class BossHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
-        foreach (var obj in bossScriptObjects)
+        foreach (var obj in _bossScriptObjects)
         {
             if (obj is IBoss boss)
-                bossScripts.Add(boss);
+                _bossScripts.Add(boss);
             else
                 Debug.LogError($"{obj.name} does not implement IBoss!");
         }
@@ -68,18 +66,17 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
-        rm.ReportTookDamage(damage);
+        _rm.ReportTookDamage(damage);
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthBar();
 
-        bool allIdle = bossScripts.TrueForAll(b => !b.IsCurrentlyChargingOrDashing());
-        if (spumPrefabs != null && !isDying && allIdle)
+        bool allIdle = _bossScripts.TrueForAll(b => !b.IsCurrentlyChargingOrDashing());
+        if (_spumPrefabs != null && !_isDying && allIdle)
         {
-            spumPrefabs.PlayAnimation(PlayerState.DAMAGED, 0);
+            _spumPrefabs.PlayAnimation(PlayerState.DAMAGED, 0);
             OnBossDamaged?.Invoke(damage);
         }
-
 
         if (currentHealth <= 0)
         {
@@ -95,9 +92,9 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     private void UpdateHealthBar()
     {
-        if (healthSlider != null)
+        if (_healthSlider != null)
         {
-            healthSlider.value = currentHealth / maxHealth;
+            _healthSlider.value = currentHealth / maxHealth;
         }
     }
     public event System.Action OnBossDied;
@@ -105,33 +102,33 @@ public class BossHealth : MonoBehaviour, IDamageable
     {
         Debug.Log("Boss Defeated!");
 
-        if (!isDying)
+        if (!_isDying)
         {
-            isDying = true;
+            _isDying = true;
 
-            if (spumPrefabs != null)
+            if (_spumPrefabs != null)
             {
-                spumPrefabs.PlayAnimation(PlayerState.DEATH, 0);
+                _spumPrefabs.PlayAnimation(PlayerState.DEATH, 0);
             }
 
             // Deactivate the health bar (slider)
-            if (healthSlider != null)
+            if (_healthSlider != null)
             {
-                healthSlider.gameObject.SetActive(false);
+                _healthSlider.gameObject.SetActive(false);
             }
             OnBossDied?.Invoke();
-            if (!isTraining)
+            if (!_isTraining)
             {
-                foreach (var boss in bossScripts)
+                foreach (var boss in _bossScripts)
                 {
                     boss.Die();
                 }
                 StartCoroutine(DestroyAfterAnimation());
             }
         }
-        if (trophy != null)
+        if (_trophy != null)
         {
-            trophy.SetActive(true);
+            _trophy.SetActive(true);
         }
     }
 
@@ -144,7 +141,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     public void ResetHealth()
     {
         currentHealth = maxHealth;
-        healthSlider.gameObject.SetActive(true);
-        isDying = false;
+        _healthSlider.gameObject.SetActive(true);
+        _isDying = false;
     }
 }

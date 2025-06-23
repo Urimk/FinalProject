@@ -5,8 +5,8 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
-    public int score = 0;
-    [SerializeField] public Text scoreText;
+    private int _score = 0;
+    [SerializeField] public Text _scoreText;
 
     private void Awake()
     {
@@ -29,26 +29,26 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScore(int amount)
     {
-        score += amount;
+        _score += amount;
         UpdateScoreText();
     }
 
     private void UpdateScoreText()
     {
-        if (scoreText != null)
+        if (_scoreText != null)
         {
-            scoreText.text = "SCORE: " + score;
+            _scoreText.text = "SCORE: " + _score;
         }
     }
 
     public int GetScore()
     {
-        return score;
+        return _score;
     }
 
     public void SetScore(int points)
     {
-        score = points;
+        _score = points;
         UpdateScoreText();
     }
 }

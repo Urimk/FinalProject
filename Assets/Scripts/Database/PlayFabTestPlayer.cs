@@ -7,16 +7,16 @@ using UnityEngine;
 
 public class PlayFabTestPlayers : MonoBehaviour
 {
-    private string testPlayerPrefix = "John_"; // Prefix for test players
-    private string leaderboardName = "Level1_Easy";
+    private string _testPlayerPrefix = "John_"; // Prefix for test players
+    private string _leaderboardName = "Level1_Easy";
 
-    void Start()
+    private void Start()
     {
-        string uniqueId = testPlayerPrefix + System.DateTime.UtcNow.Ticks; // Unique ID
+        string uniqueId = _testPlayerPrefix + System.DateTime.UtcNow.Ticks; // Unique ID
         LoginWithCustomID(uniqueId);
     }
 
-    void LoginWithCustomID(string customId)
+    private void LoginWithCustomID(string customId)
     {
         var request = new LoginWithCustomIDRequest
         {
@@ -35,7 +35,7 @@ public class PlayFabTestPlayers : MonoBehaviour
         });
     }
 
-    void SetDisplayName(string customId)
+    private void SetDisplayName(string customId)
     {
         string displayName = customId;
 
@@ -45,7 +45,7 @@ public class PlayFabTestPlayers : MonoBehaviour
             error => Debug.LogError("Failed to set display name: " + error.GenerateErrorReport()));
     }
 
-    void SubmitTestScore()
+    private void SubmitTestScore()
     {
         int randomScore = Random.Range(500, 2000); // Random test score
 
@@ -53,7 +53,7 @@ public class PlayFabTestPlayers : MonoBehaviour
         {
             Statistics = new List<StatisticUpdate>
             {
-                new StatisticUpdate { StatisticName = leaderboardName, Value = randomScore }
+                new StatisticUpdate { StatisticName = _leaderboardName, Value = randomScore }
             }
         };
 

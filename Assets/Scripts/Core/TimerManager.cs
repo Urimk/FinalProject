@@ -4,9 +4,9 @@ public class TimerManager : MonoBehaviour
 {
     public static TimerManager Instance;
 
-    [SerializeField] private float startingTime = 600f; // 10 minutes (600 seconds)
-    private float currentTime;
-    private bool isRunning = false;
+    [SerializeField] private float _startingTime = 600f; // 10 minutes (600 seconds)
+    private float _currentTime;
+    private bool _isRunning = false;
 
     private void Awake()
     {
@@ -23,30 +23,30 @@ public class TimerManager : MonoBehaviour
 
     private void Start()
     {
-        currentTime = startingTime;
-        isRunning = true;
+        _currentTime = _startingTime;
+        _isRunning = true;
     }
 
     private void Update()
     {
-        if (isRunning && currentTime > 0)
+        if (_isRunning && _currentTime > 0)
         {
-            currentTime -= Time.deltaTime;
+            _currentTime -= Time.deltaTime;
         }
     }
 
     public float GetRemainingTime()
     {
-        return Mathf.Max(0, currentTime);
+        return Mathf.Max(0, _currentTime);
     }
 
     public void SetRemainingTime(float time)
     {
-        currentTime = time;
+        _currentTime = time;
     }
 
     public void StopTimer()
     {
-        isRunning = false;
+        _isRunning = false;
     }
 }

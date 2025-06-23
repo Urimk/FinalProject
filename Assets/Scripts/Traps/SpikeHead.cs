@@ -5,44 +5,44 @@ using UnityEngine;
 public class SpikeHead : EnemyDamage
 {
     [Header("Spikehead Attributes")]
-    [SerializeField] private float speed;
-    [SerializeField] private float range;
-    [SerializeField] private float checkDelay;
-    [SerializeField] private float chargeDuration = 0.6f;
-    [SerializeField] private float chargeBackDistance = 1f;
-    [SerializeField] private float attackSpeedMultiplier = 2f;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _range;
+    [SerializeField] private float _checkDelay;
+    [SerializeField] private float _chargeDuration = 0.6f;
+    [SerializeField] private float _chargeBackDistance = 1f;
+    [SerializeField] private float _attackSpeedMultiplier = 2f;
 
-    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private LayerMask _playerLayer;
 
     [Header("Sound")]
-    [SerializeField] private AudioClip crashSound;
+    [SerializeField] private AudioClip _crashSound;
 
     [Header("Self-Deactivation")]
-    [SerializeField] private bool deactivateAfterCharge = false;
-    [SerializeField] private float deactivateDelay = 10f;
+    [SerializeField] private bool _deactivateAfterCharge = false;
+    [SerializeField] private float _deactivateDelay = 10f;
 
-    private Vector3[] directions = new Vector3[4];
-    private bool attacking;
-    private bool isCharging;
-    private float checkTimer;
-    private Vector3 destination;
+    private Vector3[] _directions = new Vector3[4];
+    private bool _attacking;
+    private bool _isCharging;
+    private float _checkTimer;
+    private Vector3 _destination;
 
-    private Coroutine selfDeactivationCoroutine = null; // Added to manage deactivation
+    private Coroutine _selfDeactivationCoroutine = null; // Added to manage deactivation
 
     private void Update()
     {
-        if (!attacking && !isCharging)
+        if (!_attacking && !_isCharging)
         {
-            checkTimer += Time.deltaTime;
-            if (checkTimer > checkDelay)
+            _checkTimer += Time.deltaTime;
+            if (_checkTimer > _checkDelay)
             {
                 CheckForPlayer();
             }
         }
 
-        if (attacking)
+        if (_attacking)
         {
-            transform.Translate(destination * Time.deltaTime * speed * attackSpeedMultiplier);
+            transform.Translate(_destination * Time.deltaTime * _speed * _attackSpeedMultiplier);
         }
     }
 
@@ -57,13 +57,13 @@ public class SpikeHead : EnemyDamage
     private void CheckForPlayer()
     {
         CalculateDirections();
-        for (int i = 0; i < directions.Length; i++)
+        for (int i = 0; i < _directions.Length; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, directions[i], range, playerLayer);
-            if (hit.collider != null && !attacking && !isCharging)
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, _directions[i], _range, _playerLayer);
+            if (hit.collider != null && !_attacking && !_isCharging)
             {
-                checkTimer = 0;
-                StartCoroutine(ChargeAndAttack(directions[i]));
+                _checkTimer = 0;
+                StartCoroutine(ChargeAndAttack(_directions[i]));
                 break; // only attack in one direction
             }
         }
@@ -71,21 +71,21 @@ public class SpikeHead : EnemyDamage
 
     private IEnumerator ChargeAndAttack(Vector3 direction)
     {
-        isCharging = true;
+        _isCharging = true;
 
         Vector3 chargeDirection = -direction.normalized;
         Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + chargeDirection * chargeBackDistance;
+        Vector3 targetPos = startPos + chargeDirection * _chargeBackDistance;
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, chargeDirection, chargeBackDistance, ~playerLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, chargeDirection, _chargeBackDistance, ~_playerLayer);
         bool canChargeBack = hit.collider == null;
 
         if (canChargeBack)
         {
             float elapsed = 0f;
-            while (elapsed < chargeDuration)
+            while (elapsed < _chargeDuration)
             {
-                transform.position = Vector3.Lerp(startPos, targetPos, elapsed / chargeDuration);
+                transform.position = Vector3.Lerp(startPos, targetPos, elapsed / _chargeDuration);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -95,9 +95,9 @@ public class SpikeHead : EnemyDamage
         {
             Vector3 reducedTargetPos = startPos + chargeDirection * 0.1f; // Small distance
             float elapsed = 0f;
-            while (elapsed < chargeDuration)
+            while (elapsed < _chargeDuration)
             {
-                transform.position = Vector3.Lerp(startPos, reducedTargetPos, elapsed / chargeDuration);
+                transform.position = Vector3.Lerp(startPos, reducedTargetPos, elapsed / _chargeDuration);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -106,28 +106,28 @@ public class SpikeHead : EnemyDamage
 
         yield return new WaitForSeconds(0.05f); // Tiny delay before attack starts
 
-        destination = direction.normalized;
-        attacking = true;
-        isCharging = false;
+        _destination = direction.normalized;
+        _attacking = true;
+        _isCharging = false;
 
         // --- Start of Self-Deactivation Logic ---
-        if (deactivateAfterCharge)
+        if (_deactivateAfterCharge)
         {
             // If a deactivation routine was already running (e.g., from a very rapid re-trigger, though unlikely), stop it.
-            if (selfDeactivationCoroutine != null)
+            if (_selfDeactivationCoroutine != null)
             {
-                StopCoroutine(selfDeactivationCoroutine);
+                StopCoroutine(_selfDeactivationCoroutine);
             }
-            selfDeactivationCoroutine = StartCoroutine(DeactivateRoutine());
+            _selfDeactivationCoroutine = StartCoroutine(DeactivateRoutine());
         }
         // --- End of Self-Deactivation Logic ---
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (SoundManager.instance != null && crashSound != null)
+        if (SoundManager.instance != null && _crashSound != null)
         {
-            SoundManager.instance.PlaySound(crashSound, gameObject);
+            SoundManager.instance.PlaySound(_crashSound, gameObject);
         }
         base.OnTriggerStay2D(collision); // Assuming EnemyDamage has OnTriggerStay2D
 
@@ -137,9 +137,9 @@ public class SpikeHead : EnemyDamage
         {
             // Determine recoil direction based on current state
             Vector3 recoilDirection;
-            if (attacking) // If was moving forward
+            if (_attacking) // If was moving forward
             {
-                recoilDirection = destination; // Recoil opposite to attack direction
+                recoilDirection = _destination; // Recoil opposite to attack direction
             }
             else // If hit during charge back or other states (less likely for this specific call point)
             {
@@ -147,7 +147,7 @@ public class SpikeHead : EnemyDamage
                 recoilDirection = (transform.position - collision.transform.position).normalized;
                 if (recoilDirection == Vector3.zero) // Avoid zero vector if positions are identical
                 {
-                    recoilDirection = -destination; // Fallback
+                    recoilDirection = -_destination; // Fallback
                     if (recoilDirection == Vector3.zero) recoilDirection = -transform.right; // Further fallback
                 }
             }
@@ -159,31 +159,31 @@ public class SpikeHead : EnemyDamage
 
     private void CalculateDirections()
     {
-        directions[0] = transform.right;
-        directions[1] = -transform.right;
-        directions[2] = transform.up;
-        directions[3] = -transform.up;
+        _directions[0] = transform.right;
+        _directions[1] = -transform.right;
+        _directions[2] = transform.up;
+        _directions[3] = -transform.up;
     }
 
     private void Stop()
     {
-        destination = Vector3.zero;
-        attacking = false;
-        isCharging = false;
+        _destination = Vector3.zero;
+        _attacking = false;
+        _isCharging = false;
 
         // --- Cancel pending self-deactivation if Stop is called ---
-        if (selfDeactivationCoroutine != null)
+        if (_selfDeactivationCoroutine != null)
         {
-            StopCoroutine(selfDeactivationCoroutine);
-            selfDeactivationCoroutine = null;
+            StopCoroutine(_selfDeactivationCoroutine);
+            _selfDeactivationCoroutine = null;
         }
         // --- End of cancellation logic ---
     }
 
     private IEnumerator Recoil(Vector3 hitDirection)
     {
-        attacking = false; // Stop attack movement during recoil
-        isCharging = false; // Ensure not in charging state
+        _attacking = false; // Stop attack movement during recoil
+        _isCharging = false; // Ensure not in charging state
 
         Vector3 startPos = transform.position;
         // Recoil slightly in the opposite direction of hitDirection
@@ -204,7 +204,7 @@ public class SpikeHead : EnemyDamage
     // --- New Coroutine for Self-Deactivation ---
     private IEnumerator DeactivateRoutine()
     {
-        yield return new WaitForSeconds(deactivateDelay);
+        yield return new WaitForSeconds(_deactivateDelay);
 
         // Check if the GameObject is still active before trying to deactivate it
         // (it might have been deactivated by other means)
@@ -212,7 +212,7 @@ public class SpikeHead : EnemyDamage
         {
             gameObject.SetActive(false);
         }
-        selfDeactivationCoroutine = null; // Clear the reference
+        _selfDeactivationCoroutine = null; // Clear the reference
     }
     // --- End of New Coroutine ---
 

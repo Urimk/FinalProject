@@ -9,22 +9,21 @@ using UnityEngine;
 
 public class LeaderboardMenu : MonoBehaviour
 {
-    [SerializeField] private AudioClip buttonClickSound;
-    [SerializeField] private GameObject mainMenu;
-    [SerializeField] private GameObject leaderboardMenu;
-    [SerializeField] private GameObject spesificLB;
-    [SerializeField] private TMP_Text[] leaderboardTexts; // Array for all 9 leaderboard cells
-    private int currentIndex;  // To store the index temporarily
+    [SerializeField] private AudioClip _buttonClickSound;
+    [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _leaderboardMenu;
+    [SerializeField] private GameObject _spesificLB;
+    [SerializeField] private TMP_Text[] _leaderboardTexts; // Array for all 9 leaderboard cells
+    private int _currentIndex;  // To store the index temporarily
 
-
-    private readonly string[] leaderboardNames =
+    private readonly string[] _leaderboardNames =
     {
         "Level1_Easy", "Level1_Normal", "Level1_Hard",
         "Level2_Easy", "Level2_Normal", "Level2_Hard",
         "Level3_Easy", "Level3_Normal", "Level3_Hard"
     };
 
-    void Start()
+    private void Start()
     {
         // Log in anonymously before accessing leaderboards
         LoginAnonymously();
@@ -52,22 +51,22 @@ public class LeaderboardMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
-        leaderboardMenu.SetActive(false);
-        mainMenu.SetActive(true);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
+        _leaderboardMenu.SetActive(false);
+        _mainMenu.SetActive(true);
     }
 
     public void ChooseLB(int index)
     {
-        if (index < 0 || index >= leaderboardNames.Length)
+        if (index < 0 || index >= _leaderboardNames.Length)
         {
             Debug.LogError("Invalid leaderboard index: " + index);
             return;
         }
-        spesificLB.SetActive(false);
+        _spesificLB.SetActive(false);
 
-        SoundManager.instance.PlaySound(buttonClickSound, gameObject);
-        leaderboardMenu.SetActive(false);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
+        _leaderboardMenu.SetActive(false);
 
         // Find the MainMenuManager and call SetLeaderboard directly
         MainMenuController mainMenuManager = FindObjectOfType<MainMenuController>();
@@ -76,7 +75,7 @@ public class LeaderboardMenu : MonoBehaviour
             SpesificLB spesificLBComponent = mainMenuManager.GetComponent<SpesificLB>();
             if (spesificLBComponent != null)
             {
-                spesificLBComponent.SetLeaderboard(leaderboardNames[index]);
+                spesificLBComponent.SetLeaderboard(_leaderboardNames[index]);
             }
             else
             {
@@ -88,22 +87,17 @@ public class LeaderboardMenu : MonoBehaviour
             Debug.LogError("MainMenuController not found.");
         }
 
-        spesificLB.SetActive(true);
+        _spesificLB.SetActive(true);
     }
-
-
-
-
-
 
     private void LoadTopPlayers()
     {
-        for (int i = 0; i < leaderboardNames.Length; i++)
+        for (int i = 0; i < _leaderboardNames.Length; i++)
         {
             int index = i; // Prevent closure issues in lambda expressions
             var request = new GetLeaderboardRequest
             {
-                StatisticName = leaderboardNames[index],
+                StatisticName = _leaderboardNames[index],
                 StartPosition = 0,
                 MaxResultsCount = 1 // Get only the top player
             };
@@ -116,17 +110,17 @@ public class LeaderboardMenu : MonoBehaviour
                     string rawName = topEntry.DisplayName ?? "Unknown";
                     string displayName = rawName.Split('_')[0]; // Remove unique suffix
                     int score = topEntry.StatValue;
-                    leaderboardTexts[index].text = $"{displayName}: {score}";
+                    _leaderboardTexts[index].text = $"{displayName}: {score}";
                 }
                 else
                 {
-                    leaderboardTexts[index].text = "No scores yet";
+                    _leaderboardTexts[index].text = "No scores yet";
                 }
             },
             error =>
             {
-                Debug.LogError($"Error fetching leaderboard {leaderboardNames[index]}: {error.GenerateErrorReport()}");
-                leaderboardTexts[index].text = "Error loading";
+                Debug.LogError($"Error fetching leaderboard {_leaderboardNames[index]}: {error.GenerateErrorReport()}");
+                _leaderboardTexts[index].text = "Error loading";
             });
         }
     }
