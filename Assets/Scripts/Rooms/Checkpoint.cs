@@ -2,5 +2,5 @@
 
 public class Checkpoint : MonoBehaviour
 {
-    public bool isActivated = false;
+    public bool IsActivated = false;
 }

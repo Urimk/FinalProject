@@ -5,28 +5,28 @@ using UnityEngine;
 public class EggLayingBird : MonoBehaviour
 {
     [Header("Egg Laying Parameters")]
-    [SerializeField] private float layCooldown = 2f;
-    [SerializeField] private Transform eggDropPoint;
-    [SerializeField] private GameObject[] eggPrefabs;
+    [SerializeField] private float _layCooldown = 2f;
+    [SerializeField] private Transform _eggDropPoint;
+    [SerializeField] private GameObject[] _eggPrefabs;
 
     [Header("Sound")]
-    [SerializeField] private AudioClip eggDropSound;
+    [SerializeField] private AudioClip _eggDropSound;
 
-    private float cooldownTimer = Mathf.Infinity;
-    private Animator anim;
+    private float _cooldownTimer = Mathf.Infinity;
+    private Animator _anim;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
+        _anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        cooldownTimer += Time.deltaTime;
+        _cooldownTimer += Time.deltaTime;
 
-        if (cooldownTimer >= layCooldown && layCooldown != 100)
+        if (_cooldownTimer >= _layCooldown && _layCooldown != 100)
         {
-            cooldownTimer = 0f;
+            _cooldownTimer = 0f;
             LayEgg();
             //anim.SetTrigger("layEgg");
         }
@@ -35,10 +35,10 @@ public class EggLayingBird : MonoBehaviour
     // Called by animation event
     private void LayEgg()
     {
-        SoundManager.instance.PlaySound(eggDropSound, gameObject);
+        SoundManager.instance.PlaySound(_eggDropSound, gameObject);
 
-        GameObject egg = eggPrefabs[FindInactiveEgg()];
-        egg.transform.position = eggDropPoint.position;
+        GameObject egg = _eggPrefabs[FindInactiveEgg()];
+        egg.transform.position = _eggDropPoint.position;
         egg.GetComponent<EnemyProjectile>().SetDirection(Vector2.down);
         egg.transform.rotation = Quaternion.identity;  // keep the sprite upright
         egg.GetComponent<EnemyProjectile>().ActivateProjectile();
@@ -48,9 +48,9 @@ public class EggLayingBird : MonoBehaviour
 
     private int FindInactiveEgg()
     {
-        for (int i = 0; i < eggPrefabs.Length; i++)
+        for (int i = 0; i < _eggPrefabs.Length; i++)
         {
-            if (!eggPrefabs[i].activeInHierarchy)
+            if (!_eggPrefabs[i].activeInHierarchy)
             {
                 return i;
             }

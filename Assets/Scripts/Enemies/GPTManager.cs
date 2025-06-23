@@ -10,13 +10,12 @@ using UnityEngine.Networking;
 
 public class GPTManager : MonoBehaviour
 {
-    private string apiKey;
-    private string apiUrl = "https://api.openai.com/v1/chat/completions";
+    private string _apiKey;
+    private string _apiUrl = "https://api.openai.com/v1/chat/completions";
 
     private void Start()
     {
-        // Load the API key from the file
-        apiKey = LoadApiKey();
+        _apiKey = LoadApiKey();
 
         // Continue with your logic...
     }
@@ -61,13 +60,13 @@ public class GPTManager : MonoBehaviour
         string json = JsonConvert.SerializeObject(requestData);
         byte[] postData = Encoding.UTF8.GetBytes(json);
 
-        UnityWebRequest request = new UnityWebRequest(apiUrl, "POST")
+        UnityWebRequest request = new UnityWebRequest(_apiUrl, "POST")
         {
             uploadHandler = new UploadHandlerRaw(postData),
             downloadHandler = new DownloadHandlerBuffer()
         };
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+        request.SetRequestHeader("Authorization", "Bearer " + _apiKey);
 
         yield return request.SendWebRequest();
 

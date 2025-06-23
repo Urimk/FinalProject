@@ -2,19 +2,19 @@
 // Explosion.cs
 public class Explosion : MonoBehaviour
 {
-    public float damage = 1f;
-    public float lifetime = 0.5f;
+    public float Damage = 1f;
+    public float Lifetime = 0.5f;
 
-    void Start()
+    private void Start()
     {
-        Destroy(gameObject, lifetime);
+        Destroy(gameObject, Lifetime);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<Health>().TakeDamage(damage);
+            other.GetComponent<Health>().TakeDamage(Damage);
         }
     }
 }

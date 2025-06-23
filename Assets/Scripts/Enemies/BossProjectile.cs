@@ -2,65 +2,54 @@
 
 public class BossProjectile : EnemyDamage
 {
-    [SerializeField] private float speed;
-    [SerializeField] private float size;
-    [SerializeField] private float resetTime;
-    private float lifeTime;
-    private Animator anim;
-    private bool hit;
-    private BoxCollider2D collid;
-    public BossRewardManager rm;
-
-
-    private Vector2 direction; // Stores movement direction
+    [SerializeField] private float _speed;
+    [SerializeField] private float _size;
+    [SerializeField] private float _resetTime;
+    private float _lifeTime;
+    private Animator _anim;
+    private bool _hit;
+    private BoxCollider2D _collid;
+    public BossRewardManager rewardManager;
+    private Vector2 _direction;
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        collid = GetComponent<BoxCollider2D>();
+        _anim = GetComponent<Animator>();
+        _collid = GetComponent<BoxCollider2D>();
     }
 
     public void ActivateProjectile()
     {
-        hit = false;
-        lifeTime = 0;
+        _hit = false;
+        _lifeTime = 0;
         gameObject.SetActive(true);
-        collid.enabled = true;
+        _collid.enabled = true;
     }
 
     public void Launch(Vector2 startPosition, Vector2 targetPosition, float speed)
     {
-
-        // Reset state variables
-        hit = false;
-        lifeTime = 0;
-
-        transform.localScale = new Vector3(size, size, 1f);
+        _hit = false;
+        _lifeTime = 0;
+        transform.localScale = new Vector3(_size, _size, 1f);
         transform.position = startPosition;
-        this.speed = speed;
-        direction = (targetPosition - startPosition).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        _speed = speed;
+        _direction = (targetPosition - startPosition).normalized;
+        float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-        // Activate projectile
         gameObject.SetActive(true);
-        collid.enabled = true;
+        _collid.enabled = true;
     }
 
     private void Update()
     {
-        if (hit) return;
-        // Move the projectile
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
-
-
-        // Handle lifetime
-        lifeTime += Time.deltaTime;
-        if (lifeTime > resetTime)
+        if (_hit) return;
+        transform.position += (Vector3)(_direction * _speed * Time.deltaTime);
+        _lifeTime += Time.deltaTime;
+        if (_lifeTime > _resetTime)
         {
-            if (rm != null)
+            if (rewardManager != null)
             {
-                rm.ReportAttackMissed();
+                rewardManager.ReportAttackMissed();
             }
             Deactivate();
         }
@@ -68,32 +57,28 @@ public class BossProjectile : EnemyDamage
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
         if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy")
         {
             return;
         }
         bool hitPlayer = collision.tag == "Player";
-
-        // Notify the boss that the fireball hit something
-        if (rm != null)
+        if (rewardManager != null)
         {
             if (hitPlayer)
             {
-                rm.ReportHitPlayer(); // Pass hit result
+                rewardManager.ReportHitPlayer();
             }
             else
             {
-                rm.ReportAttackMissed(); // Pass hit result
+                rewardManager.ReportAttackMissed();
             }
         }
-        hit = true;
+        _hit = true;
         base.OnTriggerStay2D(collision);
-        collid.enabled = false;
-
-        if (anim != null)
+        _collid.enabled = false;
+        if (_anim != null)
         {
-            anim.SetTrigger("explosion");
+            _anim.SetTrigger("explosion");
         }
         else
         {
@@ -108,12 +93,12 @@ public class BossProjectile : EnemyDamage
 
     public void SetSpeed(float newSpeed)
     {
-        speed = newSpeed;
+        _speed = newSpeed;
     }
 
     public void SetSize(float newSize)
     {
-        size = newSize;
+        _size = newSize;
     }
 
     private void Deactivate()

@@ -10,9 +10,9 @@ public class BossRewardManager : MonoBehaviour
 {
     [Header("Terminal Rewards (End of Episode)")]
     [Tooltip("Base reward given when the boss WINS the episode (defeats the player).")]
-    [SerializeField] private float rewardBossWinsBase = 200.0f; // Increased magnitude
+    [SerializeField] private float rewardBossWinsBase = 200.0f;
     [Tooltip("Base penalty given when the boss LOSES the episode (is defeated or time runs out). Should be negative.")]
-    [SerializeField] private float penaltyBossLosesBase = -200.0f; // Increased magnitude
+    [SerializeField] private float penaltyBossLosesBase = -200.0f;
     [Tooltip("Maximum expected/allowed duration of an episode in seconds. Used for scaling time-based rewards/penalties.")]
     [SerializeField] private float maxEpisodeDuration = 45.0f; // Ensure this matches your EpisodeManager's episodeDuration
     [Tooltip("Set to true to add a bonus for winning faster, and a larger penalty for losing faster.")]
@@ -46,10 +46,10 @@ public class BossRewardManager : MonoBehaviour
 
 
     // --- Internal State ---
-    private float currentAccumulatedStepReward = 0f; // Accumulates rewards *between* Q-learning agent steps
-    private float pendingTerminalReward = 0f; // Stores the calculated reward for the episode end
-    private bool terminalRewardPending = false; // Flag to indicate a terminal reward is set
-    private float currentEpisodeStartTime = 0f;
+    private float _currentAccumulatedStepReward = 0f; // Accumulates rewards *between* Q-learning agent steps
+    private float _pendingTerminalReward = 0f; // Stores the calculated reward for the episode end
+    private bool _terminalRewardPending = false; // Flag to indicate a terminal reward is set
+    private float _currentEpisodeStartTime = 0f;
 
     // --- Optional References for Deprecated Distance Logic ---
     // Uncomment and assign if you re-enable distance rewards
@@ -85,22 +85,22 @@ public class BossRewardManager : MonoBehaviour
 
     public void ReportHitPlayer()
     {
-        currentAccumulatedStepReward += rewardHitPlayer;
+        _currentAccumulatedStepReward += rewardHitPlayer;
     }
 
     public void ReportTookDamage(float damageAmount) // damageAmount unused, could scale penalty
     {
-        currentAccumulatedStepReward += penaltyTookDamage;
+        _currentAccumulatedStepReward += penaltyTookDamage;
     }
 
     public void ReportAttackMissed()
     {
-        currentAccumulatedStepReward += penaltyAttackMissed;
+        _currentAccumulatedStepReward += penaltyAttackMissed;
     }
 
     public void ReportTrapTriggered()
     {
-        currentAccumulatedStepReward += rewardTrapTriggered;
+        _currentAccumulatedStepReward += rewardTrapTriggered;
     }
 
     // --- Methods called by the system managing episodes (e.g., EpisodeManager) ---
@@ -111,10 +111,10 @@ public class BossRewardManager : MonoBehaviour
     public void StartNewEpisode()
     {
         //Debug.Log("Reward Manager: Starting New Episode");
-        currentAccumulatedStepReward = 0f;
-        pendingTerminalReward = 0f;
-        terminalRewardPending = false;
-        currentEpisodeStartTime = Time.time; // Record start time for duration calculation
+        _currentAccumulatedStepReward = 0f;
+        _pendingTerminalReward = 0f;
+        _terminalRewardPending = false;
+        _currentEpisodeStartTime = Time.time; // Record start time for duration calculation
     }
 
 
@@ -124,9 +124,9 @@ public class BossRewardManager : MonoBehaviour
     /// </summary>
     public void ReportBossWin()
     {
-        if (terminalRewardPending) return; // Prevent multiple reports
+        if (_terminalRewardPending) return; // Prevent multiple reports
 
-        float duration = Time.time - currentEpisodeStartTime;
+        float duration = Time.time - _currentEpisodeStartTime;
         float finalReward = rewardBossWinsBase; // Starts with the base win reward
 
         if (scaleTerminalRewardByTime && maxEpisodeDuration > 0)
@@ -144,8 +144,8 @@ public class BossRewardManager : MonoBehaviour
             //Debug.Log($"Reward Manager: Boss WIN! Duration: {duration:F2}s. Final Reward: {finalReward:F2}");
         }
 
-        pendingTerminalReward = finalReward;
-        terminalRewardPending = true;
+        _pendingTerminalReward = finalReward;
+        _terminalRewardPending = true;
     }
 
     /// <summary>
@@ -154,9 +154,9 @@ public class BossRewardManager : MonoBehaviour
     /// </summary>
     public void ReportBossLoss()
     {
-        if (terminalRewardPending) return; // Prevent multiple reports
+        if (_terminalRewardPending) return; // Prevent multiple reports
 
-        float duration = Time.time - currentEpisodeStartTime;
+        float duration = Time.time - _currentEpisodeStartTime;
         float finalPenalty = penaltyBossLosesBase; // Starts with the base loss penalty (negative)
 
         if (scaleTerminalRewardByTime && maxEpisodeDuration > 0)
@@ -177,8 +177,8 @@ public class BossRewardManager : MonoBehaviour
             //Debug.Log($"Reward Manager: Boss LOSS! Duration: {duration:F2}s. Final Penalty: {finalPenalty:F2}");
         }
 
-        pendingTerminalReward = finalPenalty;
-        terminalRewardPending = true;
+        _pendingTerminalReward = finalPenalty;
+        _terminalRewardPending = true;
     }
 
     // --- Method called by Q-Learning Agent ---
@@ -191,7 +191,7 @@ public class BossRewardManager : MonoBehaviour
     public float GetTotalRewardAndReset()
     {
         // Start with event-based rewards accumulated since the last step
-        float rewardToReturn = currentAccumulatedStepReward;
+        float rewardToReturn = _currentAccumulatedStepReward;
 
         // Add constant step penalty (applied each time QL requests reward)
         rewardToReturn += penaltyPerStep;
@@ -206,16 +206,16 @@ public class BossRewardManager : MonoBehaviour
 
         // --- CRITICAL: Add terminal reward if it's pending ---
         // This ensures the large terminal reward is only given once at the end of the episode.
-        if (terminalRewardPending)
+        if (_terminalRewardPending)
         {
-            //Debug.Log($"Reward Manager: Adding PENDING terminal reward: {pendingTerminalReward:F2}");
-            rewardToReturn += pendingTerminalReward;
-            pendingTerminalReward = 0f;      // Clear the pending reward once it's been given
-            terminalRewardPending = false;   // Reset the flag
+            //Debug.Log($"Reward Manager: Adding PENDING terminal reward: {_pendingTerminalReward:F2}");
+            rewardToReturn += _pendingTerminalReward;
+            _pendingTerminalReward = 0f;      // Clear the pending reward once it's been given
+            _terminalRewardPending = false;   // Reset the flag
         }
 
         // --- Reset step accumulator for the next cycle ---
-        currentAccumulatedStepReward = 0f;
+        _currentAccumulatedStepReward = 0f;
 
         return rewardToReturn;
     }
@@ -248,7 +248,7 @@ public class BossRewardManager : MonoBehaviour
         // This reward manager doesn't inherently know the episode state,
         // but the QLearning script might need this for the (s,a,r,s', done) tuple.
         // The terminalRewardPending flag is set *when* the episode ends.
-        return terminalRewardPending; // Returns true only *after* ReportWin/Loss has been called and before GetTotalRewardAndReset clears the flag
+        return _terminalRewardPending; // Returns true only *after* ReportWin/Loss has been called and before GetTotalRewardAndReset clears the flag
     }
 
 }

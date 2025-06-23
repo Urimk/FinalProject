@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class EnemyDamage : MonoBehaviour
 {
-    [SerializeField] protected float damage;
-    [SerializeField] protected bool isRecoil = false;
+    [SerializeField] protected float _damage;
+    [SerializeField] protected bool _isRecoil = false;
 
     protected void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             // Apply damage
-            collision.GetComponent<Health>().TakeDamage(damage);
+            collision.GetComponent<Health>().TakeDamage(_damage);
 
-            if (isRecoil)
+            if (_isRecoil)
             {
                 Rigidbody2D playerRb = collision.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
@@ -23,11 +23,6 @@ public class EnemyDamage : MonoBehaviour
                     collision.GetComponent<PlayerMovement>().Recoil(this.transform.position, recoilDir);
                 }
             }
-
-
-
-
         }
     }
-
 }

@@ -6,110 +6,110 @@ using UnityEngine;
 public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health or similar
 {
     [Header("Boss Parameters")]
-    [SerializeField] private float movementSpeed = 3.0f; // Adjusted speed example
+    [SerializeField] private float _movementSpeed = 3.0f; // Adjusted speed example
 
     [Header("References")]
-    [SerializeField] private Transform player;
-    [SerializeField] private Animator anim;
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] public BossRewardManager rm; // CRUCIAL - Assign in Inspector!
-    [SerializeField] private BossHealth bossHealth; // Reference to the BossHealth script
-    [SerializeField] private Transform firepoint;
-    [SerializeField] private Transform fireballHolder; // Parent for inactive fireballs
-    [SerializeField] private GameObject[] fireballs; // Pool of fireballs
-    [SerializeField] private GameObject flame; // Flame trap object
-    [SerializeField] private GameObject areaMarkerPrefab; // Marker for flame trap
-    [SerializeField] private Transform leftWall; // Boundary for flame trap
-    [SerializeField] private Transform rightWall; // Boundary for flame trap
-    [SerializeField] private GameObject targetIconPrefab; // For dash attack
+    [SerializeField] private Transform _player;
+    [SerializeField] private Animator _anim;
+    [SerializeField] private Rigidbody2D _rb;
+    [SerializeField] public BossRewardManager rewardManager; // CRUCIAL - Assign in Inspector!
+    [SerializeField] private BossHealth _bossHealth; // Reference to the BossHealth script
+    [SerializeField] private Transform _firepoint;
+    [SerializeField] private Transform _fireballHolder; // Parent for inactive fireballs
+    [SerializeField] private GameObject[] _fireballs; // Pool of fireballs
+    [SerializeField] private GameObject _flame; // Flame trap object
+    [SerializeField] private GameObject _areaMarkerPrefab; // Marker for flame trap
+    [SerializeField] private Transform _leftWall; // Boundary for flame trap
+    [SerializeField] private Transform _rightWall; // Boundary for flame trap
+    [SerializeField] private GameObject _targetIconPrefab; // For dash attack
 
     [Header("Attack Parameters")]
     [SerializeField] public float attackCooldown = 2f; // Fireball cooldown
-    [SerializeField] private int fireballDamage = 1;
-    [SerializeField] private float projectileSpeed = 5f;
-    [SerializeField] private float projectileSize = 1.5f;
-    [SerializeField] private AudioClip fireballSound;
+    [SerializeField] private int _fireballDamage = 1;
+    [SerializeField] private float _projectileSpeed = 5f;
+    [SerializeField] private float _projectileSize = 1.5f;
+    [SerializeField] private AudioClip _fireballSound;
     [Tooltip("How far ahead (in seconds) to predict player movement for aiming fireballs.")]
-    [SerializeField] private float predictionTime = 0.3f; // Adjust based on projectile speed & player speed
+    [SerializeField] private float _predictionTime = 0.3f; // Adjust based on projectile speed & player speed
 
     [Header("Flame Attack Parameters")]
     [SerializeField] public float fireAttackCooldown = 8f;
 
     [Header("Charge Dash Attack Parameters")]
-    [SerializeField] private float dashChargeTime = 1.5f; // Slightly faster charge example
-    [SerializeField] private float dashSpeed = 12f; // Slightly faster dash example
+    [SerializeField] private float _dashChargeTime = 1.5f; // Slightly faster charge example
+    [SerializeField] private float _dashSpeed = 12f; // Slightly faster dash example
     [SerializeField] public float dashCooldown = 10f;
-    [SerializeField] private AudioClip chargeSound;
-    [SerializeField] private AudioClip dashSound;
+    [SerializeField] private AudioClip _chargeSound;
+    [SerializeField] private AudioClip _dashSound;
 
     [Header("Energy System (Optional - Enable Checks Below)")]
-    [SerializeField] private float maxEnergy = 100f;
-    [SerializeField] private float energyRegenRate = 5f; // Energy per second
-    [SerializeField] private float fireballEnergyCost = 10f;
-    [SerializeField] private float flameTrapEnergyCost = 30f;
-    [SerializeField] private float dashEnergyCost = 40f;
-    private float currentEnergy;
+    [SerializeField] private float _maxEnergy = 100f;
+    [SerializeField] private float _energyRegenRate = 5f; // Energy per second
+    [SerializeField] private float _fireballEnergyCost = 10f;
+    [SerializeField] private float _flameTrapEnergyCost = 30f;
+    [SerializeField] private float _dashEnergyCost = 40f;
+    private float _currentEnergy;
 
     // --- Internal State ---
 
     //CHANGE!
-    private bool isPhase2 = true;
-    private bool isChargingDash = false;
-    private bool isDashing = false; // Added to differentiate charging phase from movement phase
-    private bool dashMissed = true;
+    private bool _isPhase2 = true;
+    private bool _isChargingDash = false;
+    private bool _isDashing = false; // Added to differentiate charging phase from movement phase
+    private bool _dashMissed = true;
     public bool flameMissed = true; // Public so BossFlameAttack can set it to false on hit
-    private Vector2 dashTarget;
-    private GameObject targetIconInstance;
-    private bool isDead = false;
-    private bool isFlameDeactivationCanceled = false;
-    private PlayerMovement playerMovement; // Cached reference
+    private Vector2 _dashTarget;
+    private GameObject _targetIconInstance;
+    private bool _isDead = false;
+    private bool _isFlameDeactivationCanceled = false;
+    private PlayerMovement _playerMovement; // Cached reference
 
     // --- Cooldown Timers ---
-    private float cooldownTimer = Mathf.Infinity;
-    private float fireAttackTimer = Mathf.Infinity;
-    private float dashCooldownTimer = Mathf.Infinity;
+    private float _cooldownTimer = Mathf.Infinity;
+    private float _fireAttackTimer = Mathf.Infinity;
+    private float _dashCooldownTimer = Mathf.Infinity;
 
     // Add these serialized fields to your AIBoss script if they aren't already there
     [Header("Movement & Targeting")]
-    [SerializeField] private Vector3 arenaCenterPosition = Vector3.zero; // Set in Inspector
-    [SerializeField] private float actionDistanceOffset = 3.0f; // Matches QLearning script parameter
-    [SerializeField] private float flameTrapGroundYLevel = -11.5f; // TODO: Get dynamically or configure
-    [SerializeField] private float dashDistance = 6.0f; // Distance for Dash_AwayFromPlayer action
+    [SerializeField] private Vector3 _arenaCenterPosition = Vector3.zero; // Set in Inspector
+    [SerializeField] private float _actionDistanceOffset = 3.0f; // Matches QLearning script parameter
+    [SerializeField] private float _flameTrapGroundYLevel = -11.5f; // TODO: Get dynamically or configure
+    [SerializeField] private float _dashDistance = 6.0f; // Distance for Dash_AwayFromPlayer action
 
 
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        _anim = GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody2D>();
 
-        if (player == null)
+        if (_player == null)
         {
             Debug.LogError("[AIBoss] Player Transform not assigned!");
             // Try finding player by tag if not assigned
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null) player = playerObj.transform;
+            if (playerObj != null) _player = playerObj.transform;
             else this.enabled = false; // Disable if player missing
         }
-        if (player != null)
+        if (_player != null)
         {
-            playerMovement = player.GetComponent<PlayerMovement>();
+            _playerMovement = _player.GetComponent<PlayerMovement>();
             // Optional: Check if playerMovement is null and log warning
         }
 
-        if (rm == null)
+        if (rewardManager == null)
         {
-            Debug.LogError("[AIBoss] BossRewardManager (rm) not assigned! Learning will fail.");
+            Debug.LogError("[AIBoss] BossRewardManager (rewardManager) not assigned! Learning will fail.");
             this.enabled = false;
         }
-        if (bossHealth == null) bossHealth = GetComponent<BossHealth>();
-        if (bossHealth == null)
+        if (_bossHealth == null) _bossHealth = GetComponent<BossHealth>();
+        if (_bossHealth == null)
         {
             Debug.LogError("[AIBoss] BossHealth component not found!");
             this.enabled = false;
         }
 
-        currentEnergy = maxEnergy; // Start with full energy
+        _currentEnergy = _maxEnergy; // Start with full energy
     }
 
     // Start can be removed if empty
@@ -117,15 +117,15 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     private void Update()
     {
-        if (isDead || player == null) return; // Ensure player exists
+        if (_isDead || _player == null) return; // Ensure player exists
 
         // Keep non-decision-making logic
         transform.rotation = Quaternion.Euler(0, 0, 0);
 
         // Update Cooldown Timers
-        cooldownTimer += Time.deltaTime;
-        fireAttackTimer += Time.deltaTime;
-        dashCooldownTimer += Time.deltaTime;
+        _cooldownTimer += Time.deltaTime;
+        _fireAttackTimer += Time.deltaTime;
+        _dashCooldownTimer += Time.deltaTime;
 
         // --- Regenerate Energy (if using) ---
         // if (currentEnergy < maxEnergy)
@@ -137,7 +137,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         HandlePhaseTransition();
 
         // Sprite flipping (only if not charging or dashing)
-        if (!isChargingDash && !isDashing)
+        if (!_isChargingDash && !_isDashing)
         {
             HandleSpriteFlip();
         }
@@ -145,9 +145,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     private void HandlePhaseTransition()
     {
-        if (!isPhase2 && bossHealth != null)
+        if (!_isPhase2 && _bossHealth != null)
         {
-            float healthPercentage = bossHealth.GetHealthPercentage();
+            float healthPercentage = _bossHealth.GetHealthPercentage();
             if (healthPercentage <= 0.5f) // Enter phase 2 at 50% health
             {
                 EnterPhase2();
@@ -157,15 +157,15 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     private void HandleSpriteFlip()
     {
-        if (player == null || isChargingDash) return; // Don't flip during dash
-        if (player.position.x < transform.position.x)
+        if (_player == null || _isChargingDash) return; // Don't flip during dash
+        if (_player.position.x < transform.position.x)
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         else
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         // Ensure fireball holder matches boss direction if needed
-        if (fireballHolder != null)
+        if (_fireballHolder != null)
         {
-            fireballHolder.localScale = transform.localScale;
+            _fireballHolder.localScale = transform.localScale;
         }
     }
 
@@ -181,7 +181,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     {
         // Basic checks: boss isn't busy with non-interruptible action or dead
         // (IsCurrentlyChargingOrDashing should cover this)
-        if (player == null || isChargingDash || isDashing || isDead) return; // Assuming these states block movement
+        if (_player == null || _isChargingDash || _isDashing || _isDead) return; // Assuming these states block movement
 
         Vector2 targetPosition;
         Vector2 moveDirection = Vector2.zero; // Default to no movement
@@ -223,7 +223,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
                 break;
 
             case BossQLearning.ActionType.Move_ToArenaCenter:
-                targetPosition = arenaCenterPosition;
+                targetPosition = _arenaCenterPosition;
                 moveDirection = (targetPosition - bossPos).normalized;
                 break;
 
@@ -250,14 +250,14 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if ((targetPosition - bossPos).sqrMagnitude > 0.25f) // Use squared magnitude for performance (0.5f squared)
         {
             // Could also use moveDirection directly: rb.velocity = moveDirection * movementSpeed;
-            rb.velocity = (targetPosition - bossPos).normalized * movementSpeed; // Move towards the target position
-            if (anim != null) anim.SetBool("IsMoving", true);
+            _rb.velocity = (targetPosition - bossPos).normalized * _movementSpeed; // Move towards the target position
+            if (_anim != null) _anim.SetBool("IsMoving", true);
         }
         else
         {
             // Reached target or very close, stop
-            rb.velocity = Vector2.zero;
-            if (anim != null) anim.SetBool("IsMoving", false);
+            _rb.velocity = Vector2.zero;
+            if (_anim != null) _anim.SetBool("IsMoving", false);
         }
     }
 
@@ -272,7 +272,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public bool AIRequestRangedAttack(BossQLearning.ActionType aimAction, Vector2 playerPos, Vector2 playerVel, float offsetDistance)
     {
         // Basic checks: is ability ready, not busy with non-interruptible action, or dead, player exists
-        if (!IsFireballReady() || isChargingDash || isDashing || isDead || player == null) return false;
+        if (!IsFireballReady() || _isChargingDash || _isDashing || _isDead || _player == null) return false;
 
         // --- Optional: Energy Check ---
         // if (currentEnergy < fireballEnergyCost) return false;
@@ -281,7 +281,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         Vector2 bossPos = transform.position; // Get boss position locally
 
         // Use predictionTime and projectileSpeed from your AIBoss configuration
-        float predictionTime = (playerPos - bossPos).magnitude / projectileSpeed; // Time for projectile to reach player
+        float predictionTime = (playerPos - bossPos).magnitude / _projectileSpeed; // Time for projectile to reach player
         Vector2 predictedPlayerPos = playerPos + (playerVel * predictionTime);
 
         switch (aimAction)
@@ -331,7 +331,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
             case BossQLearning.ActionType.Fireball_RelativeForward:
                 // Aim in boss's current facing direction (assuming horizontal facing in 2D)
                 // You'll need boss facing direction if not axis-aligned default
-                Vector2 forwardDirection = (rb.velocity.x > 0.01f) ? Vector2.right : (rb.velocity.x < -0.01f ? Vector2.left : (transform.localScale.x > 0 ? Vector2.right : Vector2.left)); // Basic facing guess
+                Vector2 forwardDirection = (_rb.velocity.x > 0.01f) ? Vector2.right : (_rb.velocity.x < -0.01f ? Vector2.left : (_fireballHolder != null ? (_fireballHolder.localScale.x > 0 ? Vector2.right : Vector2.left) : Vector2.right)); // Basic facing guess
                 if (forwardDirection == Vector2.zero) forwardDirection = Vector2.right; // Default if not moving
                 targetPosition = bossPos + forwardDirection * 100f; // Aim far away in that direction
                 break;
@@ -358,8 +358,8 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         // --- Consume Resource ---
         // if (currentEnergy < fireballEnergyCost) return false; // Double check or move up
 
-        GameObject projectile = fireballs[fireballIndex];
-        projectile.transform.position = firepoint.position;
+        GameObject projectile = _fireballs[fireballIndex];
+        projectile.transform.position = _firepoint.position;
         projectile.transform.rotation = Quaternion.identity;
         projectile.transform.parent = null; // Unparent if needed
 
@@ -367,17 +367,17 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if (bossProjectile == null) { Debug.LogError("[AIBoss] Fireball prefab missing BossProjectile script!"); return false; }
 
         // Pass necessary references/data to the projectile
-        bossProjectile.rm = this.rm; // Ensure projectile can report misses
-        bossProjectile.SetDamage(fireballDamage);
-        bossProjectile.SetSize(projectileSize);
-        bossProjectile.Launch(firepoint.position, targetPosition, projectileSpeed); // Launch towards calculated target!
+        bossProjectile.rewardManager = this.rewardManager; // Ensure projectile can report misses
+        bossProjectile.SetDamage(_fireballDamage);
+        bossProjectile.SetSize(_projectileSize);
+        bossProjectile.Launch(_firepoint.position, targetPosition, _projectileSpeed); // Launch towards calculated target!
 
-        if (anim != null) anim.SetTrigger("Attack"); // Use the correct attack trigger
-        if (fireballSound != null) SoundManager.instance.PlaySound(fireballSound, gameObject); // Assuming SoundManager is correctly set up
+        if (_anim != null) _anim.SetTrigger("Attack"); // Use the correct attack trigger
+        if (_fireballSound != null) SoundManager.instance.PlaySound(_fireballSound, gameObject); // Assuming SoundManager is correctly set up
 
         // Only reset cooldown if the launch was successful
-        cooldownTimer = 0f; // Reset cooldown *after* successful launch
-        // currentEnergy -= fireballEnergyCost; // Consume resource *after* successful launch
+        _cooldownTimer = 0f; // Reset cooldown *after* successful launch
+        // _currentEnergy -= _fireballEnergyCost; // Consume resource *after* successful launch
 
         return true; // Action initiated successfully
     }
@@ -394,7 +394,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public bool AIRequestFlameAttack(BossQLearning.ActionType placeAction, Vector2 playerPos, Vector2 bossPos, Vector2 playerVel, float offsetDistance)
     {
         // Basic checks: is ability ready, not busy with non-interruptible action, or dead, flame prefab exists, player exists
-        if (!IsFlameTrapReady() || isChargingDash || isDashing || isDead || flame == null || player == null) return false;
+        if (!IsFlameTrapReady() || _isChargingDash || _isDashing || _isDead || _flame == null || _player == null) return false;
 
         // --- Optional: Energy Check ---
         // if (currentEnergy < flameTrapEnergyCost) return false;
@@ -406,43 +406,43 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         {
             case BossQLearning.ActionType.FlameTrap_AtPlayer:
                 // Place at player's X position, on the ground level
-                placementPosition = new Vector2(playerPos.x, flameTrapGroundYLevel);
+                placementPosition = new Vector2(playerPos.x, _flameTrapGroundYLevel);
                 break;
 
             case BossQLearning.ActionType.FlameTrap_NearBoss:
                 // Place near boss's X position, on the ground level
-                placementPosition = new Vector2(bossPos.x, flameTrapGroundYLevel); // Or bossPos.x +/- offsetDistance
+                placementPosition = new Vector2(bossPos.x, _flameTrapGroundYLevel); // Or bossPos.x +/- offsetDistance
                 break;
 
             case BossQLearning.ActionType.FlameTrap_BetweenBossAndPlayer:
                 // Place at the midpoint X between boss and player, on the ground level
-                placementPosition = new Vector2(Vector2.Lerp(bossPos, playerPos, 0.5f).x, flameTrapGroundYLevel);
+                placementPosition = new Vector2(Vector2.Lerp(bossPos, playerPos, 0.5f).x, _flameTrapGroundYLevel);
                 break;
 
             case BossQLearning.ActionType.FlameTrap_BehindPlayer:
                 // Place behind the player based on their current velocity, on the ground level
                 Vector2 behindPlayerPos = playerPos - playerVel.normalized * offsetDistance; // Position offset behind player
-                placementPosition = new Vector2(behindPlayerPos.x, flameTrapGroundYLevel);
+                placementPosition = new Vector2(behindPlayerPos.x, _flameTrapGroundYLevel);
                 break;
 
             default:
                 Debug.LogWarning("[AIBoss] Received unexpected flame trap action: " + placeAction);
-                placementPosition = new Vector2(playerPos.x, flameTrapGroundYLevel); // Fallback
+                placementPosition = new Vector2(playerPos.x, _flameTrapGroundYLevel); // Fallback
                 break;
         }
 
         // Apply clamping between walls (using your existing logic)
-        if (leftWall != null && rightWall != null)
+        if (_leftWall != null && _rightWall != null)
         {
-            placementPosition.x = Mathf.Clamp(placementPosition.x, leftWall.position.x + 2f, rightWall.position.x - 2f); // Add buffer from wall edge
+            placementPosition.x = Mathf.Clamp(placementPosition.x, _leftWall.position.x + 2f, _rightWall.position.x - 2f); // Add buffer from wall edge
         }
 
         // --- Execute Flame Trap ---
         StartCoroutine(MarkAreaAndSpawnFire(placementPosition)); // Assuming this coroutine exists and uses the position
-        if (anim != null) anim.SetTrigger("CastSpell"); // Use the correct trigger
+        if (_anim != null) _anim.SetTrigger("CastSpell"); // Use the correct trigger
         // Only reset cooldown if the execution was successful
-        fireAttackTimer = 0f; // Reset cooldown
-        // currentEnergy -= flameTrapEnergyCost; // Consume resource *after* successful initiation
+        _fireAttackTimer = 0f; // Reset cooldown
+        // _currentEnergy -= _flameTrapEnergyCost; // Consume resource *after* successful initiation
 
         return true; // Action initiated successfully
     }
@@ -458,7 +458,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public bool AIRequestDashAttack(BossQLearning.ActionType dashAction, Vector2 playerPos, Vector2 bossPos, float offsetDistance)
     {
         // Basic checks: is ability ready, not busy (already dashing/charging), or dead, player exists
-        if (!IsDashReady() || isChargingDash || isDashing || isDead || player == null) return false;
+        if (!IsDashReady() || _isChargingDash || _isDashing || _isDead || _player == null) return false;
 
         // --- Optional: Energy Check ---
         // if (currentEnergy < dashEnergyCost) return false;
@@ -475,7 +475,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
             case BossQLearning.ActionType.Dash_AwayFromPlayer:
                 // Dash away from the player by a configured dashDistance
-                dashTargetCalculated = bossPos + (bossPos - playerPos).normalized * dashDistance; // Use the dashDistance field
+                dashTargetCalculated = bossPos + (bossPos - playerPos).normalized * _dashDistance; // Use the dashDistance field
                 break;
 
             case BossQLearning.ActionType.Dash_ToPlayerFlank:
@@ -495,38 +495,38 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
 
         // --- Initiate Dash ---
-        isChargingDash = true; // Enter charging state
-        isDashing = false;     // Not yet moving
-        dashMissed = true;     // Reset miss flag
-        rb.velocity = Vector2.zero; // Stop current movement
+        _isChargingDash = true; // Enter charging state
+        _isDashing = false;     // Not yet moving
+        _dashMissed = true;     // Reset miss flag
+        _rb.velocity = Vector2.zero; // Stop current movement
 
         // Set the calculated target for the dash sequence
-        dashTarget = dashTargetCalculated;
+        _dashTarget = dashTargetCalculated;
 
         // Activate target marker (using your existing logic)
-        if (targetIconPrefab != null)
+        if (_targetIconPrefab != null)
         {
-            if (targetIconInstance == null)
+            if (_targetIconInstance == null)
             {
-                targetIconInstance = Instantiate(targetIconPrefab, dashTarget, Quaternion.identity);
-                targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                _targetIconInstance = Instantiate(_targetIconPrefab, _dashTarget, Quaternion.identity);
+                _targetIconInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             }
             else
             {
-                targetIconInstance.transform.position = dashTarget;
-                targetIconInstance.SetActive(true);
+                _targetIconInstance.transform.position = _dashTarget;
+                _targetIconInstance.SetActive(true);
             }
         }
 
-        if (anim != null) anim.SetTrigger("ChargeDash"); // Use the correct trigger
-        if (chargeSound != null) SoundManager.instance.PlaySound(chargeSound, gameObject); // Assuming SoundManager
+        if (_anim != null) _anim.SetTrigger("ChargeDash"); // Use the correct trigger
+        if (_chargeSound != null) SoundManager.instance.PlaySound(_chargeSound, gameObject); // Assuming SoundManager
 
         // Start the sequence that performs the charge and dash
         StartCoroutine(PerformDashAttack()); // Assuming this coroutine exists
 
         // Only reset cooldown if the initiation was successful
-        dashCooldownTimer = 0f; // Reset cooldown
-        // currentEnergy -= dashEnergyCost; // Consume resource *after* successful initiation
+        _dashCooldownTimer = 0f; // Reset cooldown
+        // _currentEnergy -= _dashEnergyCost; // Consume resource *after* successful initiation
 
         return true; // Action initiated successfully
     }
@@ -537,10 +537,10 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public void AIRequestIdle()
     {
         // Only go idle if not busy with a non-interruptible action
-        if (isChargingDash || isDashing || isDead) return;
+        if (_isChargingDash || _isDashing || _isDead) return;
 
-        rb.velocity = Vector2.zero;
-        if (anim != null) anim.SetBool("IsMoving", false);
+        _rb.velocity = Vector2.zero;
+        if (_anim != null) _anim.SetBool("IsMoving", false);
     }
 
 
@@ -548,20 +548,20 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public bool IsFireballReady()
     {
         // Optional: Energy Check: && currentEnergy >= fireballEnergyCost;
-        return cooldownTimer >= attackCooldown;
+        return _cooldownTimer >= attackCooldown;
     }
 
     public bool IsFlameTrapReady()
     {
         // Optional: Energy Check: && currentEnergy >= flameTrapEnergyCost;
-        return fireAttackTimer >= fireAttackCooldown;
+        return _fireAttackTimer >= fireAttackCooldown;
     }
 
     public bool IsDashReady()
     {
         // Optional: Energy Check: && currentEnergy >= dashEnergyCost;
         // Add phase check? return isPhase2 && dashCooldownTimer >= dashCooldown;
-        return dashCooldownTimer >= dashCooldown;
+        return _dashCooldownTimer >= dashCooldown;
     }
 
     /// <summary>
@@ -569,7 +569,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// </summary>
     public bool IsCurrentlyChargingOrDashing()
     {
-        return isChargingDash || isDashing;
+        return _isChargingDash || _isDashing;
     }
 
 
@@ -581,8 +581,8 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// <returns>Normalized energy (0.0 to 1.0).</returns>
     public float GetCurrentEnergyNormalized()
     {
-        if (maxEnergy <= 0) return 1.0f; // Avoid division by zero if energy system not used
-        return Mathf.Clamp01(currentEnergy / maxEnergy);
+        if (_maxEnergy <= 0) return 1.0f; // Avoid division by zero if energy system not used
+        return Mathf.Clamp01(_currentEnergy / _maxEnergy);
     }
 
     /// <summary>
@@ -592,9 +592,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// <returns>True if the player is grounded, false otherwise.</returns>
     public bool IsPlayerGrounded()
     {
-        if (playerMovement != null)
+        if (_playerMovement != null)
         {
-            return playerMovement.isGrounded(); // Assuming PlayerMovement has this method
+            return _playerMovement.isGrounded(); // Assuming PlayerMovement has this method
         }
         // Fallback if playerMovement reference is missing
         // Maybe try a physics check? e.g., Physics2D.OverlapCircle below player? Less reliable.
@@ -606,10 +606,10 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // --- Coroutines and Internal Logic ---
     private int FindFireball() // Helper for object pooling
     {
-        for (int i = 0; i < fireballs.Length; i++)
+        for (int i = 0; i < _fireballs.Length; i++)
         {
             // Check if the GameObject itself is active in the hierarchy
-            if (!fireballs[i].activeInHierarchy)
+            if (!_fireballs[i].activeInHierarchy)
             {
                 return i;
             }
@@ -619,19 +619,19 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     private IEnumerator MarkAreaAndSpawnFire(Vector2 targetPosition)
     { /* ... slight modification needed ... */
-        if (isDead) yield break;
+        if (_isDead) yield break;
 
         GameObject marker = null;
-        if (areaMarkerPrefab != null)
+        if (_areaMarkerPrefab != null)
         {
-            marker = Instantiate(areaMarkerPrefab, targetPosition, Quaternion.identity);
+            marker = Instantiate(_areaMarkerPrefab, targetPosition, Quaternion.identity);
             // Removed marker.SetActive(true); - Instantiate already makes it active
         }
 
         yield return new WaitForSeconds(1.5f);
 
         // Check if boss died *during* the wait
-        if (isDead)
+        if (_isDead)
         {
             if (marker != null) Destroy(marker); // Clean up marker if boss died
             yield break;
@@ -640,21 +640,21 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if (marker != null) Destroy(marker); // Destroy normally if boss alive
 
         // Spawn flame only if boss is still alive after the wait
-        if (flame != null)
+        if (_flame != null)
         {
-            flame.transform.position = targetPosition;
-            flame.SetActive(true);
+            _flame.transform.position = targetPosition;
+            _flame.SetActive(true);
 
-            BossFlameAttack flameAttack = flame.GetComponent<BossFlameAttack>();
+            BossFlameAttack flameAttack = _flame.GetComponent<BossFlameAttack>();
             if (flameAttack != null)
             {
                 flameAttack.Activate(targetPosition);
-                StartCoroutine(DeactivateAfterDuration(flame, 3f));
+                StartCoroutine(DeactivateAfterDuration(_flame, 3f));
             }
             else
             {
                 Debug.LogError("[AIBoss] Flame object missing BossFlameAttack script!");
-                flame.SetActive(false); // Deactivate if script missing
+                _flame.SetActive(false); // Deactivate if script missing
             }
         }
         else
@@ -667,28 +667,28 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // Coroutine to deactivate the flame trap after a duration and report miss if needed
     private IEnumerator DeactivateAfterDuration(GameObject obj, float delay)
     {
-        isFlameDeactivationCanceled = false; // Reset cancel flag for this instance
+        _isFlameDeactivationCanceled = false; // Reset cancel flag for this instance
         float timer = 0f;
         while (timer < delay)
         {
-            if (isDead) // If boss dies during the flame duration
+            if (_isDead) // If boss dies during the flame duration
             {
                 if (obj != null) obj.SetActive(false); // Immediately deactivate
-                isFlameDeactivationCanceled = true; // Mark as canceled due to death
+                _isFlameDeactivationCanceled = true; // Mark as canceled due to death
                 yield break; // Exit coroutine
             }
             timer += Time.deltaTime;
             yield return null;
         }
         // Timer finished, check if not canceled and object still exists
-        if (!isFlameDeactivationCanceled && obj != null)
+        if (!_isFlameDeactivationCanceled && obj != null)
         {
             obj.SetActive(false); // Deactivate normally
-            if (rm != null)
+            if (rewardManager != null)
             {
                 if (flameMissed) // Check if the flameMissed flag (set by BossFlameAttack) indicates a miss
                 {
-                    rm.ReportAttackMissed(); // Report the miss
+                    rewardManager.ReportAttackMissed(); // Report the miss
                 }
                 // Reset flag for the next attack regardless of hit/miss status
                 flameMissed = true;
@@ -698,25 +698,25 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     private IEnumerator PerformDashAttack()
     {
-        isChargingDash = true; // redundant? already set before calling
-        isDashing = false;
+        _isChargingDash = true; // redundant? already set before calling
+        _isDashing = false;
 
-        yield return new WaitForSeconds(dashChargeTime);
+        yield return new WaitForSeconds(_dashChargeTime);
 
         // --- Charge finished ---
-        isChargingDash = false; // No longer charging
-        if (targetIconInstance != null) targetIconInstance.SetActive(false);
+        _isChargingDash = false; // No longer charging
+        if (_targetIconInstance != null) _targetIconInstance.SetActive(false);
 
-        if (isDead) yield break; // Check if died during charge
+        if (_isDead) yield break; // Check if died during charge
 
         // --- Start Dash Movement ---
-        isDashing = true; // Now actually moving
-        if (anim != null) anim.SetTrigger("Dash");
-        if (dashSound != null) SoundManager.instance.PlaySound(dashSound, gameObject);
+        _isDashing = true; // Now actually moving
+        if (_anim != null) _anim.SetTrigger("Dash");
+        if (_dashSound != null) SoundManager.instance.PlaySound(_dashSound, gameObject);
 
-        Vector2 direction = (dashTarget - (Vector2)transform.position).normalized;
-        if (direction == Vector2.zero) direction = (player.position - transform.position).normalized; // Prevent zero direction if already at target
-        rb.velocity = direction * dashSpeed;
+        Vector2 direction = (_dashTarget - (Vector2)transform.position).normalized;
+        if (direction == Vector2.zero) direction = (_player.position - transform.position).normalized; // Prevent zero direction if already at target
+        _rb.velocity = direction * _dashSpeed;
 
         // Collision check loop (simplified check)
         float dashTimer = 0f;
@@ -724,17 +724,17 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
         while (dashTimer < maxDashDuration)
         {
-            if (isDead || !isDashing) break; // Exit loop if died or flag externally reset (e.g., hit player)
+            if (_isDead || !_isDashing) break; // Exit loop if died or flag externally reset (e.g., hit player)
 
             // Check if dash hit player (OnTriggerEnter2D sets dashMissed = false and might set isDashing=false)
-            if (!dashMissed) break;
+            if (!_dashMissed) break;
 
             // Optional: More robust obstacle check if needed
             // RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.6f, LayerMask.GetMask("Ground", "Walls"));
             // if (hit.collider != null) break;
 
             // Check if approximately reached target
-            if (Vector2.Distance(transform.position, dashTarget) < 1.0f) break;
+            if (Vector2.Distance(transform.position, _dashTarget) < 1.0f) break;
 
 
             dashTimer += Time.deltaTime;
@@ -742,17 +742,17 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
 
         // --- Dash Finished (hit player, obstacle, reached target, or timed out) ---
-        isDashing = false; // Finished dashing movement phase
-        rb.velocity = Vector2.zero;
+        _isDashing = false; // Finished dashing movement phase
+        _rb.velocity = Vector2.zero;
 
         // Report miss ONLY if the dash finished, the 'dashMissed' flag is still true, AND boss isn't dead
-        if (rm != null && dashMissed && !isDead)
+        if (rewardManager != null && _dashMissed && !_isDead)
         {
-            rm.ReportAttackMissed();
+            rewardManager.ReportAttackMissed();
         }
 
         // Reset flag for the next dash attempt
-        dashMissed = true;
+        _dashMissed = true;
     }
 
     // --- Phase Logic ---
@@ -762,7 +762,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // --- Collision Handling ---
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (isDead) return;
+        if (_isDead) return;
 
         if (other.CompareTag("Player"))
         {
@@ -772,27 +772,27 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
             if (playerHealth != null) playerHealth.TakeDamage(damage);
 
             // Report direct collision hit to reward manager
-            if (rm != null) rm.ReportHitPlayer();
+            if (rewardManager != null) rewardManager.ReportHitPlayer();
 
             // Check if this collision happened during the dash movement phase
-            if (isDashing) // Check isDashing, not isChargingDash
+            if (_isDashing) // Check isDashing, not isChargingDash
             {
                 //Debug.Log("[AIBoss] Dash connected with player during movement!");
-                dashMissed = false;   // Mark dash as successful hit
-                isDashing = false;    // Stop dash movement immediately on hit
-                rb.velocity = Vector2.zero; // Stop immediately
+                _dashMissed = false;   // Mark dash as successful hit
+                _isDashing = false;    // Stop dash movement immediately on hit
+                _rb.velocity = Vector2.zero; // Stop immediately
                 // Optionally add knockback to player here
             }
             // isColliding flag seems unused, can be removed if not needed elsewhere
             // isColliding = true;
         }
         // Add checks for hitting walls/ground during dash if needed
-        else if (isDashing && (other.gameObject.layer == LayerMask.NameToLayer("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Walls")))
+        else if (_isDashing && (other.gameObject.layer == LayerMask.NameToLayer("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Walls")))
         {
             // Stop dash if hitting obstacles during movement phase
             //Debug.Log("[AIBoss] Dash hit obstacle: " + other.name);
-            isDashing = false;
-            rb.velocity = Vector2.zero;
+            _isDashing = false;
+            _rb.velocity = Vector2.zero;
         }
     }
 
@@ -801,20 +801,20 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // --- Death Handling ---
     public void Die() // Override if EnemyDamage has a virtual Die method
     {
-        if (isDead) return;
-        isDead = true;
+        if (_isDead) return;
+        _isDead = true;
         //Debug.Log("[AIBoss] Die() method called.");
 
         StopAllCoroutines();
         DeactivateFlameAndWarning(); // Ensure cleanup
 
-        rb.velocity = Vector2.zero;
-        rb.isKinematic = true;
+        _rb.velocity = Vector2.zero;
+        _rb.isKinematic = true;
         // Safely disable collider
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
-        if (anim != null) anim.SetTrigger("Die");
+        if (_anim != null) _anim.SetTrigger("Die");
 
         // Optional: Delay disabling/destroying to allow animation
         // StartCoroutine(DestroyAfterDelay(2.0f)); // Example delay
@@ -830,7 +830,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // Utility to clean up flame visuals immediately
     public void DeactivateFlameAndWarning()
     {
-        if (flame != null) flame.SetActive(false);
+        if (_flame != null) _flame.SetActive(false);
 
         // Find and destroy any active area markers by tag
         GameObject[] markers = GameObject.FindGameObjectsWithTag("FlameWarningMarker"); // Ensure markers have this tag
@@ -842,8 +842,8 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     public void ResetAbilityStates()
     {
-        cooldownTimer = 0;
-        dashCooldownTimer = 0;
-        fireAttackTimer = 0;
+        _cooldownTimer = 0;
+        _dashCooldownTimer = 0;
+        _fireAttackTimer = 0;
     }
 }

@@ -3,53 +3,53 @@
 public class PeakingSpike : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float basePosition;          // Y position when at base
-    public float lowPosition;          // Y position when lowered
-    public float baseHoldTime = 2f;          // Time to stay at base position
-    public float lowHoldTime = 1f;           // Time to stay at low position
-    public float moveSpeed = 5f;             // Speed of movement between positions
-    public float initialDelay = 0f;          // Delay before starting the loop
+    public float BasePosition;          // Y position when at base
+    public float LowPosition;          // Y position when lowered
+    public float BaseHoldTime = 2f;          // Time to stay at base position
+    public float LowHoldTime = 1f;           // Time to stay at low position
+    public float MoveSpeed = 5f;             // Speed of movement between positions
+    public float InitialDelay = 0f;          // Delay before starting the loop
 
-    private Vector3 startPos;
-    private Vector3 targetPos;
-    private float timer;
-    private bool isAtBase = true;
-    private bool isMoving = false;
-    private bool hasStarted = false;
+    private Vector3 _startPos;
+    private Vector3 _targetPos;
+    private float _timer;
+    private bool _isAtBase = true;
+    private bool _isMoving = false;
+    private bool _hasStarted = false;
 
-    void Start()
+    private void Start()
     {
         // Store the initial position and set base position
-        startPos = transform.position;
-        //startPos.y = basePosition;
-        transform.position = startPos;
-        basePosition = startPos.y;
-        lowPosition = basePosition - 1.7f;
+        _startPos = transform.position;
+        //_startPos.y = BasePosition;
+        transform.position = _startPos;
+        BasePosition = _startPos.y;
+        LowPosition = BasePosition - 1.7f;
 
         // Set initial timer to the delay value
-        timer = initialDelay;
+        _timer = InitialDelay;
     }
 
-    void Update()
+    private void Update()
     {
-        if (!hasStarted)
+        if (!_hasStarted)
         {
             // Wait for initial delay
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            _timer -= Time.deltaTime;
+            if (_timer <= 0f)
             {
-                hasStarted = true;
-                timer = baseHoldTime; // Start with base hold time
+                _hasStarted = true;
+                _timer = BaseHoldTime; // Start with base hold time
             }
             return;
         }
 
-        if (!isMoving)
+        if (!_isMoving)
         {
             // Count down the hold timer
-            timer -= Time.deltaTime;
+            _timer -= Time.deltaTime;
 
-            if (timer <= 0f)
+            if (_timer <= 0f)
             {
                 // Start moving to the other position
                 StartMovement();
@@ -62,38 +62,38 @@ public class PeakingSpike : MonoBehaviour
         }
     }
 
-    void StartMovement()
+    private void StartMovement()
     {
-        isMoving = true;
+        _isMoving = true;
 
-        if (isAtBase)
+        if (_isAtBase)
         {
             // Moving from base to low position
-            targetPos = startPos;
-            targetPos.y = lowPosition;
+            _targetPos = _startPos;
+            _targetPos.y = LowPosition;
         }
         else
         {
             // Moving from low to base position
-            targetPos = startPos;
-            targetPos.y = basePosition;
+            _targetPos = _startPos;
+            _targetPos.y = BasePosition;
         }
     }
 
-    void MoveToTarget()
+    private void MoveToTarget()
     {
         // Move towards target position
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _targetPos, MoveSpeed * Time.deltaTime);
 
         // Check if we've reached the target
-        if (Vector3.Distance(transform.position, targetPos) < 0.01f)
+        if (Vector3.Distance(transform.position, _targetPos) < 0.01f)
         {
-            transform.position = targetPos;
-            isMoving = false;
-            isAtBase = !isAtBase;
+            transform.position = _targetPos;
+            _isMoving = false;
+            _isAtBase = !_isAtBase;
 
             // Set the appropriate hold time
-            timer = isAtBase ? baseHoldTime : lowHoldTime;
+            _timer = _isAtBase ? BaseHoldTime : LowHoldTime;
         }
     }
 }

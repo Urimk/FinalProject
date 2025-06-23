@@ -2,20 +2,20 @@
 
 public class HealthCollectable : MonoBehaviour
 {
-    [SerializeField] private float healthValue;
+    [SerializeField] private float _healthValue;
 
     [Header("Sound")]
-    [SerializeField] private AudioClip collectSound;
-    private bool healthAdded;
+    [SerializeField] private AudioClip _collectSound;
+    private bool _healthAdded;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
-            healthAdded = collision.GetComponent<Health>().AddHealth(healthValue);
-            if (healthAdded)
+            _healthAdded = collision.GetComponent<Health>().AddHealth(_healthValue);
+            if (_healthAdded)
             {
-                SoundManager.instance.PlaySound(collectSound, gameObject);
+                SoundManager.instance.PlaySound(_collectSound, gameObject);
                 gameObject.SetActive(false);
             }
         }

@@ -2,46 +2,46 @@
 
 public class Enemy_Sideways : MonoBehaviour
 {
-    [SerializeField] private float movementDistance;
-    [SerializeField] private float speed;
-    [SerializeField] private float damage;
-    [SerializeField] private bool moveVertically; // New parameter
+    [SerializeField] private float _movementDistance;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _damage;
+    [SerializeField] private bool _moveVertically;
 
-    public bool movingNegative = true; // Replaces movingLeft
-    private float minEdge;
-    private float maxEdge;
+    public bool MovingNegative = true;
+    private float _minEdge;
+    private float _maxEdge;
 
     private void Awake()
     {
-        float currentPos = moveVertically ? transform.position.y : transform.position.x;
-        minEdge = currentPos - movementDistance;
-        maxEdge = currentPos + movementDistance;
+        float currentPos = _moveVertically ? transform.position.y : transform.position.x;
+        _minEdge = currentPos - _movementDistance;
+        _maxEdge = currentPos + _movementDistance;
     }
 
     private void Update()
     {
-        if (movingNegative)
+        if (MovingNegative)
         {
-            if ((moveVertically && transform.position.y > minEdge) ||
-                (!moveVertically && transform.position.x > minEdge))
+            if ((_moveVertically && transform.position.y > _minEdge) ||
+                (!_moveVertically && transform.position.x > _minEdge))
             {
                 Move(-1);
             }
             else
             {
-                movingNegative = false;
+                MovingNegative = false;
             }
         }
         else
         {
-            if ((moveVertically && transform.position.y < maxEdge) ||
-                (!moveVertically && transform.position.x < maxEdge))
+            if ((_moveVertically && transform.position.y < _maxEdge) ||
+                (!_moveVertically && transform.position.x < _maxEdge))
             {
                 Move(1);
             }
             else
             {
-                movingNegative = true;
+                MovingNegative = true;
             }
         }
     }
@@ -49,12 +49,10 @@ public class Enemy_Sideways : MonoBehaviour
     private void Move(int direction)
     {
         Vector3 position = transform.position;
-
-        if (moveVertically)
-            position.y += direction * speed * Time.deltaTime;
+        if (_moveVertically)
+            position.y += direction * _speed * Time.deltaTime;
         else
-            position.x += direction * speed * Time.deltaTime;
-
+            position.x += direction * _speed * Time.deltaTime;
         transform.position = position;
     }
 
@@ -62,7 +60,7 @@ public class Enemy_Sideways : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<Health>().TakeDamage(damage);
+            collision.GetComponent<Health>().TakeDamage(_damage);
         }
     }
 }
