@@ -119,9 +119,9 @@ public class PlayerRespawn : MonoBehaviour
         if (collision.CompareTag("Checkpoint"))
         {
             Checkpoint checkpoint = collision.GetComponent<Checkpoint>();
-            if (checkpoint != null && !checkpoint.isActivated)
+            if (checkpoint != null && !checkpoint.IsActivated)
             {
-                checkpoint.isActivated = true;
+                checkpoint.IsActivated = true;
 
                 _currentCheckpoint = collision.transform;
                 SoundManager.instance.PlaySound(checkpointSound, gameObject);

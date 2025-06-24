@@ -52,7 +52,7 @@ public class Room : MonoBehaviour
 
 
         // 3) Gravity
-        _playerMovement.defaultGravityScale = gravScaleValue;
+        _playerMovement.normalGrav = gravScaleValue;
         _playerMovement.maxFallSpeed = maxFallSpeedValue;
 
         // 4) Activate rooms

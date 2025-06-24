@@ -88,7 +88,7 @@ public class BossProjectile : EnemyDamage
 
     public void SetDamage(int newDamage)
     {
-        damage = newDamage;
+        _damage = newDamage;
     }
 
     public void SetSpeed(float newSpeed)

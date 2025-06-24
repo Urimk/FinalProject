@@ -58,9 +58,9 @@ public class BossFlameAttack : MonoBehaviour
                 // Only give the reward if 1 second has passed since the last reward
                 if (_timeSinceLastReward >= _rewardCooldown)
                 {
-                    if (boss.rm != null)
+                    if (boss.rewardManager != null)
                     {
-                        boss.rm.ReportHitPlayer();
+                        boss.rewardManager.ReportHitPlayer();
                     }
 
                     // Reset the timer after rewarding

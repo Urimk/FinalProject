@@ -594,7 +594,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     {
         if (_playerMovement != null)
         {
-            return _playerMovement.isGrounded(); // Assuming PlayerMovement has this method
+            return _playerMovement.IsGrounded(); // Assuming PlayerMovement has this method
         }
         // Fallback if playerMovement reference is missing
         // Maybe try a physics check? e.g., Physics2D.OverlapCircle below player? Less reliable.
@@ -769,7 +769,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
             // Apply damage to player
             Health playerHealth = other.GetComponent<Health>();
             // Use 'damage' field inherited from EnemyDamage base class
-            if (playerHealth != null) playerHealth.TakeDamage(damage);
+            if (playerHealth != null) playerHealth.TakeDamage(_damage);
 
             // Report direct collision hit to reward manager
             if (rewardManager != null) rewardManager.ReportHitPlayer();

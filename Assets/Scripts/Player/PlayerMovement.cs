@@ -380,7 +380,7 @@ public class PlayerMovement : MonoBehaviour
     // Handles jump logic
     private bool AttemptJump()
     {
-        if (UIManager.instance.IsGamePaused())
+        if (UIManager.Instance.IsGamePaused())
         {
             return false;
         }

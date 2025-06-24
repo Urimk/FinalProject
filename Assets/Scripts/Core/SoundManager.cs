@@ -7,8 +7,8 @@ public class SoundManager : MonoBehaviour
     private AudioSource _soundSource;
     private AudioSource _musicSource;
 
-    [SerializeField] public AudioClip _menuMusic;  // Serialized for Inspector
-    [SerializeField] public AudioClip _level1Music; // Serialized for Inspector
+    [SerializeField] public AudioClip menuMusic;  // Serialized for Inspector
+    [SerializeField] public AudioClip level1Music; // Serialized for Inspector
 
     private void Awake()
     {

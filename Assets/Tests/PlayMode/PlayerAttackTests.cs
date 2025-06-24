@@ -1,4 +1,5 @@
 using NUnit.Framework;
+
 using UnityEngine;
 
 [TestFixture]
@@ -42,7 +43,7 @@ public class PlayerAttackTests
     public void TestAttackSetsFireballPosition()
     {
         // Simulate calling testAttack() (directly invoking the code inside)
-        playerAttack.testAttack();
+        playerAttack.TestAttack();
 
         // Check if fireball's position matches the firePoint's position
         Assert.AreEqual(firePoint.position, fireball.transform.position, "Fireball position should match the firePoint.");
@@ -56,7 +57,7 @@ public class PlayerAttackTests
         playerAttack.CooldownTimer = 0.5f;
 
         // Call the attack method (but cooldown is not yet finished)
-        playerAttack.testAttack();
+        playerAttack.TestAttack();
 
         // Fireball should not be activated (since cooldown is still ongoing)
         Assert.IsFalse(fireball.activeInHierarchy, "Fireball should not be active if cooldown is not finished.");
@@ -70,7 +71,7 @@ public class PlayerAttackTests
         playerAttack.CooldownTimer = 0.0f;
 
         // Call attack method
-        playerAttack.testAttack();
+        playerAttack.TestAttack();
 
         // Check if cooldown timer was reset
         Assert.AreEqual(0f, playerAttack.CooldownTimer, "Cooldown timer should be reset after attack.");

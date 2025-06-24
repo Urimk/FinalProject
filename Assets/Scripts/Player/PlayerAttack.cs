@@ -79,7 +79,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        if (UIManager.instance.IsGamePaused())
+        if (UIManager.Instance.IsGamePaused())
         {
             return;
         }
@@ -259,7 +259,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void UpdateSwordPosition()
     {
-        if (hasSword && _playerSpriteRenderer.sprite != null)
+        if (HasSword && _playerSpriteRenderer.sprite != null)
         {
             string spriteName = _playerSpriteRenderer.sprite.name;
             Vector3 newPosition;
@@ -283,7 +283,7 @@ public class PlayerAttack : MonoBehaviour
 
     public float IsAttackReady()
     {
-        if (cooldownTimer >= attackCooldown)
+        if (_cooldownTimer >= attackCooldown)
             return 1.0f;
         else
             return 0.0f;
@@ -291,7 +291,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void ResetCooldown()
     {
-        cooldownTimer = 0;
+        _cooldownTimer = 0;
     }
 
 

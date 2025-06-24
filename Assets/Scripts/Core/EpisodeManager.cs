@@ -188,7 +188,7 @@ public class EpisodeManager : MonoBehaviour
             string logMessage = $"--- Batch Summary (Episodes {episodeCount - _episodesSinceLastLog + 1} to {episodeCount}) ---" +
                                 $"\n  Average QL Reward (last {_episodesSinceLastLog} episodes): {averageReward:F3}" +
                                 $"\n  Total Episodes Trained: {episodeCount}" +
-                                $"\n  Current Epsilon: " + (_bossQLearning != null ? _bossQLearning.epsilon.ToString("F3") : "-1.000") +
+                                $"\n  Current Epsilon: " + (_bossQLearning != null ? _bossQLearning.Epsilon.ToString("F3") : "-1.000") +
                                 $"\n  Unique States in Q-Table: {uniqueStates}" +
                                 $"\n  Total Unique States Visited (All Time): {totalVisitedStates}" +
                                 $"\n  States Visited More Than Once: {revisitedStateCount}";
