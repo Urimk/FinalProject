@@ -363,11 +363,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d18ec31211c5e47a11b54d34e8b077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 0
+  _speed: 0.3
   _player: {fileID: 1393604989}
-  _playerHealth: {fileID: 1393604982}
-  _aheadDistance: 0
-  _cameraSpeed: 0
+  _playerHealth: {fileID: 0}
+  _aheadDistance: 5.5
+  _cameraSpeed: 1.5
   _isChase: 0
   _chaseSpeed: 5
   _followPlayerY: 0
@@ -620,7 +620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameOverScreen: {fileID: 235078908}
-  _gameOverSound: {fileID: 0}
+  _gameOverSound: {fileID: 8300000, guid: 5197d54806cf8cf4a9b865c68b7be8c4, type: 3}
   _pauseScreen: {fileID: 1478620801}
   _winScreen: {fileID: 107604972}
 --- !u!114 &67259636
@@ -815,8 +815,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ee5b1372928194b89b85c876d1dc8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _usernameInputScreen: {fileID: 0}
-  _usernameInputField: {fileID: 0}
+  _usernameInputScreen: {fileID: 109013194}
+  _usernameInputField: {fileID: 681646889}
   _errorText: {fileID: 0}
 --- !u!1 &119640155
 GameObject:
@@ -1566,9 +1566,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d312101489f5e049bf2dd1660bc3ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isAIControlled: 0
+  _isAIControlled: 1
   _isFallable: 1
-  _waitTime: 0.4
+  _waitTime: 0.3
   _player: {fileID: 1393604989}
 --- !u!212 &369539319
 SpriteRenderer:
@@ -1807,12 +1807,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &386825171 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
@@ -2375,12 +2375,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &643878523
 GameObject:
   m_ObjectHideFlags: 0
@@ -3484,12 +3484,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!4 &890204395 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4409422353053517975, guid: 66db28530de79ec4a81ab6b7b6c21ffb, type: 3}
@@ -3858,8 +3858,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c85114006280e14a8983fc91f43ab7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _volumeName: 
-  _textIntro: 
+  _volumeName: musicVolume
+  _textIntro: 'MUSIC: '
 --- !u!114 &920692787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4200,7 +4200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 531923236697951366, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: _numberOfFlashes
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: earsSlot
@@ -5466,7 +5466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerGameObject: {fileID: 1393604978}
   _bossGameObject: {fileID: 1957706213}
-  _aiBoss: {fileID: 0}
+  _aiBoss: {fileID: 1957706221}
   _boss: {fileID: 1957706224}
   _bossHealth: {fileID: 1957706222}
   _playerHealth: {fileID: 1393604982}
@@ -5475,7 +5475,7 @@ MonoBehaviour:
   _bossRewardManager: {fileID: 1079023050}
   _bossQLearning: {fileID: 1957706214}
   initialPlayerPosition: {x: -30, y: -10, z: 0}
-  _initialBossPosition: {x: 10, y: -9, z: 0}
+  _initialBossPosition: {x: -25, y: -8, z: 0}
   _logFilePath: BossTrainingLog.txt
   _logFrequency: 100
   episodeCount: 0
@@ -6093,7 +6093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d9426b7aaa184147b9ad8f6971e2c0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scoreText: {fileID: 0}
+  _scoreText: {fileID: 965087384}
 --- !u!1 &1301965643
 GameObject:
   m_ObjectHideFlags: 0
@@ -6221,9 +6221,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0512112d618203840aced5dd316010bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _options: []
-  _changeSound: {fileID: 0}
-  _interactSound: {fileID: 0}
+  _options:
+  - {fileID: 916889319}
+  - {fileID: 1642391974}
+  - {fileID: 2134508859}
+  _changeSound: {fileID: 8300000, guid: c537372af4edc564385e72f1b4dd8341, type: 3}
+  _interactSound: {fileID: 8300000, guid: 29064db9c57bebd41835a219560b8154, type: 3}
 --- !u!114 &1306004936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6314,12 +6317,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &1320945304
 GameObject:
   m_ObjectHideFlags: 0
@@ -6940,8 +6943,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c85114006280e14a8983fc91f43ab7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _volumeName: 
-  _textIntro: 
+  _volumeName: soundVolume
+  _textIntro: 'SOUNDS: '
 --- !u!114 &1391025918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7096,23 +7099,43 @@ MonoBehaviour:
   _playerHealth: {fileID: 1393604982}
   _oneWayPlatform: {fileID: 1988890584}
   _bossHealth: {fileID: 1957706222}
-  _aiBoss: {fileID: 0}
+  _aiBoss: {fileID: 1957706221}
   _boss: {fileID: 1957706220}
   _flames: {fileID: 743609663}
-  _bossFireballs: []
-  _playerFireballs: []
+  _bossFireballs:
+  - {fileID: 1318267781}
+  - {fileID: 620404855}
+  - {fileID: 873336492}
+  - {fileID: 1640000621}
+  - {fileID: 1788871777}
+  - {fileID: 385936518}
+  - {fileID: 1840715148}
+  - {fileID: 1721609926}
+  - {fileID: 1558456096}
+  - {fileID: 1455788293}
+  _playerFireballs:
+  - {fileID: 1292831299}
+  - {fileID: 1397233026}
+  - {fileID: 366846050}
+  - {fileID: 378944430}
+  - {fileID: 1832807652}
+  - {fileID: 1379048511}
+  - {fileID: 906406351}
+  - {fileID: 513587700}
+  - {fileID: 1895430468}
+  - {fileID: 386825171}
   _raycastDistance: 10
   _environmentLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  _groundLayer: 3
-  _platformLayer: 7
-  _wallLayer: 6
+    m_Bits: 4294967295
+  _groundLayer: 8
+  _platformLayer: 9
+  _wallLayer: 10
   _rewardWin: 1
   _penaltyLose: -1
-  _rewardDamageBoss: 0.75
-  _penaltyTakeDamage: -3
-  _penaltyPerStep: -0.0001
+  _rewardDamageBoss: 0.6666666
+  _penaltyTakeDamage: -2
+  _penaltyPerStep: -0.001
   _maxBossFireballsToObserve: 1
   _hazardDetectionRadius: 15
   _hazardDetectionLayerMask:
@@ -7419,12 +7442,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &1478620801
 GameObject:
   m_ObjectHideFlags: 0
@@ -7750,12 +7773,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1001 &1608241231
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7919,12 +7942,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &1642391973
 GameObject:
   m_ObjectHideFlags: 0
@@ -8408,12 +8431,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1001 &1728677508
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8824,12 +8847,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1 &1809271015
 GameObject:
   m_ObjectHideFlags: 0
@@ -8946,12 +8969,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _speed: 0
-  _size: 0
-  _resetTime: 0
-  rewardManager: {fileID: 0}
+  _speed: 1
+  _size: 0.3
+  _resetTime: 10
+  rewardManager: {fileID: 1079023050}
 --- !u!1001 &1855889462
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9472,12 +9495,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42f8fad79680667409eab8c7f3b7feca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 0}
-  _aiBoss: {fileID: 0}
-  _rewardManager: {fileID: 0}
-  _playerHealth: {fileID: 0}
+  _player: {fileID: 1393604989}
+  _aiBoss: {fileID: 1957706221}
+  _rewardManager: {fileID: 1079023050}
+  _playerHealth: {fileID: 1393604982}
   _learningRate: 0.1
-  _discountFactor: 0.95
+  _discountFactor: 0.9
   Epsilon: 1
   EpsilonDecay: 0.9995
   EpsilonMin: 0.1
@@ -9622,31 +9645,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72616a6dd84fc1146930f9493c5f3c23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 0
+  _damage: 1
   _isRecoil: 0
-  _movementSpeed: 3
-  _player: {fileID: 0}
+  _movementSpeed: 1
+  _player: {fileID: 1393604989}
   _anim: {fileID: 0}
-  _rb: {fileID: 0}
-  rewardManager: {fileID: 0}
-  _bossHealth: {fileID: 0}
-  _firepoint: {fileID: 0}
-  _fireballHolder: {fileID: 0}
-  _fireballs: []
-  _flame: {fileID: 0}
-  _areaMarkerPrefab: {fileID: 0}
-  _leftWall: {fileID: 0}
-  _rightWall: {fileID: 0}
-  _targetIconPrefab: {fileID: 0}
+  _rb: {fileID: 1957706216}
+  rewardManager: {fileID: 1079023050}
+  _bossHealth: {fileID: 1957706222}
+  _firepoint: {fileID: 72478224}
+  _fireballHolder: {fileID: 739563515}
+  _fireballs:
+  - {fileID: 1318267781}
+  - {fileID: 620404855}
+  - {fileID: 873336492}
+  - {fileID: 1640000621}
+  - {fileID: 1788871777}
+  - {fileID: 385936518}
+  - {fileID: 1840715148}
+  - {fileID: 1721609926}
+  - {fileID: 1558456096}
+  - {fileID: 1455788293}
+  _flame: {fileID: 743609662}
+  _areaMarkerPrefab: {fileID: 1760400758}
+  _leftWall: {fileID: 1077036129}
+  _rightWall: {fileID: 782904748}
+  _targetIconPrefab: {fileID: 434469124}
   attackCooldown: 6
   _fireballDamage: 1
-  _projectileSpeed: 5
-  _projectileSize: 1.5
+  _projectileSpeed: 4
+  _projectileSize: 0.6
   _fireballSound: {fileID: 0}
-  _predictionTime: 0.3
+  _predictionTime: 0.5
   fireAttackCooldown: 8.5
-  _dashChargeTime: 1.5
-  _dashSpeed: 12
+  _dashChargeTime: 2
+  _dashSpeed: 10
   dashCooldown: 10
   _chargeSound: {fileID: 0}
   _dashSound: {fileID: 0}
@@ -9656,7 +9689,7 @@ MonoBehaviour:
   _flameTrapEnergyCost: 30
   _dashEnergyCost: 40
   flameMissed: 1
-  _arenaCenterPosition: {x: 0, y: 0, z: 0}
+  _arenaCenterPosition: {x: -30, y: -8, z: 0}
   _actionDistanceOffset: 3
   _flameTrapGroundYLevel: -11.5
   _dashDistance: 6
@@ -9677,9 +9710,10 @@ MonoBehaviour:
   _spumPrefabObject: {fileID: 1250826683}
   _boss: {fileID: 1957706220}
   _rm: {fileID: 1079023050}
-  _isTraining: 0
+  _isTraining: 1
   _trophy: {fileID: 0}
-  _bossScriptObjects: []
+  _bossScriptObjects:
+  - {fileID: 1957706224}
 --- !u!114 &1957706224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9692,17 +9726,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15c141126a6a4a45bf7f94ff2cbe245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
+  _damage: 0
   _isRecoil: 0
-  _rb: {fileID: 1957706216}
-  _movementSpeed: 1
+  _rb: {fileID: 0}
+  _movementSpeed: 0.5
   _doRestHealth: 0
   _playerHealth: {fileID: 1393604982}
-  _attackCooldown: 6
+  _attackCooldown: 5
   _fireballDamage: 1
-  _projectileSpeed: 5
-  _projectileSize: 0.3
-  _attackRange: 10
+  _projectileSpeed: 2.5
+  _projectileSize: 0.7
+  _attackRange: 20
   _fireballSound: {fileID: 0}
   _bossHealth: {fileID: 1957706222}
   _firepoint: {fileID: 72478224}
@@ -9722,10 +9756,10 @@ MonoBehaviour:
   _fireballHolder: {fileID: 739563515}
   _flame: {fileID: 743609662}
   _areaMarkerPrefab: {fileID: 1760400758}
-  _fireAttackCooldown: 6
+  _fireAttackCooldown: 7
   _dashChargeTime: 2
   _dashSpeed: 10
-  _dashCooldown: 10
+  _dashCooldown: 5
   _chargeSound: {fileID: 0}
   _dashSound: {fileID: 0}
   _targetIconPrefab: {fileID: 434469124}
@@ -10056,9 +10090,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d312101489f5e049bf2dd1660bc3ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isAIControlled: 0
+  _isAIControlled: 1
   _isFallable: 1
-  _waitTime: 0.4
+  _waitTime: 0.3
   _player: {fileID: 1393604989}
 --- !u!1 &2008115411
 GameObject:
@@ -10271,9 +10305,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0512112d618203840aced5dd316010bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _options: []
-  _changeSound: {fileID: 0}
-  _interactSound: {fileID: 0}
+  _options:
+  - {fileID: 1883026004}
+  - {fileID: 1391025916}
+  - {fileID: 920692785}
+  - {fileID: 1207742821}
+  - {fileID: 1241898267}
+  _changeSound: {fileID: 8300000, guid: c537372af4edc564385e72f1b4dd8341, type: 3}
+  _interactSound: {fileID: 8300000, guid: 29064db9c57bebd41835a219560b8154, type: 3}
 --- !u!114 &2036872813
 MonoBehaviour:
   m_ObjectHideFlags: 0
