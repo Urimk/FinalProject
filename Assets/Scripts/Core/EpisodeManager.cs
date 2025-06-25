@@ -10,6 +10,9 @@ using UnityEngine;
 // Streamlined for use with an ML-Agents Player.
 public class EpisodeManager : MonoBehaviour
 {
+    [Header("Episode Timeout (seconds)")]
+    [Tooltip("How many seconds before an episode is forced to end with a penalty.")]
+    [SerializeField] private float _maxEpisodeDuration = 30f;
     [Header("Scene References")]
     [Tooltip("Reference to the Player GameObject.")]
     [SerializeField] private GameObject _playerGameObject;
@@ -44,16 +47,22 @@ public class EpisodeManager : MonoBehaviour
     [Tooltip("File path for detailed training logs.")]
     [SerializeField] private string _logFilePath = "BossTrainingLog.txt";
     [Tooltip("How many episodes to log detailed stats (including state visits) over (primarily for QL).")]
-    [SerializeField] private int _logFrequency = 100; // Log every 100 episodes
+    [SerializeField] private int _logFrequency = 10; // Log every 100 episodes
 
 
     // --- Internal State for Episode Counting, Logging Accumulation ---
     public int episodeCount = 0;
+    public float averageReward;
     private string _episodeCountSaveKey = "BossEpisodeCount"; // Key for PlayerPrefs
 
     // Fields to accumulate reward and count episodes between logs (primarily for QL logging)
     private float _accumulatedRewardSinceLastLog = 0f;
     private int _episodesSinceLastLog = 0;
+    // Internal timer
+    private float _episodeStartTime;
+    private bool _timeoutTriggered = false;
+    private bool debugged = false;
+
 
     // Removed isEpisodeEnding flag - rely on ML-Agents EndEpisode call
 
@@ -63,7 +72,7 @@ public class EpisodeManager : MonoBehaviour
 
     private void Awake()
     {
-        //Time.timeScale = 10f;
+        //Time.timeScale = 2f;
         //Application.targetFrameRate = -1; // No frame limit
 
         // --- Singleton Setup ---
@@ -96,6 +105,40 @@ public class EpisodeManager : MonoBehaviour
         //     catch (Exception ex) { Debug.LogError($"[EpisodeManager] Failed to clear log file: {ex.Message}"); }
         // }
     }
+    private void Update()
+    {
+        // Only run the timeout check if an episode is in progress:
+        if (!_timeoutTriggered && Time.time - _episodeStartTime >= _maxEpisodeDuration)
+        {
+            _timeoutTriggered = true;
+            HandleEpisodeTimeout();
+        }
+    }
+
+    private void HandleEpisodeTimeout()
+    {
+        Debug.LogWarning("[EpisodeManager] Episode timed out! Applying penalty and ending episode.");
+
+        // 1. Apply your timeout penalty (e.g. −1 reward)
+        if (_bossRewardManager != null)
+        {
+            _bossRewardManager.AddCustomReward(-30f);  // You'll implement this to do something like AddReward(-1f)
+        }
+
+        // 2. Tell your ML-Agents agent to end the episode
+        //    Assuming your PlayerAI component is on _playerGameObject:
+        var agent = _playerGameObject.GetComponent<PlayerAI>();
+        if (agent != null)
+        {
+            RecordEndOfEpisode(bossWon: false);
+            agent.EndEpisode();
+        }
+        else
+        {
+            Debug.LogError("[EpisodeManager] Could not find PlayerAI to EndEpisode on timeout!");
+        }
+
+    }
 
     private void OnApplicationQuit()
     {
@@ -123,6 +166,7 @@ public class EpisodeManager : MonoBehaviour
         if (_playerGameObject == null || _bossGameObject == null || _bossRewardManager == null) // QL is optional for ML-Agents Player training
         {
             Debug.LogError("[EpisodeManager] Critical references missing for ML-Agents training. Disabling EpisodeManager.");
+
             this.enabled = false;
             return;
         }
@@ -177,7 +221,7 @@ public class EpisodeManager : MonoBehaviour
         // 4. Logging (Handles Q-Learning specific stats)
         if (_logFrequency > 0 && _episodesSinceLastLog >= _logFrequency)
         {
-            float averageReward = (_episodesSinceLastLog > 0) ? _accumulatedRewardSinceLastLog / _episodesSinceLastLog : 0f;
+            averageReward = (_episodesSinceLastLog > 0) ? _accumulatedRewardSinceLastLog / _episodesSinceLastLog : 0f;
 
             // Get state counts from the Q-Learning script (if assigned)
             int uniqueStates = _bossQLearning != null ? _bossQLearning.GetUniqueStateCount() : -1;
@@ -206,6 +250,7 @@ public class EpisodeManager : MonoBehaviour
         if (_bossQLearning != null)
         {
             _bossQLearning.ResetQLearningState();
+            _bossQLearning.LogEpisode(episodeCount, averageReward, bossWon);
         }
         else
         {
@@ -244,6 +289,12 @@ public class EpisodeManager : MonoBehaviour
         // --- Reset Shared Hazards ---
         ResetSharedHazards();
 
+        // --- NEW: record the time this episode began ---
+        _episodeStartTime = Time.time;
+        // --- FIX: Reset the timeout trigger for the new episode ---
+        _timeoutTriggered = false;
+        Debug.Log($"[EpisodeManager] Episode timer started at {_episodeStartTime}");
+
         // DO NOT reset Player state here - PlayerAI.OnEpisodeBegin handles its own player reset.
         // DO NOT reset QL state here - RecordEndOfEpisode handles that.
 
@@ -265,7 +316,6 @@ public class EpisodeManager : MonoBehaviour
             if (_aiBoss != null)
             {
                 if (!_aiBoss.enabled) _aiBoss.enabled = true;
-                _aiBoss.DeactivateFlameAndWarning(); // Assuming this exists
                 _aiBoss.ResetAbilityStates(); // Assuming this exists
             }
             if (_boss != null)

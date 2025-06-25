@@ -14,7 +14,7 @@ public class BossRewardManager : MonoBehaviour
     [Tooltip("Base penalty given when the boss LOSES the episode (is defeated or time runs out). Should be negative.")]
     [SerializeField] private float penaltyBossLosesBase = -200.0f;
     [Tooltip("Maximum expected/allowed duration of an episode in seconds. Used for scaling time-based rewards/penalties.")]
-    [SerializeField] private float maxEpisodeDuration = 45.0f; // Ensure this matches your EpisodeManager's episodeDuration
+    [SerializeField] private float maxEpisodeDuration = 30f; // Ensure this matches your EpisodeManager's episodeDuration
     [Tooltip("Set to true to add a bonus for winning faster, and a larger penalty for losing faster.")]
     [SerializeField] private bool scaleTerminalRewardByTime = true;
 
@@ -249,6 +249,10 @@ public class BossRewardManager : MonoBehaviour
         // but the QLearning script might need this for the (s,a,r,s', done) tuple.
         // The terminalRewardPending flag is set *when* the episode ends.
         return _terminalRewardPending; // Returns true only *after* ReportWin/Loss has been called and before GetTotalRewardAndReset clears the flag
+    }
+    public void AddCustomReward(float reward)
+    {
+        _currentAccumulatedStepReward += reward;
     }
 
 }

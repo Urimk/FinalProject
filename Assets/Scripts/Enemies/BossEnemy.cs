@@ -421,15 +421,6 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
     }
 
-    // Method to initiate Charge Dash Attack (can be called by QL agent)
-    public void AIRequestChargeDashAttack()
-    {
-        // Check if boss is dead, already busy, or dash is on cooldown, or not in phase 2
-        if (_isDead || _isChargingDash || _isDashing || _dashCooldownTimer < _dashCooldown || !_isPhase2) return;
-
-        ChargeDashAttack(); // Perform the attack logic
-    }
-
 
     // Charge Dash Attack sequence
     private void ChargeDashAttack()

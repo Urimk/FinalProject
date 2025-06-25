@@ -224,7 +224,7 @@ public class PlayerAI : Agent
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == _groundLayer); // Hit Ground? (1 float)
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == _platformLayer); // Hit Platform? (1 float)
         sensor.AddObservation(worldDownHit.collider != null && worldDownHit.collider.gameObject.layer == _wallLayer); // Hit Wall? (1 float)
-                                                                                                                     // Add more layers here if needed
+                                                                                                                      // Add more layers here if needed
 
 
         // --- Physics-Based Hazard/Indicator Detection (Keep this) ---
