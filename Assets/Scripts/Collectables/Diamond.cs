@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Diamond : MonoBehaviour
 {
-    [SerializeField] private int _scoreValue = 50;
-    public string collectableID;
+    private const int DefaultScoreValue = 50; // Default score value for diamonds
+
+    [Header("Collectable Info")]
+    [SerializeField] private int _scoreValue = DefaultScoreValue;
+    [FormerlySerializedAs("collectableID")]
+    [SerializeField] private string _collectableID;
 
     [Header("Sound")]
     [SerializeField] private AudioClip _collectSound;

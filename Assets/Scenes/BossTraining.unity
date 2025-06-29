@@ -363,10 +363,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d18ec31211c5e47a11b54d34e8b077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 0.3
   _player: {fileID: 1393604989}
   _playerHealth: {fileID: 0}
-  _aheadDistance: 5.5
+  _speed: 0.3
+  _targetXOffset: 5.5
   _cameraSpeed: 1.5
   _isChase: 0
   _chaseSpeed: 5
@@ -4862,7 +4862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5966890650448994648, guid: 66db28530de79ec4a81ab6b7b6c21ffb, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7799581190300183235, guid: 66db28530de79ec4a81ab6b7b6c21ffb, type: 3}
       propertyPath: m_Layer
@@ -5651,8 +5651,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxEpisodeDuration: 30
-  _playerGameObject: {fileID: 1393604978}
-  _bossGameObject: {fileID: 1957706213}
+  _playerObject: {fileID: 1393604978}
+  _bossObject: {fileID: 1957706213}
   _aiBoss: {fileID: 1957706221}
   _boss: {fileID: 0}
   _bossHealth: {fileID: 1957706222}
@@ -9941,26 +9941,30 @@ MonoBehaviour:
     positionDiscretization: 4
     velocityThresholdLow: 3.5
     velocityThresholdHigh: 8
+    playerSpeed: 3
     minEpisodes: 100
-    minAverageReward: 10
+    minAverageReward: 130
   - numActions: 22
     positionDiscretization: 3.5
     velocityThresholdLow: 3
     velocityThresholdHigh: 7
+    playerSpeed: 3
     minEpisodes: 200
-    minAverageReward: 20
+    minAverageReward: 145
   - numActions: 26
     positionDiscretization: 3
     velocityThresholdLow: 2.5
     velocityThresholdHigh: 6
+    playerSpeed: 3
     minEpisodes: 300
-    minAverageReward: 30
+    minAverageReward: 155
   - numActions: 29
     positionDiscretization: 2.5
     velocityThresholdLow: 2
     velocityThresholdHigh: 5
+    playerSpeed: 3
     minEpisodes: 400
-    minAverageReward: 40
+    minAverageReward: 160
   penaltyInvalidAction: -1
   penaltyGCDBlocked: -0.5
 --- !u!61 &1957706215

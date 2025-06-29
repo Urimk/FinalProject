@@ -2,10 +2,12 @@
 
 public class HealthCollectable : MonoBehaviour
 {
+    [Header("Collectable Info")]
     [SerializeField] private float _healthValue;
 
     [Header("Sound")]
     [SerializeField] private AudioClip _collectSound;
+
     private bool _healthAdded;
 
     private void OnTriggerEnter2D(Collider2D collision)

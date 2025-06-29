@@ -2,12 +2,20 @@
 
 public class TimerManager : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const float DefaultStartingTime = 600f; // 10 minutes (600 seconds)
+
+    // ==================== Singleton ====================
     public static TimerManager Instance;
 
-    [SerializeField] private float _startingTime = 600f; // 10 minutes (600 seconds)
+    // ==================== Serialized Fields ====================
+    [SerializeField] private float _startingTime = DefaultStartingTime;
+
+    // ==================== Private Fields ====================
     private float _currentTime;
     private bool _isRunning = false;
 
+    // ==================== Unity Lifecycle ====================
     private void Awake()
     {
         if (Instance == null)
@@ -35,6 +43,7 @@ public class TimerManager : MonoBehaviour
         }
     }
 
+    // ==================== Public Methods ====================
     public float GetRemainingTime()
     {
         return Mathf.Max(0, _currentTime);

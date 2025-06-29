@@ -1,41 +1,54 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
-    // Room Camera
-    [SerializeField] private float _speed;
-    private float _currentPosY; // Used as target Y for room camera or initial Y
-    private Vector3 _velocity = Vector3.zero; // Used by SmoothDamp for Y-axis
+    // ==================== Constants ====================
+    private const float DefaultYOffset = 2f;
+    private const float RoomYOffset = 2.38f;
+    private const float PlayerMoveThreshold = 0.01f;
+    private const float CameraMiddleZonePercent = 0.1f;
+    private const int PlayerFallDamage = 100;
 
-    // Follow player X
+    // ==================== Dependencies ====================
     [SerializeField] private Transform _player;
     [SerializeField] private Health _playerHealth;
-    [SerializeField] private float _aheadDistance;
-    [SerializeField] private float _cameraSpeed; // Speed for lookAhead Lerp
-    private float _lookAhead;
 
-    // Freeze camera X
+    // ==================== General Camera Movement ====================
+    [Header("General Movement")]
+    [SerializeField] private float _speed;
+    private float _currentPosY;
+    private Vector3 _velocity = Vector3.zero;
+
+    // ==================== Player X Follow ====================
+    [Header("X Follow Settings")]
+    [FormerlySerializedAs("_aheadDistance")]
+    [SerializeField] private float _targetXOffset;
+    [SerializeField] private float _cameraSpeed;
+    private float _currentXOffset;
+
+    // ==================== X Freeze ====================
+    [Header("X Freeze Settings")]
     private bool _isXFrozen = false;
     private float _frozenX = 0f;
 
-
-    // Chase mode
+    // ==================== Chase Mode ====================
     [Header("Chase Mode Settings")]
     [SerializeField] private bool _isChase = false;
-    [SerializeField] private float _chaseSpeed = 5f; // Speed at which camera moves right in chase mode
+    [SerializeField] private float _chaseSpeed = 5f;
     private bool _playerInMiddle = false;
-    private bool _playerWasMoving = false;
+    private bool _playerIsMoving = false;
     private float _playerLastXPosition;
 
-    // Player Y Follow Settings
-    [Header("Player Y Follow Settings")]
+    // ==================== Y Follow ====================
+    [Header("Y Follow Settings")]
     [SerializeField] private bool _followPlayerY = false;
-    [SerializeField] private float _playerYOffset = 2f; // Vertical offset when following player's Y
+    [SerializeField] private float _playerYOffset = DefaultYOffset;
     private bool _snapYNextFrame = true;
 
+    // ==================== Y Offset Transition ====================
     [Header("Y Offset Transition")]
     [SerializeField] private float _offsetTransitionDuration = 0.5f;
-
     private bool _isTransitioningYOffset = false;
     private float _transitionStartYOffset;
     private float _transitionTargetYOffset;
@@ -45,21 +58,14 @@ public class CameraController : MonoBehaviour
     {
         if (_followPlayerY)
         {
-            // If starting with Y follow, set the camera's Y position directly to the target.
-            // SmoothDamp in Update will then keep it following smoothly.
             float initialTargetY = _player.position.y + _playerYOffset;
             transform.position = new Vector3(transform.position.x, initialTargetY, transform.position.z);
-            _currentPosY = initialTargetY; // Initialize currentPosY in case mode is toggled
+            _currentPosY = initialTargetY;
         }
         else
         {
-            // Original behavior for room camera:
-            // Set initial target Y based on player's start position, with a fixed offset.
-            // The camera will SmoothDamp to this Y.
-            _currentPosY = _player.position.y + 2f; // Using the 2f offset from your original Start()
+            _currentPosY = _player.position.y + DefaultYOffset;
         }
-
-        // Initialize chase mode variables
         _playerLastXPosition = _player.position.x;
     }
 
@@ -67,46 +73,36 @@ public class CameraController : MonoBehaviour
     {
         HandleYMovement();
         HandleXMovement();
-
-        // Update lookAhead for normal follow mode
         if (!_isChase && !_isXFrozen)
         {
-            _lookAhead = Mathf.Lerp(_lookAhead, (_aheadDistance * _player.localScale.x), Time.deltaTime * _cameraSpeed);
+            _currentXOffset = Mathf.Lerp(_currentXOffset, _targetXOffset * _player.localScale.x, Time.deltaTime * _cameraSpeed);
         }
     }
 
+    // ==================== Y Movement ====================
     private void HandleYMovement()
     {
         float yTargetForSmoothDamp;
-
         if (_followPlayerY)
         {
             if (_isTransitioningYOffset)
             {
                 _transitionTimer += Time.deltaTime;
                 float t = Mathf.Clamp01(_transitionTimer / _offsetTransitionDuration);
-                // Lerp the offset
                 _playerYOffset = Mathf.Lerp(_transitionStartYOffset, _transitionTargetYOffset, t);
-
                 if (t >= 1f)
                 {
-                    // Done transitioning
                     _isTransitioningYOffset = false;
                 }
             }
-
             yTargetForSmoothDamp = _player.position.y + _playerYOffset;
-
             if (_snapYNextFrame)
             {
-                // Instantly snap camera Y position and clear velocity
                 transform.position = new Vector3(transform.position.x, yTargetForSmoothDamp, transform.position.z);
                 _velocity = Vector3.zero;
-                //_snapYNextFrame = false; // Only snap once
             }
             else
             {
-                // Smooth follow Y
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
                     new Vector3(transform.position.x, yTargetForSmoothDamp, transform.position.z),
@@ -117,7 +113,6 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            // Room camera mode
             yTargetForSmoothDamp = _currentPosY;
             transform.position = Vector3.SmoothDamp(
                 transform.position,
@@ -128,6 +123,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    // ==================== X Movement ====================
     private void HandleXMovement()
     {
         if (_isChase)
@@ -136,75 +132,57 @@ public class CameraController : MonoBehaviour
         }
         else if (!_isXFrozen)
         {
-            // Normal follow mode
-            transform.position = new Vector3(_player.position.x + _lookAhead, transform.position.y, transform.position.z);
+            transform.position = new Vector3(_player.position.x + _currentXOffset, transform.position.y, transform.position.z);
         }
         else
         {
-            // Frozen mode
             transform.position = new Vector3(_frozenX, transform.position.y, transform.position.z);
         }
     }
 
+    // ==================== Chase Mode Methods ====================
     private void HandleChaseMode()
     {
         float cameraCurrentX = transform.position.x;
         float playerCurrentX = _player.position.x;
-
-        // Check if player is moving
-        bool isPlayerMoving = Mathf.Abs(playerCurrentX - _playerLastXPosition) > 0.01f;
+        bool isPlayerMoving = Mathf.Abs(playerCurrentX - _playerLastXPosition) > PlayerMoveThreshold;
         _playerLastXPosition = playerCurrentX;
-
-        // Get camera bounds (assuming camera width, you might need to adjust this based on your camera setup)
         Camera cam = GetComponent<Camera>();
         float cameraHalfWidth = cam.orthographicSize * cam.aspect;
         float cameraLeftEdge = cameraCurrentX - cameraHalfWidth;
         float cameraMiddle = cameraCurrentX;
-
-        // Check if player fell out of camera on the left side
         if (playerCurrentX < cameraLeftEdge)
         {
-            // Player fell out, give damage
-            _playerHealth.TakeDamage(100);
+            _playerHealth.TakeDamage(PlayerFallDamage);
         }
-
-        // Check if player is in the middle of the camera
-        _playerInMiddle = Mathf.Abs(playerCurrentX - cameraMiddle) < cameraHalfWidth * 0.1f; // 10% of camera width as "middle" zone
-
+        _playerInMiddle = Mathf.Abs(playerCurrentX - cameraMiddle) < cameraHalfWidth * CameraMiddleZonePercent;
         if (_playerInMiddle && isPlayerMoving && playerCurrentX > cameraMiddle)
         {
-            // Player is in middle, moving, and moving right - camera follows player
-            _playerWasMoving = true;
+            _playerIsMoving = true;
             transform.position = new Vector3(playerCurrentX, transform.position.y, transform.position.z);
         }
-        else if (_playerWasMoving && (!isPlayerMoving || playerCurrentX <= cameraMiddle))
+        else if (_playerIsMoving && (!isPlayerMoving || playerCurrentX <= cameraMiddle))
         {
-            // Player stopped moving or moved back - return to normal chase speed
-            _playerWasMoving = false;
+            _playerIsMoving = false;
         }
-
-        if (!_playerWasMoving)
+        if (!_playerIsMoving)
         {
-            // Normal chase mode - move right at constant speed
             transform.position = new Vector3(cameraCurrentX + _chaseSpeed * Time.deltaTime, transform.position.y, transform.position.z);
         }
     }
 
+    // ==================== Public Methods ====================
     public void MoveToNewRoom(Transform newRoom)
     {
-        // This sets the target Y for the room camera mode.
-        // If followPlayerY is true, this value will be stored but not immediately used
-        // for camera positioning until followPlayerY is set to false.
-        _currentPosY = newRoom.position.y + 2.38f;
+        _currentPosY = newRoom.position.y + RoomYOffset;
     }
 
-    // Method to freeze or unfreeze the X position of the camera
     public void SetCameraXFreeze(bool freeze, float xPosition = 0f)
     {
         _isXFrozen = freeze;
         if (freeze)
         {
-            _frozenX = xPosition; // Set the X position to freeze the camera at
+            _frozenX = xPosition;
         }
     }
 
@@ -214,33 +192,28 @@ public class CameraController : MonoBehaviour
         SetYOffset(yPosition, false);
     }
 
-    // Method to enable/disable chase mode
     public void SetChaseMode(bool chase)
     {
         _isChase = chase;
         if (chase)
         {
-            // Reset chase mode variables
-            _playerWasMoving = false;
+            _playerIsMoving = false;
             _playerInMiddle = false;
             _playerLastXPosition = _player.position.x;
         }
     }
 
-    // Optional: Method to toggle Y follow mode and set offset
     public void SetFollowPlayerY(float yOffset = -1f)
     {
         _followPlayerY = true;
         if (yOffset != -1f)
         {
             SetYOffset(yOffset, false);
-
         }
         else
         {
-            _snapYNextFrame = true; // Trigger snapping in next Update
+            _snapYNextFrame = true;
         }
-
     }
 
     public void SetYOffset(float newOffset, bool instantSnap = false)
@@ -265,13 +238,11 @@ public class CameraController : MonoBehaviour
         return _playerYOffset;
     }
 
-    // Getter for chase mode state
     public bool IsChaseMode()
     {
         return _isChase;
     }
 
-    // Method to set chase speed
     public void SetChaseSpeed(float newChaseSpeed)
     {
         _chaseSpeed = newChaseSpeed;

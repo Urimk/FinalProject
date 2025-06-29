@@ -13,6 +13,7 @@ public class CurriculumStage
     public float positionDiscretization = 4.0f;
     public float velocityThresholdLow = 2.0f;
     public float velocityThresholdHigh = 6.0f;
+    public float playerSpeed = 3.0f; // If you want to slow the player
     public int minEpisodes = 100; // Minimum episodes before advancing
     public float minAverageReward = 50.0f; // Threshold to advance
 }
@@ -62,7 +63,7 @@ public class BossQLearning : MonoBehaviour
     [SerializeField] private float _actionDistanceOffset = 3.0f;
 
     [SerializeField] private List<CurriculumStage> curriculumStages = new List<CurriculumStage>();
-    [Header("Q-Learning Parameters")]
+    [Header("RL Penalties")]
     [SerializeField] private float penaltyInvalidAction = -1.0f;
     [SerializeField] private float penaltyGCDBlocked = -0.5f;
     private int currentCurriculumStage = 0;
@@ -78,6 +79,8 @@ public class BossQLearning : MonoBehaviour
 
     private string logFilePath;
     private int _maxActionIndexForCurrentStage;
+
+
 
     // --- Action Definition (Expanded) ---
     // Includes more Movement Types and more granular Aiming Modes for Abilities
@@ -178,7 +181,7 @@ public class BossQLearning : MonoBehaviour
 
     private void Start()
     {
-        logFilePath = Path.Combine(Application.persistentDataPath, "BossTrainingLog.xlsx");
+        logFilePath = Path.Combine(Application.persistentDataPath, "BossTrainingLog.csv");
         if (!File.Exists(logFilePath))
             File.WriteAllText(logFilePath, "Episode,Reward,Win,Stage,AverageReward\n");
     }
@@ -324,7 +327,7 @@ public class BossQLearning : MonoBehaviour
         {
             // Clamp energy just in case it goes slightly out of 0-1 range
             // Ensure AIBoss has a GetCurrentEnergyNormalized method returning 0-1
-            currentEnergy = _aiBoss.GetCurrentEnergyNormalized(); // Uncomment and implement in AIBoss
+            // currentEnergy = aiBoss.GetCurrentEnergyNormalized(); // Uncomment and implement in AIBoss
             energyBin = Mathf.FloorToInt(Mathf.Clamp01(currentEnergy) * _energyDiscretizationBins);
             // Ensure max value maps to highest valid bin
             if (energyBin >= _energyDiscretizationBins) energyBin = _energyDiscretizationBins - 1;
@@ -686,10 +689,8 @@ public class BossQLearning : MonoBehaviour
                     }
                     else
                     {
-                        _rewardManager.AddCustomReward(penaltyInvalidAction);
                         // Debug.Log($"[Q-Learning] Fireball action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
                     }
-                    _rewardManager.AddCustomReward(penaltyGCDBlocked);
                 } // else { Debug.Log($"[Q-Learning] Fireball action {selectedAction} attempted but GCD ({_globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
@@ -707,10 +708,8 @@ public class BossQLearning : MonoBehaviour
                     }
                     else
                     {
-                        _rewardManager.AddCustomReward(penaltyInvalidAction);
                         // Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
                     }
-                    _rewardManager.AddCustomReward(penaltyGCDBlocked);
                 } // else { Debug.Log($"[Q-Learning] FlameTrap action {selectedAction} attempted but GCD ({_globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
@@ -727,10 +726,8 @@ public class BossQLearning : MonoBehaviour
                     }
                     else
                     {
-                        _rewardManager.AddCustomReward(penaltyInvalidAction);
                         // Debug.Log($"[Q-Learning] Dash action {selectedAction} chosen, but AIBoss couldn't execute (internal check failed).");
                     }
-                    _rewardManager.AddCustomReward(penaltyGCDBlocked);
                 } // else { Debug.Log($"[Q-Learning] Dash action {selectedAction} attempted but GCD ({_globalCooldownTimer:F2}s remaining) or busy."); }
                 break;
 
@@ -753,7 +750,6 @@ public class BossQLearning : MonoBehaviour
             // This case means the QL agent chose an ability when GCD was ready and AIBoss wasn't busy,
             // but the AIBoss.AIRequest... method still returned false (e.g., individual cooldown wasn't *actually* ready, or insufficient resources).
             // This log helps debug why an action chosen by QL isn't happening in game.
-            _rewardManager.AddCustomReward(penaltyInvalidAction);
             Debug.LogWarning($"[Q-Learning] Ability Action {selectedAction} chosen & conditions met (GCD ready, not busy), but AIBoss.AIRequest failed (internal readiness/resource/constraint issue).");
         }
     }
@@ -967,8 +963,6 @@ public class BossQLearning : MonoBehaviour
         var stage = curriculumStages[stageIdx];
         _maxActionIndexForCurrentStage = stage.numActions; // Store the limit
         _positionDiscretizationFactor = stage.positionDiscretization;
-        _velocityThresholdLow = stage.velocityThresholdLow;
-        _velocityThresholdHigh = stage.velocityThresholdHigh;
     }
 
     public void OnEpisodeEnd(float episodeReward)
