@@ -5185,7 +5185,7 @@ MonoBehaviour:
   penaltyBossLosesBase: -100
   maxEpisodeDuration: 30
   scaleTerminalRewardByTime: 1
-  rewardHitPlayer: 15
+  rewardHitPlayer: 30
   penaltyTookDamage: -2
   penaltyAttackMissed: -1
   rewardTrapTriggered: 8
@@ -5664,7 +5664,7 @@ MonoBehaviour:
   initialPlayerPosition: {x: -30, y: -10, z: 0}
   _initialBossPosition: {x: -25, y: -8, z: 0}
   _logFilePath: BossTrainingLog.txt
-  _logFrequency: 100
+  _logFrequency: 10
   episodeCount: 0
   averageReward: 0
 --- !u!1 &1207742820
@@ -9943,28 +9943,28 @@ MonoBehaviour:
     velocityThresholdHigh: 8
     playerSpeed: 3
     minEpisodes: 100
-    minAverageReward: 130
+    minAverageReward: 150
   - numActions: 22
     positionDiscretization: 3.5
     velocityThresholdLow: 3
     velocityThresholdHigh: 7
     playerSpeed: 3
     minEpisodes: 200
-    minAverageReward: 145
+    minAverageReward: 175
   - numActions: 26
     positionDiscretization: 3
     velocityThresholdLow: 2.5
     velocityThresholdHigh: 6
     playerSpeed: 3
     minEpisodes: 300
-    minAverageReward: 155
+    minAverageReward: 190
   - numActions: 29
     positionDiscretization: 2.5
     velocityThresholdLow: 2
     velocityThresholdHigh: 5
     playerSpeed: 3
     minEpisodes: 400
-    minAverageReward: 160
+    minAverageReward: 200
   penaltyInvalidAction: -1
   penaltyGCDBlocked: -0.5
 --- !u!61 &1957706215

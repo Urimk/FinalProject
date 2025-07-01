@@ -224,6 +224,12 @@ public class EpisodeManager : MonoBehaviour
             int totalVisitedStates = _bossQLearning != null ? _bossQLearning.GetTotalStatesVisitedCount() : -1;
             int revisitedStateCount = _bossQLearning != null ? _bossQLearning.GetRevisitedStateCount() : -1;
 
+            Dictionary<int, int> visitThresholds = _bossQLearning?.GetStateVisitThresholdCounts();
+
+            string visitStats = visitThresholds != null
+                ? $"  States visited >20: {visitThresholds[20]}, >50: {visitThresholds[50]}, >100: {visitThresholds[100]}, >200: {visitThresholds[200]}"
+                : "  State visit thresholds not available.";
+
 
             string logMessage = $"--- Batch Summary (Episodes {episodeCount - _episodesSinceLastLog + 1} to {episodeCount}) ---" +
                                 $"\n  Average QL Reward (last {_episodesSinceLastLog} episodes): {averageReward:F3}" +
@@ -231,7 +237,8 @@ public class EpisodeManager : MonoBehaviour
                                 $"\n  Current Epsilon: " + (_bossQLearning != null ? _bossQLearning.Epsilon.ToString("F3") : "-1.000") +
                                 $"\n  Unique States in Q-Table: {uniqueStates}" +
                                 $"\n  Total Unique States Visited (All Time): {totalVisitedStates}" +
-                                $"\n  States Visited More Than Once: {revisitedStateCount}";
+                                $"\n  States Visited More Than Once: {revisitedStateCount}" +
+                                $"\n" + visitStats;
 
             Debug.Log($"[EpisodeManager QL Log]\n{logMessage}");
             LogToFile(logMessage); // Log to file
@@ -405,4 +412,5 @@ public class EpisodeManager : MonoBehaviour
     {
         return episodeCount; // Return current episode count
     }
+
 }

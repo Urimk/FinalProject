@@ -782,7 +782,7 @@ public class BossQLearning : MonoBehaviour
             QTableWrapper wrapper = new QTableWrapper(_qTable, _stateVisitCounts);
             string json = JsonUtility.ToJson(wrapper, true); // Use 'true' for pretty print (debugging)
             File.WriteAllText(_saveFilePath, json);
-            Debug.Log($"[Q-Learning] Q-Table and State Visits saved successfully to {_saveFilePath}. Number of actions: {_numActions}");
+            //Debug.Log($"[Q-Learning] Q-Table and State Visits saved successfully to {_saveFilePath}. Number of actions: {_numActions}");
         }
         catch (System.Exception ex)
         {
@@ -989,6 +989,27 @@ public class BossQLearning : MonoBehaviour
         float avgReward = recentRewards.Count > 0 ? recentRewards.Average() : 0f;
         string line = $"{episode},{reward},{(win ? 1 : 0)},{currentCurriculumStage},{avgReward}\n";
         File.AppendAllText(logFilePath, line);
+    }
+
+    public Dictionary<int, int> GetStateVisitThresholdCounts()
+    {
+        var result = new Dictionary<int, int>
+        {
+            [20] = 0,
+            [50] = 0,
+            [100] = 0,
+            [200] = 0
+        };
+
+        foreach (var count in _stateVisitCounts.Values) // Adjust to match your actual field
+        {
+            if (count > 20) result[20]++;
+            if (count > 50) result[50]++;
+            if (count > 100) result[100]++;
+            if (count > 200) result[200]++;
+        }
+
+        return result;
     }
 }
 
