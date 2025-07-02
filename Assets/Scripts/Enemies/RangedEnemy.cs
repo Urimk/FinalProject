@@ -1,7 +1,16 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles ranged enemy attack logic, including player detection, fireball attack, and cooldown.
+/// </summary>
 public class RangedEnemy : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const float BoxCastAngle = 0f;
+    private const float BoxCastDistance = 0f;
+    private static readonly Color GizmoColor = Color.red;
+
+    // ==================== Serialized Fields ====================
     [Header("Attack Parameters")]
     [SerializeField] private float _attackCooldown;
     [SerializeField] private int _damage;
@@ -20,17 +29,24 @@ public class RangedEnemy : MonoBehaviour
 
     [Header("Fireball Sound")]
     [SerializeField] private AudioClip _fireballSound;
-    private float _cooldownTimer = Mathf.Infinity;
 
+    // ==================== Private Fields ====================
+    private float _cooldownTimer = Mathf.Infinity;
     private Animator _animator;
     private EnemyPatrol _enemyPatrol;
 
+    /// <summary>
+    /// Initializes animator and patrol references.
+    /// </summary>
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
+    /// <summary>
+    /// Handles attack cooldown, triggers attack, and manages patrol state.
+    /// </summary>
     private void Update()
     {
         _cooldownTimer += Time.deltaTime;
@@ -48,22 +64,31 @@ public class RangedEnemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if the player is in sight using a box cast.
+    /// </summary>
     private bool PlayerInSight()
     {
         RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
                                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y),
-                                             0, Vector2.left, 0, _playerLayer);
+                                             BoxCastAngle, Vector2.left, BoxCastDistance, _playerLayer);
 
         return hit.collider != null;
     }
 
+    /// <summary>
+    /// Draws the box cast gizmo in the editor for debugging.
+    /// </summary>
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = GizmoColor;
         Gizmos.DrawWireCube(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y));
     }
 
+    /// <summary>
+    /// Plays the fireball sound, resets cooldown, and activates a fireball.
+    /// </summary>
     private void RangedAttack()
     {
         SoundManager.instance.PlaySound(_fireballSound, gameObject);
@@ -72,6 +97,9 @@ public class RangedEnemy : MonoBehaviour
         _fireballs[FindFireball()].GetComponent<EnemyProjectile>().ActivateProjectile();
     }
 
+    /// <summary>
+    /// Finds the index of an inactive fireball in the pool.
+    /// </summary>
     private int FindFireball()
     {
         for (int i = 0; i < _fireballs.Length; i++)

@@ -2,11 +2,17 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Base class for enemy damage logic. Handles damaging the player and optional recoil.
+/// </summary>
 public class EnemyDamage : MonoBehaviour
 {
     [SerializeField] protected float _damage;
     [SerializeField] protected bool _isRecoil = false;
 
+    /// <summary>
+    /// Applies damage to the player and triggers recoil if enabled when the player stays in the trigger.
+    /// </summary>
     protected void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

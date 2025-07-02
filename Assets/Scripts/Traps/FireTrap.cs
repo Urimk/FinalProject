@@ -2,8 +2,18 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Trap that activates and damages the player, with optional auto-cycling.
+/// </summary>
 public class FireTrap : MonoBehaviour
 {
+    // === Constants ===
+    private const string PlayerTag = "Player";
+    private const string AnimatorActivated = "activated";
+    private static readonly Color WarningColor = Color.red;
+    private static readonly Color NormalColor = Color.white;
+
+    // === Serialized Fields ===
     [SerializeField] private int _damage;
     [Header("FireTrap Timers")]
     [SerializeField] private float _activationDelay;
@@ -23,12 +33,18 @@ public class FireTrap : MonoBehaviour
     private bool _active;
     private Health _playerHealth;
 
+    /// <summary>
+    /// Unity Awake callback. Initializes components.
+    /// </summary>
     private void Awake()
     {
         _anim = GetComponent<Animator>();
         _spriteRend = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Unity Start callback. Starts auto-cycle if enabled.
+    /// </summary>
     private void Start()
     {
         // If always active mode is enabled, start the auto-cycle after delay
@@ -38,6 +54,9 @@ public class FireTrap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine to delay the start of the auto-cycle.
+    /// </summary>
     private IEnumerator StartAutoCycleWithDelay()
     {
         Debug.Log($"Starting cycle delay: {_cycleStartDelay} seconds");
@@ -46,6 +65,9 @@ public class FireTrap : MonoBehaviour
         StartCoroutine(AutoCycleFireTrap());
     }
 
+    /// <summary>
+    /// Unity Update callback. Damages the player if active.
+    /// </summary>
     private void Update()
     {
         if (_playerHealth != null && _active)
@@ -54,9 +76,12 @@ public class FireTrap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles player entering the trap trigger.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == PlayerTag)
         {
             _playerHealth = collision.GetComponent<Health>();
 
@@ -73,52 +98,61 @@ public class FireTrap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles player exiting the trap trigger.
+    /// </summary>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == PlayerTag)
         {
             _playerHealth = null;
         }
     }
 
+    /// <summary>
+    /// Coroutine to activate the trap, damage the player, and reset.
+    /// </summary>
     private IEnumerator ActivateFireTrap()
     {
         // Set the trap as triggered and change color to red as a warning signal
         _triggered = true;
-        _spriteRend.color = Color.red;
+        _spriteRend.color = WarningColor;
 
         // Wait for the activation delay, then reset color, mark trap as active, and play activation animation
         yield return new WaitForSeconds(_activationDelay);
         SoundManager.instance.PlaySound(_fireSound, gameObject);
-        _spriteRend.color = Color.white;
+        _spriteRend.color = NormalColor;
         _active = true;
-        _anim.SetBool("activated", true);
+        _anim.SetBool(AnimatorActivated, true);
 
         // Wait for the active duration, then deactivate trap, reset triggered, and stop activation animation
         yield return new WaitForSeconds(_activeTime);
         _active = false;
         _triggered = false;
-        _anim.SetBool("activated", false);
+        _anim.SetBool(AnimatorActivated, false);
     }
 
+    /// <summary>
+    /// Coroutine for auto-cycling the trap.
+    /// </summary>
     private IEnumerator AutoCycleFireTrap()
     {
         while (_alwaysActive)
         {
             // Warning phase (red color)
-            _spriteRend.color = Color.red;
+            _spriteRend.color = WarningColor;
             yield return new WaitForSeconds(_activationDelay);
 
             // Active phase
             SoundManager.instance.PlaySound(_fireSound, gameObject);
-            _spriteRend.color = Color.white;
+            _spriteRend.color = NormalColor;
             _active = true;
-            _anim.SetBool("activated", true);
+            _anim.SetBool(AnimatorActivated, true);
             yield return new WaitForSeconds(_activeTime);
 
             // Inactive phase
             _active = false;
-            _anim.SetBool("activated", false);
+            _anim.SetBool(AnimatorActivated, false);
             yield return new WaitForSeconds(_cycleWaitTime);
         }
     }

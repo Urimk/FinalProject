@@ -2,8 +2,19 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Handles health, damage, invulnerability, and death logic for a character.
+/// </summary>
 public class Health : MonoBehaviour, IDamageable
 {
+    // ==================== Constants ====================
+    private const int IgnoreLayerA = 8;
+    private const int IgnoreLayerB = 9;
+    private static readonly Color HurtColor = new Color(1, 0, 0, 0.5f);
+    private static readonly Color NormalColor = Color.white;
+    private const int DefaultScoreValue = 100;
+
+    // ==================== Serialized Fields ====================
     [SerializeField] private GroundManager groundManager;
     [SerializeField] private PlayerAttack _playerAttack;
     [Header("Health")]
@@ -25,21 +36,23 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip _hurtSound;
     public bool invulnerable;
     private int _isFirstHealth = 1;
-    private PlayerAI _playerAI; // Reference to PlayerAI
-    private PlayerMovement _player; // Reference to PlayerAI
+    private PlayerAI _playerAI;
+    private PlayerMovement _player;
     [Header("Score")]
-    [SerializeField] private int scoreValue = 100;
+    [SerializeField] private int scoreValue = DefaultScoreValue;
 
-
-
+    // ==================== Private Fields ====================
     private float _maxDamageThisFrame;
     private bool _isDamageQueued;
 
+    /// <summary>
+    /// Initializes health and component references.
+    /// </summary>
     private void Awake()
     {
         currentHealth = startingHealth;
-        _playerAI = GetComponent<PlayerAI>(); // Get PlayerAI component
-        _player = GetComponent<PlayerMovement>(); // Get PlayerAI component
+        _playerAI = GetComponent<PlayerAI>();
+        _player = GetComponent<PlayerMovement>();
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
@@ -54,13 +67,15 @@ public class Health : MonoBehaviour, IDamageable
         }
     }
 
+    /// <summary>
+    /// Queues damage to be applied, respecting invulnerability.
+    /// </summary>
     public void TakeDamage(float damage)
     {
         if (invulnerable)
         {
             return;
         }
-        // Only queue the highest damage this frame
         if (!_isDamageQueued || damage > _maxDamageThisFrame)
         {
             _maxDamageThisFrame = damage;
@@ -81,11 +96,10 @@ public class Health : MonoBehaviour, IDamageable
         {
             if (_playerAI != null)
             {
-                OnDamaged?.Invoke(damage); // Notify AI of damage
+                OnDamaged?.Invoke(damage);
             }
             _animator.SetTrigger("hurt");
             SoundManager.instance.PlaySound(_hurtSound, gameObject);
-
         }
         else
         {
@@ -109,12 +123,15 @@ public class Health : MonoBehaviour, IDamageable
                 {
                     _playerAttack.UnequipWeapon();
                 }
-                OnDamaged?.Invoke(damage); // Notify AI of damage
+                OnDamaged?.Invoke(damage);
                 SoundManager.instance.PlaySound(_deathSound, gameObject);
             }
         }
     }
 
+    /// <summary>
+    /// Adds health to the character, up to the starting value.
+    /// </summary>
     public bool AddHealth(float health)
     {
         if (currentHealth == startingHealth || dead)
@@ -125,18 +142,21 @@ public class Health : MonoBehaviour, IDamageable
         return true;
     }
 
+    /// <summary>
+    /// Handles invulnerability frames and visual feedback.
+    /// </summary>
     private IEnumerator Invulnerability()
     {
         invulnerable = true;
-        Physics2D.IgnoreLayerCollision(8, 9, true);
+        Physics2D.IgnoreLayerCollision(IgnoreLayerA, IgnoreLayerB, true);
         for (int i = 0; i < _numberOfFlashes; i++)
         {
-            _spriteRenderer.color = new Color(1, 0, 0, 0.5f);
+            _spriteRenderer.color = HurtColor;
             yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
-            _spriteRenderer.color = Color.white;
+            _spriteRenderer.color = NormalColor;
             yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
         }
-        Physics2D.IgnoreLayerCollision(8, 9, false);
+        Physics2D.IgnoreLayerCollision(IgnoreLayerA, IgnoreLayerB, false);
         invulnerable = false;
     }
     private void Deactivate()
@@ -144,6 +164,9 @@ public class Health : MonoBehaviour, IDamageable
         gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Respawns the character, restoring health and enabling components.
+    /// </summary>
     public void Respawn()
     {
         dead = false;

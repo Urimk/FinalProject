@@ -2,35 +2,43 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Handles player respawn logic, checkpoint management, and room resets.
+/// </summary>
 public class PlayerRespawn : MonoBehaviour
 {
+    // === Constants ===
+    private const int DefaultLives = 3;
+    private const float DefaultTimeAtCheckpoint = 600f;
+    private const string InitialCheckpointName = "InitialCheckpoint";
+    private const string CheckpointTag = "Checkpoint";
+    private const string AnimatorAppear = "appear";
+
+    // === Serialized Fields ===
     [SerializeField] private AudioClip checkpointSound;
     [SerializeField] private GroundManager groundManager;
-    [SerializeField] private int lives = 3; // Set the number of lives in the Inspector
+    [SerializeField] private int lives = DefaultLives;
     [SerializeField] private Transform initialRoom;
 
+    // === Private Fields ===
     private Transform _currentCheckpoint;
     private Health _playerHealth;
-    private Transform _currentRoom; // Tracks the currently active room
+    private Transform _currentRoom;
     private UIManager _uiManager;
-
     private int _scoreAtCheckpoint;
-    private float _timeAtCheckpoint = 600f;
-
-    // List of rooms visited since the last checkpoint was activated
+    private float _timeAtCheckpoint = DefaultTimeAtCheckpoint;
     private List<Transform> _roomsSinceCheckpoint = new List<Transform>();
 
+    /// <summary>
+    /// Unity Awake callback. Initializes checkpoint and references.
+    /// </summary>
     private void Awake()
     {
         _playerHealth = GetComponent<Health>();
         _uiManager = FindObjectOfType<UIManager>();
-
-        // Set the initial checkpoint to the player's starting position
-        GameObject initialCheckpoint = new GameObject("InitialCheckpoint");
+        GameObject initialCheckpoint = new GameObject(InitialCheckpointName);
         initialCheckpoint.transform.position = transform.position;
         _currentRoom = initialRoom;
-
-        // Assign to starting room if provided
         if (_currentRoom != null)
         {
             initialCheckpoint.transform.parent = _currentRoom;
@@ -38,12 +46,12 @@ public class PlayerRespawn : MonoBehaviour
         _currentCheckpoint = initialCheckpoint.transform;
     }
 
-    // Called by Room or CameraController when the player enters a new room
+    /// <summary>
+    /// Sets the current room and tracks rooms entered since the last checkpoint.
+    /// </summary>
     public void SetCurrentRoom(Transform newRoom)
     {
         _currentRoom = newRoom;
-
-        // Track rooms entered since the checkpoint
         if (_currentCheckpoint != null && newRoom != _currentCheckpoint.parent)
         {
             if (!_roomsSinceCheckpoint.Contains(newRoom))
@@ -51,6 +59,9 @@ public class PlayerRespawn : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Respawns the player at the last checkpoint, resets rooms, and restores state.
+    /// </summary>
     public void Respawn()
     {
         _playerHealth.SetFirstHealth(0);
@@ -59,47 +70,32 @@ public class PlayerRespawn : MonoBehaviour
             _uiManager.GameOver();
             return;
         }
-
-        // Move player to the checkpoint
         Transform respawnRoom = _currentCheckpoint.parent;
         transform.position = _currentCheckpoint.position;
-
-        // Reset all rooms visited since the checkpoint
         foreach (var roomTransform in _roomsSinceCheckpoint)
         {
             var roomComp = roomTransform.GetComponent<Room>();
             if (roomComp != null)
                 roomComp.ResetRoom();
         }
-
-        // Also reset the checkpoint room itself
         if (respawnRoom != null)
         {
             var checkpointRoomComp = respawnRoom.GetComponent<Room>();
             if (checkpointRoomComp != null)
                 checkpointRoomComp.ResetRoom();
         }
-
-        // Clear the visited rooms list
         _roomsSinceCheckpoint.Clear();
-
-        // Enter the respawn room
         if (respawnRoom != null)
         {
             respawnRoom.GetComponent<Room>().EnterRoom();
         }
-
-        // Respawn player health and restore state
         _playerHealth.Respawn();
         ScoreManager.Instance.SetScore(_scoreAtCheckpoint);
         TimerManager.Instance.SetRemainingTime(_timeAtCheckpoint);
-
-        // Handle camera and room activation
         if (respawnRoom != null)
         {
             groundManager?.OnPlayerRespawn();
             Camera.main.GetComponent<CameraController>().MoveToNewRoom(respawnRoom);
-
             if (_currentRoom != respawnRoom)
             {
                 _currentRoom?.GetComponent<Room>()?.ActivateRoom(false);
@@ -114,29 +110,27 @@ public class PlayerRespawn : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles checkpoint activation and updates checkpoint state.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Checkpoint"))
+        if (collision.CompareTag(CheckpointTag))
         {
             Checkpoint checkpoint = collision.GetComponent<Checkpoint>();
             if (checkpoint != null && !checkpoint.IsActivated)
             {
                 checkpoint.IsActivated = true;
-
                 _currentCheckpoint = collision.transform;
                 SoundManager.instance.PlaySound(checkpointSound, gameObject);
                 _scoreAtCheckpoint = ScoreManager.Instance.GetScore();
                 _timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
-
-                // Clear the list of rooms visited since this new checkpoint
                 _roomsSinceCheckpoint.Clear();
-
                 Transform respawnRoom = _currentCheckpoint.parent;
                 var roomComponent = respawnRoom.GetComponent<Room>();
                 roomComponent.RemoveCollectedDiamonds();
-
                 collision.GetComponent<Collider2D>().enabled = false;
-                collision.GetComponent<Animator>().SetTrigger("appear");
+                collision.GetComponent<Animator>().SetTrigger(AnimatorAppear);
             }
         }
     }

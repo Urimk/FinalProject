@@ -2,8 +2,17 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Handles melee enemy attack logic, including player detection and attack cooldown.
+/// </summary>
 public class MeleeEnemy : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const float BoxCastAngle = 0f;
+    private const float BoxCastDistance = 0f;
+    private static readonly Color GizmoColor = Color.red;
+
+    // ==================== Serialized Fields ====================
     [Header("Attack Parameters")]
     [SerializeField] private float _attackCooldown;
     [SerializeField] private int _damage;
@@ -18,17 +27,25 @@ public class MeleeEnemy : MonoBehaviour
 
     [Header("Attack Sound")]
     [SerializeField] private AudioClip _attackSound;
+
+    // ==================== Private Fields ====================
     private float _cooldownTimer = Mathf.Infinity;
     private Health _playerHealth;
     private EnemyPatrol _enemyPatrol;
     private Animator _animator;
 
+    /// <summary>
+    /// Initializes animator and patrol references.
+    /// </summary>
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
+    /// <summary>
+    /// Handles attack cooldown, triggers attack, and manages patrol state.
+    /// </summary>
     private void Update()
     {
         _cooldownTimer += Time.deltaTime;
@@ -47,11 +64,14 @@ public class MeleeEnemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if the player is in sight using a box cast.
+    /// </summary>
     private bool PlayerInSight()
     {
         RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
                                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y),
-                                             0, Vector2.left, 0, _playerLayer);
+                                             BoxCastAngle, Vector2.left, BoxCastDistance, _playerLayer);
         if (hit.collider != null)
         {
             _playerHealth = hit.transform.GetComponent<Health>();
@@ -60,13 +80,19 @@ public class MeleeEnemy : MonoBehaviour
         return hit.collider != null;
     }
 
+    /// <summary>
+    /// Draws the box cast gizmo in the editor for debugging.
+    /// </summary>
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = GizmoColor;
         Gizmos.DrawWireCube(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y));
     }
 
+    /// <summary>
+    /// Damages the player if still in sight.
+    /// </summary>
     private void DamagePlayer()
     {
         // Checks if the player is still in sight

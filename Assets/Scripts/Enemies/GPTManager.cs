@@ -8,29 +8,42 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Manages communication with the OpenAI GPT API for in-game AI interactions.
+/// </summary>
 public class GPTManager : MonoBehaviour
 {
-    private string _apiKey;
-    private string _apiUrl = "https://api.openai.com/v1/chat/completions";
+    // ==================== Constants ====================
+    private const string ApiUrl = "https://api.openai.com/v1/chat/completions";
+    private const string ModelName = "gpt-3.5-turbo";
+    private const int MaxTokens = 100;
+    private const string SystemRole = "system";
+    private const string UserRole = "user";
 
+    // ==================== Private Fields ====================
+    private string _apiKey;
+    private string _apiUrl = ApiUrl;
+
+    /// <summary>
+    /// Loads the API key at startup.
+    /// </summary>
     private void Start()
     {
         _apiKey = LoadApiKey();
-
         // Continue with your logic...
     }
 
+    /// <summary>
+    /// Loads the API key from the StreamingAssets folder.
+    /// </summary>
     private string LoadApiKey()
     {
-        // Path to the api_key.txt file in the Resources folder (or StreamingAssets if needed)
         string path = Path.Combine(Application.streamingAssetsPath, "api_key.txt");
-
         if (File.Exists(path))
         {
             try
             {
-                // Read the API key from the file
-                return File.ReadAllText(path).Trim(); // Trim to remove extra whitespace
+                return File.ReadAllText(path).Trim();
             }
             catch (IOException ex)
             {
@@ -44,17 +57,21 @@ public class GPTManager : MonoBehaviour
             return string.Empty;
         }
     }
+
+    /// <summary>
+    /// Sends a prompt to the OpenAI API and invokes the callback with the response.
+    /// </summary>
     public IEnumerator SendRequest(string prompt, System.Action<string> callback)
     {
         var requestData = new
         {
-            model = "gpt-3.5-turbo",
+            model = ModelName,
             messages = new[]
             {
-                new { role = "system", content = "You are a game AI that asks and evaluates questions." },
-                new { role = "user", content = prompt }
+                new { role = SystemRole, content = "You are a game AI that asks and evaluates questions." },
+                new { role = UserRole, content = prompt }
             },
-            max_tokens = 100
+            max_tokens = MaxTokens
         };
 
         string json = JsonConvert.SerializeObject(requestData);

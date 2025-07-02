@@ -1,44 +1,61 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles the options menu, including difficulty selection and navigation.
+/// </summary>
 public class OptionsMenu : MonoBehaviour
 {
-    [SerializeField] private AudioClip _buttonClickSound; // Assign the sound effect in the Inspector
-    [SerializeField] private GameObject _mainMenu; // Assign the MainMenu GameObject in the Inspector
-    [SerializeField] private GameObject _optionsMenu; // Assign the OptionsMenu GameObject in the Inspector
+    private const string DifficultyKey = "GameDifficulty";
+    private const string EasyDifficulty = "Easy";
+    private const string NormalDifficulty = "Normal";
+    private const string HardDifficulty = "Hard";
 
-    private const string DifficultyKey = "GameDifficulty"; // Key for storing difficulty in PlayerPrefs
+    [SerializeField] private AudioClip _buttonClickSound;
+    [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _optionsMenu;
 
-    // Back button functionality
+    /// <summary>
+    /// Returns to the main menu from the options menu.
+    /// </summary>
     public void BackToMainMenu()
     {
         SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
-
-        // Deactivate OptionsMenu and activate MainMenu
         _optionsMenu.SetActive(false);
         _mainMenu.SetActive(true);
     }
 
-    // Methods to set difficulty
+    /// <summary>
+    /// Sets the game difficulty to Easy.
+    /// </summary>
     public void SetEasyDifficulty()
     {
-        SetDifficulty("Easy");
+        SetDifficulty(EasyDifficulty);
     }
 
+    /// <summary>
+    /// Sets the game difficulty to Normal.
+    /// </summary>
     public void SetNormalDifficulty()
     {
-        SetDifficulty("Normal");
+        SetDifficulty(NormalDifficulty);
     }
 
+    /// <summary>
+    /// Sets the game difficulty to Hard.
+    /// </summary>
     public void SetHardDifficulty()
     {
-        SetDifficulty("Hard");
+        SetDifficulty(HardDifficulty);
     }
 
+    /// <summary>
+    /// Sets the game difficulty and saves it in PlayerPrefs.
+    /// </summary>
     private void SetDifficulty(string difficulty)
     {
         SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
-        PlayerPrefs.SetString(DifficultyKey, difficulty); // Save difficulty in PlayerPrefs
-        PlayerPrefs.Save(); // Ensure it gets saved
+        PlayerPrefs.SetString(DifficultyKey, difficulty);
+        PlayerPrefs.Save();
         Debug.Log("Difficulty set to: " + difficulty);
     }
 }

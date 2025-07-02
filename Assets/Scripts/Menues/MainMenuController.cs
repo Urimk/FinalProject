@@ -1,38 +1,53 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Controls the main menu navigation and actions.
+/// </summary>
 public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] public AudioClip ButtonClickSound;
+    [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _levelSelect;
     [SerializeField] private GameObject _optionsMenu;
     [SerializeField] private GameObject _leaderboardMenu;
 
+    /// <summary>
+    /// Navigates to the level select menu.
+    /// </summary>
     public void Play()
     {
-        SoundManager.instance.PlaySound(ButtonClickSound, gameObject);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
         _mainMenu.SetActive(false);
         _levelSelect.SetActive(true);
     }
 
+    /// <summary>
+    /// Opens the options menu.
+    /// </summary>
     public void OpenOptions()
     {
-        SoundManager.instance.PlaySound(ButtonClickSound, gameObject);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
         _mainMenu.SetActive(false);
         _optionsMenu.SetActive(true);
     }
 
+    /// <summary>
+    /// Opens the leaderboard menu.
+    /// </summary>
     public void OpenLeaderboard()
     {
-        SoundManager.instance.PlaySound(ButtonClickSound, gameObject);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
         _mainMenu.SetActive(false);
         _leaderboardMenu.SetActive(true);
     }
 
+    /// <summary>
+    /// Quits the game application.
+    /// </summary>
     public void QuitGame()
     {
-        SoundManager.instance.PlaySound(ButtonClickSound, gameObject);
+        SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
         Application.Quit();
     }
 }

@@ -3,11 +3,19 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const string ScorePrefix = "SCORE: ";
+
+    // ==================== Singleton ====================
     public static ScoreManager Instance;
 
+    // ==================== Private Fields ====================
     private int _score = 0;
+
+    // ==================== Serialized Fields ====================
     [SerializeField] public Text _scoreText;
 
+    // ==================== Unity Lifecycle ====================
     private void Awake()
     {
         // Ensure there's only one instance of ScoreManager
@@ -27,18 +35,11 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreText();
     }
 
+    // ==================== Public Methods ====================
     public void AddScore(int amount)
     {
         _score += amount;
         UpdateScoreText();
-    }
-
-    private void UpdateScoreText()
-    {
-        if (_scoreText != null)
-        {
-            _scoreText.text = "SCORE: " + _score;
-        }
     }
 
     public int GetScore()
@@ -50,5 +51,14 @@ public class ScoreManager : MonoBehaviour
     {
         _score = points;
         UpdateScoreText();
+    }
+
+    // ==================== Private Methods ====================
+    private void UpdateScoreText()
+    {
+        if (_scoreText != null)
+        {
+            _scoreText.text = ScorePrefix + _score;
+        }
     }
 }

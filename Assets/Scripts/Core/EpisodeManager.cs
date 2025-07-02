@@ -116,10 +116,10 @@ public class EpisodeManager : MonoBehaviour
         Debug.LogWarning("[EpisodeManager] Episode timed out! Applying penalty and ending episode.");
 
         // 1. Apply your timeout penalty (e.g. −1 reward)
-        if (_bossRewardManager != null)
-        {
-            _bossRewardManager.AddCustomReward(TimeoutPenalty);
-        }
+        //if (_bossRewardManager != null)
+        //{
+        //    _bossRewardManager.AddCustomReward(TimeoutPenalty);
+        //}
 
         // 2. Tell your ML-Agents agent to end the episode
         //    Assuming your PlayerAI component is on _playerObject:
@@ -205,7 +205,7 @@ public class EpisodeManager : MonoBehaviour
         if (_bossRewardManager != null)
         {
             // Get total reward and clear for next QL cycle's accumulation
-            episodeTotalReward = _bossRewardManager.GetTotalRewardAndReset();
+            episodeTotalReward = _bossRewardManager.GetEpisodeTotalReward();
         }
         _accumulatedReward += episodeTotalReward;
         _episodesSinceLastLog++;
@@ -227,7 +227,7 @@ public class EpisodeManager : MonoBehaviour
             Dictionary<int, int> visitThresholds = _bossQLearning?.GetStateVisitThresholdCounts();
 
             string visitStats = visitThresholds != null
-                ? $"  States visited >20: {visitThresholds[20]}, >50: {visitThresholds[50]}, >100: {visitThresholds[100]}, >200: {visitThresholds[200]}"
+                ? $"  States visited >100: {visitThresholds[100]}, >200: {visitThresholds[200]}, >500: {visitThresholds[500]}, >1000: {visitThresholds[1000]}"
                 : "  State visit thresholds not available.";
 
 

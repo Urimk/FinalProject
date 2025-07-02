@@ -9,55 +9,79 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages the GPT-powered boss challenge, including question/answer logic and player interaction.
+/// </summary>
 public class GPTBoss : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const float DefaultTypingSpeed = 0.05f;
+    private const float QuestionDelay = 2f;
+    private const float PlayerDeathCheckDelay = 0.05f;
+    private const int WrongAnswerDamage = 1;
+    private const int QuestionTypeCount = 3;
+    private const int DuplicateWordCount = 4;
+    private const string PlayerTag = "Player";
+    private const string CorrectMessage = "Correct!";
+    private const string WrongMessage = "Wrong! Try again!";
+    private const string DefeatedMessage = "You have defeated me!";
+    private const string LostMessage = "You have lost!";
+    private const string ChallengeIntro = "Prepare to face my challenge! Answer correctly, and you will survive.";
+
+    // ==================== Serialized Fields ====================
     [SerializeField] private GameObject trophy;
+
+    // ==================== Public Fields ====================
     public Text bossText;
     public TMP_InputField playerInput;
     public Health playerHealth;
+    public float typingSpeed = DefaultTypingSpeed;
+
+    // ==================== Private Fields ====================
     private Animator _bossAnimator;
     private Collider2D _bossCollider;
     private GPTManager _gptManager;
     private bool _challengeActive = false;
-    public float typingSpeed = 0.05f;
     private int _currentQuestionType = 0;
     private GameObject _currentPlayer;
     private string _currentQuestion;
     private HashSet<string> _askedQuestions = new HashSet<string>();
-
-    // Up to 15 categories
     private readonly string[] categories = new string[] {
         "Mathematics", "Geography", "History", "Science",
         "Literature", "Art", "Music", "Sports",
         "Technology", "Food", "Animals", "Mythology",
         "Movies", "Television", "Video Games"
     };
+    private List<string> _availableCategories;
 
-    private List<string> _availableCategories; // List to track categories that haven't been used
-
+    /// <summary>
+    /// Initializes references and sets up the challenge.
+    /// </summary>
     private void Start()
     {
         _gptManager = FindObjectOfType<GPTManager>();
-
         playerInput.gameObject.SetActive(false);
         playerInput.characterLimit = 75;
         playerInput.onEndEdit.AddListener(delegate { OnEnterPressed(); });
-
         _bossAnimator = GetComponent<Animator>();
         _bossCollider = GetComponent<Collider2D>();
-
-        // Initialize the list of available categories
         InitializeAvailableCategories();
     }
 
+    /// <summary>
+    /// Initializes the list of available categories.
+    /// </summary>
     private void InitializeAvailableCategories()
     {
         _availableCategories = new List<string>(categories);
     }
 
+    /// <summary>
+    /// Starts the challenge when the player enters the trigger.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && !_challengeActive)
+        if (other.CompareTag(PlayerTag) && !_challengeActive)
         {
             _challengeActive = true;
             _currentPlayer = other.gameObject;
@@ -65,15 +89,21 @@ public class GPTBoss : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Begins the verbal challenge sequence.
+    /// </summary>
     private void StartVerbalChallenge()
     {
         DisablePlayerControls();
-        StartCoroutine(TypeText("Prepare to face my challenge! Answer correctly, and you will survive.", () =>
+        StartCoroutine(TypeText(ChallengeIntro, () =>
         {
-            Invoke(nameof(AskQuestion), 2f);
+            Invoke(nameof(AskQuestion), QuestionDelay);
         }));
     }
 
+    /// <summary>
+    /// Asks a new question from a random category.
+    /// </summary>
     private void AskQuestion()
     {
         if (_availableCategories.Count == 0)
@@ -89,12 +119,15 @@ public class GPTBoss : MonoBehaviour
         StartCoroutine(_gptManager.SendRequest(prompt, CheckAndDisplayQuestion));
     }
 
+    /// <summary>
+    /// Checks for duplicate questions and displays the new question.
+    /// </summary>
     private void CheckAndDisplayQuestion(string question)
     {
-        string firstFour = GetFirstFourWords(question);
+        string firstFour = GetFirstNWords(question, DuplicateWordCount);
         if (_askedQuestions.Contains(firstFour))
         {
-            Debug.LogWarning($"Duplicate question detected based on first four words: '{firstFour}'. Asking another question.");
+            Debug.LogWarning($"Duplicate question detected based on first {DuplicateWordCount} words: '{firstFour}'. Asking another question.");
             AskQuestion();
             return;
         }
@@ -102,13 +135,19 @@ public class GPTBoss : MonoBehaviour
         DisplayQuestion(question);
     }
 
-    private string GetFirstFourWords(string question)
+    /// <summary>
+    /// Gets the first N words of a question for duplicate detection.
+    /// </summary>
+    private string GetFirstNWords(string question, int n)
     {
         var words = question.Split(new char[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-        int count = Mathf.Min(4, words.Length);
+        int count = Mathf.Min(n, words.Length);
         return string.Join(" ", words.Take(count));
     }
 
+    /// <summary>
+    /// Returns the prompt for the current question type.
+    /// </summary>
     private string GetPromptForType(int type)
     {
         switch (type)
@@ -123,6 +162,9 @@ public class GPTBoss : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Displays the question and enables player input.
+    /// </summary>
     private void DisplayQuestion(string question)
     {
         StartCoroutine(TypeText(question, () =>
@@ -135,6 +177,9 @@ public class GPTBoss : MonoBehaviour
         }));
     }
 
+    /// <summary>
+    /// Checks the player's answer by sending it to the GPT API for validation.
+    /// </summary>
     private void CheckAnswer()
     {
         string playerAnswer = playerInput.text.Trim();
@@ -146,6 +191,9 @@ public class GPTBoss : MonoBehaviour
         playerInput.text = string.Empty;
     }
 
+    /// <summary>
+    /// Called when the player presses enter in the input field.
+    /// </summary>
     private void OnEnterPressed()
     {
         if (playerInput.gameObject.activeSelf && playerInput.interactable)
@@ -154,44 +202,56 @@ public class GPTBoss : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Processes the GPT API's answer validation response.
+    /// </summary>
     private void ProcessAnswer(string response)
     {
         if (response.ToLower().Contains("yes"))
         {
-            bossText.text = "Correct!";
+            bossText.text = CorrectMessage;
             _bossAnimator?.SetTrigger("3_Damaged");
-            _currentQuestionType = (_currentQuestionType + 1) % 3;
+            _currentQuestionType = (_currentQuestionType + 1) % QuestionTypeCount;
             if (_currentQuestionType == 0)
                 BossDefeated();
             else
-                Invoke(nameof(AskQuestion), 2f);
+                Invoke(nameof(AskQuestion), QuestionDelay);
         }
         else
         {
-            bossText.text = "Wrong! Try again!";
-            playerHealth.TakeDamage(1);
-            Invoke(nameof(CheckPlayerDeath), 0.05f);
+            bossText.text = WrongMessage;
+            playerHealth.TakeDamage(WrongAnswerDamage);
+            Invoke(nameof(CheckPlayerDeath), PlayerDeathCheckDelay);
         }
     }
 
+    /// <summary>
+    /// Checks if the player is dead after a wrong answer.
+    /// </summary>
     private void CheckPlayerDeath()
     {
         if (playerHealth.dead)
             PlayerDefeated();
         else
-            Invoke(nameof(AskQuestion), 2f);
+            Invoke(nameof(AskQuestion), QuestionDelay);
     }
 
+    /// <summary>
+    /// Handles boss defeat logic and disables the boss.
+    /// </summary>
     private void BossDefeated()
     {
-        bossText.text = "You have defeated me!";
+        bossText.text = DefeatedMessage;
         playerInput.gameObject.SetActive(false);
         EnablePlayerControls();
         _bossAnimator?.SetTrigger("4_Death");
         _bossCollider.enabled = false;
-        Invoke(nameof(DisableBoss), 2f);
+        Invoke(nameof(DisableBoss), QuestionDelay);
     }
 
+    /// <summary>
+    /// Disables the boss and shows the trophy if available.
+    /// </summary>
     private void DisableBoss()
     {
         gameObject.SetActive(false);
@@ -202,16 +262,25 @@ public class GPTBoss : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles player defeat logic.
+    /// </summary>
     private void PlayerDefeated()
     {
-        bossText.text = "You have lost!";
+        bossText.text = LostMessage;
         playerInput.gameObject.SetActive(false);
         EnablePlayerControls();
-        Invoke(nameof(ClearBossText), 2f);
+        Invoke(nameof(ClearBossText), QuestionDelay);
     }
 
+    /// <summary>
+    /// Clears the boss text.
+    /// </summary>
     private void ClearBossText() => bossText.text = string.Empty;
 
+    /// <summary>
+    /// Disables player movement and attack controls.
+    /// </summary>
     private void DisablePlayerControls()
     {
         if (_currentPlayer == null) return;
@@ -223,6 +292,9 @@ public class GPTBoss : MonoBehaviour
         if (rb != null) rb.velocity = new Vector2(0, rb.velocity.y);
     }
 
+    /// <summary>
+    /// Enables player movement and attack controls.
+    /// </summary>
     private void EnablePlayerControls()
     {
         if (_currentPlayer == null) return;
@@ -232,6 +304,9 @@ public class GPTBoss : MonoBehaviour
         if (attack != null) attack.enabled = true;
     }
 
+    /// <summary>
+    /// Types out the given message character by character, then invokes onComplete.
+    /// </summary>
     private IEnumerator TypeText(string message, Action onComplete)
     {
         bossText.text = string.Empty;

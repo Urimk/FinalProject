@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Controls an enemy that moves sideways (horizontally or vertically) and damages the player on contact.
+/// </summary>
 public class Enemy_Sideways : MonoBehaviour
 {
     [SerializeField] private float _movementDistance;
@@ -11,6 +14,9 @@ public class Enemy_Sideways : MonoBehaviour
     private float _minEdge;
     private float _maxEdge;
 
+    /// <summary>
+    /// Initializes the movement edges based on the starting position.
+    /// </summary>
     private void Awake()
     {
         float currentPos = _moveVertically ? transform.position.y : transform.position.x;
@@ -18,6 +24,9 @@ public class Enemy_Sideways : MonoBehaviour
         _maxEdge = currentPos + _movementDistance;
     }
 
+    /// <summary>
+    /// Handles movement logic each frame.
+    /// </summary>
     private void Update()
     {
         if (MovingNegative)
@@ -46,6 +55,10 @@ public class Enemy_Sideways : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the enemy in the specified direction.
+    /// </summary>
+    /// <param name="direction">-1 for negative, 1 for positive direction.</param>
     private void Move(int direction)
     {
         Vector3 position = transform.position;
@@ -56,6 +69,10 @@ public class Enemy_Sideways : MonoBehaviour
         transform.position = position;
     }
 
+    /// <summary>
+    /// Damages the player if they stay in the enemy's trigger.
+    /// </summary>
+    /// <param name="collision">The collider staying in the trigger.</param>
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

@@ -7,8 +7,21 @@ using TMPro; // Make sure to import TextMeshPro
 
 using UnityEngine;
 
+/// <summary>
+/// Handles the leaderboard menu, including login, navigation, and displaying top players for each leaderboard.
+/// </summary>
 public class LeaderboardMenu : MonoBehaviour
 {
+    private const int LeaderboardCells = 9;
+    private const int MaxResultsCount = 1;
+    private const string CustomIdPrefix = "TestPlayer_";
+    private const string UnknownPlayerName = "Unknown";
+    private const string NoScoresYetText = "No scores yet";
+    private const string ErrorLoadingText = "Error loading";
+    private const string InvalidLeaderboardIndexError = "Invalid leaderboard index: ";
+    private const string SpesificLBComponentNotFoundError = "SpesificLB component not found on MainMenuManager.";
+    private const string MainMenuControllerNotFoundError = "MainMenuController not found.";
+
     [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _leaderboardMenu;
@@ -23,15 +36,20 @@ public class LeaderboardMenu : MonoBehaviour
         "Level3_Easy", "Level3_Normal", "Level3_Hard"
     };
 
+    /// <summary>
+    /// Logs in anonymously to PlayFab and loads top players for all leaderboards.
+    /// </summary>
     private void Start()
     {
-        // Log in anonymously before accessing leaderboards
         LoginAnonymously();
     }
 
+    /// <summary>
+    /// Logs in anonymously using a custom ID.
+    /// </summary>
     private void LoginAnonymously()
     {
-        string customId = "TestPlayer_" + System.DateTime.UtcNow.Ticks;
+        string customId = CustomIdPrefix + System.DateTime.UtcNow.Ticks;
 
         PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest
         {
@@ -49,6 +67,9 @@ public class LeaderboardMenu : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Returns to the main menu from the leaderboard menu.
+    /// </summary>
     public void BackToMainMenu()
     {
         SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
@@ -56,11 +77,14 @@ public class LeaderboardMenu : MonoBehaviour
         _mainMenu.SetActive(true);
     }
 
+    /// <summary>
+    /// Opens a specific leaderboard by index.
+    /// </summary>
     public void ChooseLB(int index)
     {
         if (index < 0 || index >= _leaderboardNames.Length)
         {
-            Debug.LogError("Invalid leaderboard index: " + index);
+            Debug.LogError(InvalidLeaderboardIndexError + index);
             return;
         }
         _spesificLB.SetActive(false);
@@ -79,17 +103,20 @@ public class LeaderboardMenu : MonoBehaviour
             }
             else
             {
-                Debug.LogError("SpesificLB component not found on MainMenuManager.");
+                Debug.LogError(SpesificLBComponentNotFoundError);
             }
         }
         else
         {
-            Debug.LogError("MainMenuController not found.");
+            Debug.LogError(MainMenuControllerNotFoundError);
         }
 
         _spesificLB.SetActive(true);
     }
 
+    /// <summary>
+    /// Loads and displays the top player for each leaderboard.
+    /// </summary>
     private void LoadTopPlayers()
     {
         for (int i = 0; i < _leaderboardNames.Length; i++)
@@ -99,7 +126,7 @@ public class LeaderboardMenu : MonoBehaviour
             {
                 StatisticName = _leaderboardNames[index],
                 StartPosition = 0,
-                MaxResultsCount = 1 // Get only the top player
+                MaxResultsCount = MaxResultsCount
             };
 
             PlayFabClientAPI.GetLeaderboard(request, result =>
@@ -107,20 +134,20 @@ public class LeaderboardMenu : MonoBehaviour
                 if (result.Leaderboard.Count > 0)
                 {
                     var topEntry = result.Leaderboard[0];
-                    string rawName = topEntry.DisplayName ?? "Unknown";
+                    string rawName = topEntry.DisplayName ?? UnknownPlayerName;
                     string displayName = rawName.Split('_')[0]; // Remove unique suffix
                     int score = topEntry.StatValue;
                     _leaderboardTexts[index].text = $"{displayName}: {score}";
                 }
                 else
                 {
-                    _leaderboardTexts[index].text = "No scores yet";
+                    _leaderboardTexts[index].text = NoScoresYetText;
                 }
             },
             error =>
             {
                 Debug.LogError($"Error fetching leaderboard {_leaderboardNames[index]}: {error.GenerateErrorReport()}");
-                _leaderboardTexts[index].text = "Error loading";
+                _leaderboardTexts[index].text = ErrorLoadingText;
             });
         }
     }

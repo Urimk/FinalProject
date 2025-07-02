@@ -2,24 +2,38 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Platform that falls when the player stands on it, then resets after a delay.
+/// </summary>
 public class FallingPlatform : MonoBehaviour
 {
+    // === Constants ===
+    private const string PlayerTag = "Player";
+
+    // === Serialized Fields ===
     public float fallDistance = 10f; // How far the platform falls
     public float fallTime = 5f;      // Time it takes to reach the lowest point
     public float stayTime = 2f;      // Time it stays before deactivating
     public GroundManager groundManager;
-    public string playerTag = "Player"; // Tag of the player GameObject
+    public string playerTag = PlayerTag; // Tag of the player GameObject
 
+    // === Private Fields ===
     private Vector3 _originalPosition;
     private bool _isFalling = false;
     private Transform _playerOnPlatform = null;
     private Vector3 _lastPlatformPosition;
 
+    /// <summary>
+    /// Unity Start callback. Stores the original position.
+    /// </summary>
     void Start()
     {
         _originalPosition = transform.position;
     }
 
+    /// <summary>
+    /// Handles player entering the platform trigger.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(playerTag))
@@ -33,6 +47,9 @@ public class FallingPlatform : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles player exiting the platform trigger.
+    /// </summary>
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag(playerTag) && collision.transform == _playerOnPlatform)
@@ -41,6 +58,9 @@ public class FallingPlatform : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine for falling and resetting the platform.
+    /// </summary>
     IEnumerator FallRoutine()
     {
         _isFalling = true;
@@ -85,7 +105,9 @@ public class FallingPlatform : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // ✅ Add this method to reset the platform
+    /// <summary>
+    /// Resets the platform to its original state.
+    /// </summary>
     public void ResetPlatform()
     {
         _isFalling = false;

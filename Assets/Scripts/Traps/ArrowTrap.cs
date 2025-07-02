@@ -1,13 +1,20 @@
 ﻿using System.Collections; // Required for Coroutines
-
 using UnityEngine;
 
+/// <summary>
+/// Controls an arrow trap that periodically fires arrows and can optionally rotate its firepoint.
+/// </summary>
 public class ArrowTrap : MonoBehaviour
 {
+    private const string PlayerTag = "Player";
+    private const float DefaultSpeed = 5f;
+    private const float DefaultRotationAngle = 40f;
+    private const float DefaultRotationDuration = 3f;
+
     [SerializeField] private float _attackCooldown;
     [SerializeField] private Transform _firepoint;
     [SerializeField] private GameObject[] _arrows;
-    [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _speed = DefaultSpeed;
     [SerializeField] private bool _isComingOut = false;
 
     [Header("Sound")]
@@ -15,13 +22,16 @@ public class ArrowTrap : MonoBehaviour
 
     [Header("Rotation")]
     [SerializeField] private bool _rotateFirepoint = false;
-    [SerializeField] private float _rotationAngle = 40f;
-    [SerializeField] private float _rotationDuration = 3f;
+    [SerializeField] private float _rotationAngle = DefaultRotationAngle;
+    [SerializeField] private float _rotationDuration = DefaultRotationDuration;
 
     private float _cooldownTimer;
     private bool _rotatingForward = true;
     private Coroutine _rotationCoroutine;
 
+    /// <summary>
+    /// Fires an arrow from the trap.
+    /// </summary>
     private void Attack()
     {
         _cooldownTimer = 0;
@@ -39,6 +49,10 @@ public class ArrowTrap : MonoBehaviour
         projectile.GetComponent<EnemyProjectile>().ActivateProjectile();
     }
 
+    /// <summary>
+    /// Finds an available arrow in the pool.
+    /// </summary>
+    /// <returns>Index of the available arrow.</returns>
     private int FindArrow()
     {
         for (int i = 0; i < _arrows.Length; i++)
@@ -51,6 +65,9 @@ public class ArrowTrap : MonoBehaviour
         return 0;
     }
 
+    /// <summary>
+    /// Handles cooldown and rotation logic each frame.
+    /// </summary>
     private void Update()
     {
         _cooldownTimer += Time.deltaTime;
@@ -73,6 +90,9 @@ public class ArrowTrap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine to rotate the firepoint back and forth.
+    /// </summary>
     private IEnumerator RotateFirepointCoroutine()
     {
         float originalX = _firepoint.localEulerAngles.x;
@@ -142,6 +162,9 @@ public class ArrowTrap : MonoBehaviour
         _rotationCoroutine = null;
     }
 
+    /// <summary>
+    /// Stops the rotation coroutine when disabled.
+    /// </summary>
     private void OnDisable()
     {
         if (_rotationCoroutine != null)

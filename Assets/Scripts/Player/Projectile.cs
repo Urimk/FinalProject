@@ -3,58 +3,72 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+/// <summary>
+/// Handles projectile movement, collision, and deactivation logic.
+/// </summary>
 public class Projectile : MonoBehaviour
 {
+    // === Constants ===
+    private const float DefaultLifetime = 5f;
+    private const int DamageAmount = 1;
+    private const string DoorObjectName = "Door";
+    private const string NoCollisionTag = "NoCollision";
+    private const string PlayerTag = "Player";
+    private const string AnimatorExplosion = "explosion";
+
+    // === Serialized Fields ===
     [SerializeField] private float speed;
+
+    // === Private Fields ===
     private float _direction;
     private bool _hit;
     private float _lifetime;
-
     private BoxCollider2D _boxCollider;
     private Animator _animator;
 
+    /// <summary>
+    /// Unity Awake callback. Initializes components.
+    /// </summary>
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    // 1) In Projectile.cs, let _lifetime continue (even when hit),
-    //    and/or deactivate immediately on hit:
+    /// <summary>
+    /// Unity Update callback. Handles movement and lifetime.
+    /// </summary>
     private void Update()
     {
-        // Always update _lifetime so we eventually Despawn()
         _lifetime += Time.deltaTime;
-
-        if (_lifetime > 5f)
+        if (_lifetime > DefaultLifetime)
         {
             Deactivate();
             return;
         }
-
         if (_hit)
             return;
-
         float movement = speed * Time.deltaTime * _direction;
         transform.Translate(movement, 0, 0);
     }
 
+    /// <summary>
+    /// Handles collision logic for the projectile.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.name == "Door" || other.gameObject.tag == "NoCollision" || other.gameObject.tag == "Player") return;
-
+        if (other.gameObject.name == DoorObjectName || other.gameObject.tag == NoCollisionTag || other.gameObject.tag == PlayerTag) return;
         _hit = true;
         _boxCollider.enabled = false;
-        _animator.SetTrigger("explosion");
-
-        if (other.TryGetComponent<IDamageable>(out var dmg) && other.gameObject.tag != "Player")
-            dmg.TakeDamage(1);
-
-        //deactivates in the animation end
+        _animator.SetTrigger(AnimatorExplosion);
+        if (other.TryGetComponent<IDamageable>(out var dmg) && other.gameObject.tag != PlayerTag)
+            dmg.TakeDamage(DamageAmount);
+        // Deactivates in the animation end
     }
 
-
-    // common Deactivate helper
+    /// <summary>
+    /// Deactivates the projectile and resets state.
+    /// </summary>
     private void Deactivate()
     {
         _hit = false;
@@ -62,19 +76,19 @@ public class Projectile : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-
+    /// <summary>
+    /// Sets the direction and resets the projectile for reuse.
+    /// </summary>
     public void SetDirection(float direction)
     {
         _lifetime = 0;
         _direction = direction;
         gameObject.SetActive(true);
         _hit = false;
-        // Check if the BoxCollider2D exists before enabling it
         if (_boxCollider != null)
         {
-            _boxCollider.enabled = true; // Enable the collider if it exists
+            _boxCollider.enabled = true;
         }
-
         float localScaleX = transform.localScale.x;
         if (Mathf.Sign(localScaleX) != direction)
         {

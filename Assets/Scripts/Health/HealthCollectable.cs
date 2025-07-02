@@ -1,7 +1,12 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles the logic for a health collectable that restores player health on pickup.
+/// </summary>
 public class HealthCollectable : MonoBehaviour
 {
+    private const string PlayerTag = "Player";
+
     [Header("Collectable Info")]
     [SerializeField] private float _healthValue;
 
@@ -10,9 +15,12 @@ public class HealthCollectable : MonoBehaviour
 
     private bool _healthAdded;
 
+    /// <summary>
+    /// Restores health to the player and plays a sound when collected.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == PlayerTag)
         {
             _healthAdded = collision.GetComponent<Health>().AddHealth(_healthValue);
             if (_healthAdded)

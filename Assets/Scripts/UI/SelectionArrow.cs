@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles the selection arrow for menu navigation and interaction.
+/// </summary>
 public class SelectionArrow : MonoBehaviour
 {
     [SerializeField] private RectTransform[] _options;
@@ -10,11 +13,17 @@ public class SelectionArrow : MonoBehaviour
     private RectTransform _rect;
     private int _currentPosition;
 
+    /// <summary>
+    /// Caches the RectTransform component.
+    /// </summary>
     private void Awake()
     {
         _rect = GetComponent<RectTransform>();
     }
 
+    /// <summary>
+    /// Handles input for changing selection and interaction.
+    /// </summary>
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -31,21 +40,25 @@ public class SelectionArrow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Invokes the selected option's button and plays sound.
+    /// </summary>
     private void Interact()
     {
         SoundManager.instance.PlaySound(_interactSound, gameObject);
         _options[_currentPosition].GetComponent<Button>().onClick.Invoke();
     }
 
+    /// <summary>
+    /// Changes the current selection position and updates arrow position.
+    /// </summary>
     private void ChangePosition(int change)
     {
         _currentPosition += change;
-
         if (change != 0)
         {
             SoundManager.instance.PlaySound(_changeSound, gameObject);
         }
-
         if (_currentPosition < 0)
         {
             _currentPosition = _options.Length - 1;
@@ -54,7 +67,6 @@ public class SelectionArrow : MonoBehaviour
         {
             _currentPosition = 0;
         }
-
         _rect.position = new Vector3(_rect.position.x, _options[_currentPosition].position.y, 0);
     }
 }

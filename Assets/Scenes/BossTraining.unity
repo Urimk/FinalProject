@@ -5181,22 +5181,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae38c68c254f3c84b8b0c8740b396363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rewardBossWinsBase: 100
-  penaltyBossLosesBase: -100
-  maxEpisodeDuration: 30
-  scaleTerminalRewardByTime: 1
-  rewardHitPlayer: 30
-  penaltyTookDamage: -2
-  penaltyAttackMissed: -1
-  rewardTrapTriggered: 8
-  penaltyPerStep: -0.01
-  rewardVeryClose: 2
-  veryCloseDistance: 4
-  rewardModerateDistance: 0.5
-  moderateMinDistance: 4
-  moderateMaxDistance: 8
-  penaltyTooFar: -1
-  tooFarDistance: 8
+  _rewardBossWinsBase: 100
+  _penaltyBossLosesBase: -100
+  _maxEpisodeDuration: 30
+  _scaleTerminalRewardByTime: 1
+  _rewardHitPlayer: 20
+  _penaltyTookDamage: -2
+  _penaltyAttackMissed: -0.5
+  _rewardTrapTriggered: 3
+  _penaltyPerStep: -0.01
 --- !u!224 &1079023051
 RectTransform:
   m_ObjectHideFlags: 0

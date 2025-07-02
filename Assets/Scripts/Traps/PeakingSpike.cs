@@ -1,15 +1,28 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Spike trap that moves between base and low positions on a timer.
+/// </summary>
 public class PeakingSpike : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float BasePosition;          // Y position when at base
-    public float LowPosition;          // Y position when lowered
-    public float BaseHoldTime = 2f;          // Time to stay at base position
-    public float LowHoldTime = 1f;           // Time to stay at low position
-    public float MoveSpeed = 5f;             // Speed of movement between positions
-    public float InitialDelay = 0f;          // Delay before starting the loop
+    // === Constants ===
+    private const float DefaultBaseHoldTime = 2f;
+    private const float DefaultLowHoldTime = 1f;
+    private const float DefaultMoveSpeed = 5f;
+    private const float DefaultInitialDelay = 0f;
+    private const float DefaultLowOffset = -1.7f;
+    private const float PositionEpsilon = 0.01f;
 
+    // === Serialized Fields ===
+    [Header("Movement Settings")]
+    public float BasePosition;
+    public float LowPosition;
+    public float BaseHoldTime = DefaultBaseHoldTime;
+    public float LowHoldTime = DefaultLowHoldTime;
+    public float MoveSpeed = DefaultMoveSpeed;
+    public float InitialDelay = DefaultInitialDelay;
+
+    // === Private Fields ===
     private Vector3 _startPos;
     private Vector3 _targetPos;
     private float _timer;
@@ -17,82 +30,76 @@ public class PeakingSpike : MonoBehaviour
     private bool _isMoving = false;
     private bool _hasStarted = false;
 
+    /// <summary>
+    /// Unity Start callback. Initializes positions and timers.
+    /// </summary>
     private void Start()
     {
-        // Store the initial position and set base position
         _startPos = transform.position;
-        //_startPos.y = BasePosition;
         transform.position = _startPos;
         BasePosition = _startPos.y;
-        LowPosition = BasePosition - 1.7f;
-
-        // Set initial timer to the delay value
+        LowPosition = BasePosition + DefaultLowOffset;
         _timer = InitialDelay;
     }
 
+    /// <summary>
+    /// Unity Update callback. Handles movement and timing.
+    /// </summary>
     private void Update()
     {
         if (!_hasStarted)
         {
-            // Wait for initial delay
             _timer -= Time.deltaTime;
             if (_timer <= 0f)
             {
                 _hasStarted = true;
-                _timer = BaseHoldTime; // Start with base hold time
+                _timer = BaseHoldTime;
             }
             return;
         }
-
         if (!_isMoving)
         {
-            // Count down the hold timer
             _timer -= Time.deltaTime;
-
             if (_timer <= 0f)
             {
-                // Start moving to the other position
                 StartMovement();
             }
         }
         else
         {
-            // Move towards target position
             MoveToTarget();
         }
     }
 
+    /// <summary>
+    /// Starts movement to the next position.
+    /// </summary>
     private void StartMovement()
     {
         _isMoving = true;
-
         if (_isAtBase)
         {
-            // Moving from base to low position
             _targetPos = _startPos;
             _targetPos.y = LowPosition;
         }
         else
         {
-            // Moving from low to base position
             _targetPos = _startPos;
             _targetPos.y = BasePosition;
         }
     }
 
+    /// <summary>
+    /// Moves the spike towards the target position.
+    /// </summary>
     private void MoveToTarget()
     {
-        // Move towards target position
         transform.position = Vector3.MoveTowards(transform.position, _targetPos, MoveSpeed * Time.deltaTime);
-
-        // Check if we've reached the target
-        if (Vector3.Distance(transform.position, _targetPos) < 0.01f)
+        if (Vector3.Distance(transform.position, _targetPos) < PositionEpsilon)
         {
             transform.position = _targetPos;
             _isMoving = false;
             _isAtBase = !_isAtBase;
-
-            // Set the appropriate hold time
             _timer = _isAtBase ? BaseHoldTime : LowHoldTime;
         }
     }

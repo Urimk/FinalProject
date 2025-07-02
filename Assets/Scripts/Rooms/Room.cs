@@ -3,43 +3,54 @@
 using UnityEditor;
 
 using UnityEngine;
+/// <summary>
+/// Manages room state, including camera, player, enemies, traps, and collectables.
+/// </summary>
 public class Room : MonoBehaviour
 {
+    // === Constants ===
+    private const float DefaultYOffset = 2f;
+    private const float DefaultGravScale = 2f;
+    private const float DefaultMaxFallSpeed = 100f;
+    private const float DefaultChaseSpeed = 5f;
+    private const string PlayerTag = "Player";
+
+    // === Serialized Fields ===
     [SerializeField] private GameObject[] _enemies;
     [SerializeField] private GameObject[] _traps;
     [SerializeField] private GameObject[] _collectables;
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private PlayerRespawn _playerRespawn;
-    private Vector3[] _initialEnemyPositions;
-    private Quaternion[] _initialEnemyRotations;
-    private Vector3[] _initialTrapPositions;
-    private Vector3[] _initialCollectablePositions;
-
-
     [Header("Room Settings")]
     public bool freezeCamX = false;
     public bool freezeCamY = true;
     public float xFreezeValue;
     public float yFreezeValue;
-    public float yOffsetValue = 2f;
-    public float gravScaleValue = 2f;
-    public float maxFallSpeedValue = 100;
+    public float yOffsetValue = DefaultYOffset;
+    public float gravScaleValue = DefaultGravScale;
+    public float maxFallSpeedValue = DefaultMaxFallSpeed;
     public bool isChase = false;
-    public float chaseSpeed = 5f;
+    public float chaseSpeed = DefaultChaseSpeed;
     public float chaseStartOffSet = 0;
     public bool followPlayerY = false;
 
+    // === Private Fields ===
+    private Vector3[] _initialEnemyPositions;
+    private Quaternion[] _initialEnemyRotations;
+    private Vector3[] _initialTrapPositions;
+    private Vector3[] _initialCollectablePositions;
+
+    /// <summary>
+    /// Called when the player enters the room. Sets camera, gravity, and activates room.
+    /// </summary>
     public void EnterRoom()
     {
-        // 1) Camera
         _cameraController.MoveToNewRoom(transform);
         _cameraController.SetCameraXFreeze(freezeCamX, xFreezeValue);
         _cameraController.SetChaseMode(isChase);
         _cameraController.SetChaseSpeed(chaseSpeed);
         _cameraController.SetChaseStart(chaseStartOffSet);
-
-        // 2) Y-offset
         if (freezeCamY)
         {
             _cameraController.SetCameraYFreeze(yFreezeValue);
@@ -48,20 +59,16 @@ public class Room : MonoBehaviour
         {
             _cameraController.SetFollowPlayerY(yOffsetValue);
         }
-
-
-
-        // 3) Gravity
         _playerMovement.normalGrav = gravScaleValue;
         _playerMovement.maxFallSpeed = maxFallSpeedValue;
-
-        // 4) Activate rooms
         _playerRespawn.SetCurrentRoom(transform);
     }
 
+    /// <summary>
+    /// Unity Awake callback. Stores initial positions and rotations for enemies, traps, and collectables.
+    /// </summary>
     private void Awake()
     {
-        // Enemies
         _initialEnemyPositions = new Vector3[_enemies.Length];
         _initialEnemyRotations = new Quaternion[_enemies.Length];
         for (int i = 0; i < _enemies.Length; i++)
@@ -69,18 +76,13 @@ public class Room : MonoBehaviour
             if (_enemies[i] != null)
                 _initialEnemyPositions[i] = _enemies[i].transform.position;
             _initialEnemyRotations[i] = _enemies[i].transform.rotation;
-
         }
-
-        // Traps
         _initialTrapPositions = new Vector3[_traps.Length];
         for (int i = 0; i < _traps.Length; i++)
         {
             if (_traps[i] != null)
                 _initialTrapPositions[i] = _traps[i].transform.position;
         }
-
-        // Collectables
         _initialCollectablePositions = new Vector3[_collectables.Length];
         for (int i = 0; i < _collectables.Length; i++)
         {
@@ -89,24 +91,23 @@ public class Room : MonoBehaviour
         }
     }
 
-    public void ActivateRoom(bool _status)
+    /// <summary>
+    /// Activates or deactivates the room and its enemies.
+    /// </summary>
+    public void ActivateRoom(bool status)
     {
         for (int i = 0; i < _enemies.Length; i++)
         {
             if (_enemies[i] != null && _enemies[i].GetComponent<Health>().GetHealth() != 0f)
             {
-                _enemies[i].SetActive(_status);
-
-                if (_status)
+                _enemies[i].SetActive(status);
+                if (status)
                 {
-                    // Reset enemy position when activating the room
                     _enemies[i].transform.position = _initialEnemyPositions[i];
                     _enemies[i].transform.rotation = _initialEnemyRotations[i];
-
                 }
                 else
                 {
-                    // Deactivate all projectiles associated with the enemy
                     EnemyProjectile[] projectiles = _enemies[i].GetComponentsInChildren<EnemyProjectile>(true);
                     foreach (var projectile in projectiles)
                     {
@@ -117,9 +118,11 @@ public class Room : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets the room's enemies, traps, and collectables to their initial state.
+    /// </summary>
     public void ResetRoom()
     {
-        // Reset enemies
         for (int i = 0; i < _enemies.Length; i++)
         {
             if (_enemies[i] != null)
@@ -131,8 +134,6 @@ public class Room : MonoBehaviour
                 _enemies[i].transform.rotation = _initialEnemyRotations[i];
             }
         }
-
-        // Reset traps
         for (int i = 0; i < _traps.Length; i++)
         {
             if (_traps[i] != null)
@@ -141,8 +142,6 @@ public class Room : MonoBehaviour
                 _traps[i].transform.position = _initialTrapPositions[i];
             }
         }
-
-        // Reset collectables
         for (int i = 0; i < _collectables.Length; i++)
         {
             if (_collectables[i] != null)
@@ -153,11 +152,13 @@ public class Room : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Removes collected diamonds from the room's collectables list.
+    /// </summary>
     public void RemoveCollectedDiamonds()
     {
         List<GameObject> activeCollectables = new List<GameObject>();
         List<Vector3> activePositions = new List<Vector3>();
-
         for (int i = 0; i < _collectables.Length; i++)
         {
             if (_collectables[i] != null && _collectables[i].activeInHierarchy)
@@ -166,10 +167,7 @@ public class Room : MonoBehaviour
                 activePositions.Add(_initialCollectablePositions[i]);
             }
         }
-
         _collectables = activeCollectables.ToArray();
         _initialCollectablePositions = activePositions.ToArray();
     }
-
-
 }

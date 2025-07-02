@@ -1,24 +1,34 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles the pickup and rotation logic for the sword collectible.
+/// </summary>
 public class SwordPickup : MonoBehaviour
 {
-    [SerializeField] private float rotationSpeed = 90f; // degrees per second
+    private const float DefaultRotationSpeed = 90f; // degrees per second
+    private const string PlayerTag = "Player";
 
+    [SerializeField] private float _rotationSpeed = DefaultRotationSpeed;
+
+    /// <summary>
+    /// Rotates the sword around the Y axis every frame.
+    /// </summary>
     private void Update()
     {
-        // Constant rotation around the Y axis
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
+        transform.Rotate(Vector3.up * _rotationSpeed * Time.deltaTime, Space.World);
     }
 
+    /// <summary>
+    /// Equips the sword to the player when they collide with the pickup.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        float distance = Vector2.Distance(transform.position, collision.transform.position);
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(PlayerTag))
         {
             PlayerAttack playerAttack = collision.GetComponent<PlayerAttack>();
             if (playerAttack != null)
             {
-                playerAttack.HasSword = true; // Call the equip method
+                playerAttack.HasSword = true;
                 playerAttack.EquipWeapon();
                 gameObject.SetActive(false);
             }

@@ -5,27 +5,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles boss health, damage, death, and health bar UI logic.
+/// </summary>
 public class BossHealth : MonoBehaviour, IDamageable
 {
+    // ==================== Constants ====================
+    private static readonly Vector3 HealthBarOffset = new Vector3(0, 2.6f, 0);
+    private const float DeathAnimationWait = 2f;
+    private const float HealthNormalizationDivisor = 1f;
+
+    // ==================== Serialized Fields ====================
     [SerializeField] public float maxHealth = 10f;
-    public event Action<float> OnBossDamaged; // Event for AI notification
-
+    public event Action<float> OnBossDamaged;
     public float currentHealth { get; private set; }
-
     [SerializeField] private Slider _healthSlider;
     [SerializeField] private GameObject _spumPrefabObject;
-    [SerializeField] private Transform _boss;  // Reference to the boss Transform
+    [SerializeField] private Transform _boss;
     [SerializeField] private BossRewardManager _rm;
     [SerializeField] private bool _isTraining;
     [SerializeField] private GameObject _trophy;
+    [SerializeField] private List<MonoBehaviour> _bossScriptObjects;
 
+    // ==================== Private Fields ====================
     private SPUM_Prefabs _spumPrefabs;
     private bool _isDying = false;
-
-    // Reference to BossEnemy script to access flame and warning marker
-    [SerializeField] private List<MonoBehaviour> _bossScriptObjects; // Drag any boss component here (AIBoss or BossEnemy)
     private List<IBoss> _bossScripts = new List<IBoss>();
 
+    /// <summary>
+    /// Initializes SPUM prefab reference.
+    /// </summary>
     private void Awake()
     {
         if (_spumPrefabObject != null)
@@ -38,18 +47,18 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         if (_healthSlider != null && _boss != null)
         {
-            // Follow the boss's position
-            _healthSlider.transform.position = _boss.transform.position + new Vector3(0, 2.6f, 0);
-
-            // Keep rotation fixed
+            _healthSlider.transform.position = _boss.transform.position + HealthBarOffset;
             _healthSlider.transform.rotation = Quaternion.identity;
         }
     }
 
+    /// <summary>
+    /// Initializes health and boss script references.
+    /// </summary>
     private void Start()
     {
         currentHealth = maxHealth;
@@ -61,9 +70,11 @@ public class BossHealth : MonoBehaviour, IDamageable
             else
                 Debug.LogError($"{obj.name} does not implement IBoss!");
         }
-
     }
 
+    /// <summary>
+    /// Applies damage to the boss and updates health bar.
+    /// </summary>
     public void TakeDamage(float damage)
     {
         _rm.ReportTookDamage(damage);
@@ -84,7 +95,9 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
     }
 
-    // New method to get current health percentage (0.0 to 1.0)
+    /// <summary>
+    /// Returns the boss's current health as a percentage (0.0 to 1.0).
+    /// </summary>
     public float GetHealthPercentage()
     {
         return currentHealth / maxHealth;
@@ -94,7 +107,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     {
         if (_healthSlider != null)
         {
-            _healthSlider.value = currentHealth / maxHealth;
+            _healthSlider.value = currentHealth / maxHealth / HealthNormalizationDivisor;
         }
     }
     public event System.Action OnBossDied;
@@ -111,7 +124,6 @@ public class BossHealth : MonoBehaviour, IDamageable
                 _spumPrefabs.PlayAnimation(PlayerState.DEATH, 0);
             }
 
-            // Deactivate the health bar (slider)
             if (_healthSlider != null)
             {
                 _healthSlider.gameObject.SetActive(false);
@@ -134,10 +146,13 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     private IEnumerator DestroyAfterAnimation()
     {
-        yield return new WaitForSeconds(2f);  // Adjust the time to match your animation length
+        yield return new WaitForSeconds(DeathAnimationWait);
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Resets the boss's health and health bar.
+    /// </summary>
     public void ResetHealth()
     {
         currentHealth = maxHealth;

@@ -1,30 +1,44 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Manages UI screens for game over, pause, win, and handles related input and sound.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
+    // Constants
+    private const int MainMenuSceneIndex = 0;
+    private const float VolumeStep = 0.2f;
+
+    // Singleton
     public static UIManager Instance;
-    private bool _isGamePaused = false;
+
+    // Serialized fields
     [Header("Game Over")]
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private AudioClip _gameOverSound;
     [Header("Pause")]
     [SerializeField] private GameObject _pauseScreen;
-    [SerializeField] private GameObject _winScreen; // Reference to WinScreen
+    [SerializeField] private GameObject _winScreen;
 
-    // For testing
+    // Private fields
+    private bool _isGamePaused = false;
+
+    // Properties for testing
     public GameObject GameOverScreen
     {
         get { return _gameOverScreen; }
         set { _gameOverScreen = value; }
     }
-
     public GameObject PauseScreen
     {
         get { return _pauseScreen; }
         set { _pauseScreen = value; }
     }
 
+    /// <summary>
+    /// Initializes singleton and disables all UI screens.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -37,14 +51,15 @@ public class UIManager : MonoBehaviour
         }
         _gameOverScreen.SetActive(false);
         _pauseScreen.SetActive(false);
-        _winScreen.SetActive(false); // Make sure WinScreen starts disabled
+        _winScreen.SetActive(false);
     }
 
+    /// <summary>
+    /// Handles pause input unless win screen is active.
+    /// </summary>
     private void Update()
     {
-        // Only listen for Esc key if WinScreen is not active
         if (_winScreen.activeInHierarchy) return;
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (_pauseScreen.activeInHierarchy)
@@ -59,23 +74,35 @@ public class UIManager : MonoBehaviour
     }
 
     #region Game Over
+    /// <summary>
+    /// Shows the game over screen and plays sound.
+    /// </summary>
     public void GameOver()
     {
         _gameOverScreen.SetActive(true);
         SoundManager.instance.PlaySound(_gameOverSound, gameObject);
     }
 
+    /// <summary>
+    /// Restarts the current scene.
+    /// </summary>
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    /// <summary>
+    /// Loads the main menu scene and changes music.
+    /// </summary>
     public void MainMenu()
     {
         SoundManager.instance.ChangeMusic(SoundManager.instance.menuMusic);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(MainMenuSceneIndex);
     }
 
+    /// <summary>
+    /// Quits the application (and stops play mode in editor).
+    /// </summary>
     public void Quit()
     {
         Application.Quit();
@@ -86,33 +113,38 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Pause
+    /// <summary>
+    /// Shows or hides the pause screen and sets time scale.
+    /// </summary>
     public void PauseGame(bool status)
     {
         _pauseScreen.SetActive(status);
         _isGamePaused = status;
-        if (status)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
-        }
+        Time.timeScale = status ? 0 : 1;
     }
 
+    /// <summary>
+    /// Returns whether the game is currently paused.
+    /// </summary>
     public bool IsGamePaused()
     {
         return _isGamePaused;
     }
 
+    /// <summary>
+    /// Changes the sound volume by a fixed step.
+    /// </summary>
     public void SoundVolume()
     {
-        SoundManager.instance.ChangeSoundVolume(0.2f);
+        SoundManager.instance.ChangeSoundVolume(VolumeStep);
     }
 
+    /// <summary>
+    /// Changes the music volume by a fixed step.
+    /// </summary>
     public void MusicVolume()
     {
-        SoundManager.instance.ChangeMusicVolume(0.2f);
+        SoundManager.instance.ChangeMusicVolume(VolumeStep);
     }
     #endregion
 }

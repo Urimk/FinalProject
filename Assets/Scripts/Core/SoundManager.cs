@@ -2,14 +2,24 @@
 
 public class SoundManager : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const float DefaultSoundBaseVolume = 1f;
+    private const float DefaultMusicBaseVolume = 0.3f;
+    private const float VolumeMin = 0f;
+    private const float VolumeMax = 1f;
+
+    // ==================== Singleton ====================
     public static SoundManager instance { get; private set; }
 
+    // ==================== Private Fields ====================
     private AudioSource _soundSource;
     private AudioSource _musicSource;
 
+    // ==================== Serialized Fields ====================
     [SerializeField] public AudioClip menuMusic;  // Serialized for Inspector
     [SerializeField] public AudioClip level1Music; // Serialized for Inspector
 
+    // ==================== Unity Lifecycle ====================
     private void Awake()
     {
         _soundSource = GetComponent<AudioSource>();
@@ -27,6 +37,7 @@ public class SoundManager : MonoBehaviour
         ChangeSoundVolume(0);
     }
 
+    // ==================== Public Methods ====================
     public void PlaySound(AudioClip sound, GameObject caller)
     {
         if (IsObjectVisible(caller))
@@ -35,19 +46,39 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    public void ChangeSoundVolume(float change)
+    {
+        ChangeSourceVolume(DefaultSoundBaseVolume, "soundVolume", change, _soundSource);
+    }
+    public void ChangeMusicVolume(float change)
+    {
+        ChangeSourceVolume(DefaultMusicBaseVolume, "musicVolume", change, _musicSource);
+    }
+    public float GetCurrentMusicVolume()
+    {
+        return PlayerPrefs.GetFloat("musicVolume", VolumeMax);
+    }
+    public float GetCurrentSoundVolume()
+    {
+        return PlayerPrefs.GetFloat("soundVolume", VolumeMax);
+    }
+    public void ChangeMusic(AudioClip newClip)
+    {
+        if (_musicSource.clip == newClip) return; // Prevent restarting same music
+        _musicSource.clip = newClip;
+        _musicSource.Play();
+    }
+
+    // ==================== Private Methods ====================
     private bool IsObjectVisible(GameObject obj)
     {
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return false;
-
-        // Check the object itself
         SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
         if (spriteRenderer != null && spriteRenderer.isVisible)
         {
             return true;
         }
-
-        // Check all children
         SpriteRenderer[] childRenderers = obj.GetComponentsInChildren<SpriteRenderer>();
         foreach (SpriteRenderer childRenderer in childRenderers)
         {
@@ -56,57 +87,23 @@ public class SoundManager : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
-    public void ChangeSoundVolume(float _change)
-    {
-        ChangeSourceVolume(1, "soundVolume", _change, _soundSource);
-    }
-    public void ChangeMusicVolume(float _change)
-    {
-        ChangeSourceVolume(0.3f, "musicVolume", _change, _musicSource);
-    }
     private void ChangeSourceVolume(float baseVolume, string volumeName, float change, AudioSource source)
     {
-        // Get the current logical volume (0 to 1) from PlayerPrefs, defaulting to 1 if not set
-        float currentVolume = PlayerPrefs.GetFloat(volumeName, 1);
-
-        // Adjust the volume
+        float currentVolume = PlayerPrefs.GetFloat(volumeName, VolumeMax);
         currentVolume += change;
-
-        // Ensure it wraps around between 0 and 1
-        if (currentVolume > 1)
+        // Ensure it wraps around between min and max
+        if (currentVolume > VolumeMax)
         {
-            currentVolume = 0;
+            currentVolume = VolumeMin;
         }
-        else if (currentVolume < 0)
+        else if (currentVolume < VolumeMin)
         {
-            currentVolume = 1;
+            currentVolume = VolumeMax;
         }
-
-        // Set the audio source volume (scaled by baseVolume)
         source.volume = currentVolume * baseVolume;
-
-        // Save the logical volume (not scaled)
         PlayerPrefs.SetFloat(volumeName, currentVolume);
-    }
-    public float GetCurrentMusicVolume()
-    {
-        return PlayerPrefs.GetFloat("musicVolume", 1);
-    }
-
-    public float GetCurrentSoundVolume()
-    {
-        return PlayerPrefs.GetFloat("soundVolume", 1);
-    }
-
-    public void ChangeMusic(AudioClip newClip)
-    {
-        if (_musicSource.clip == newClip) return; // Prevent restarting same music
-
-        _musicSource.clip = newClip;
-        _musicSource.Play();
     }
 }

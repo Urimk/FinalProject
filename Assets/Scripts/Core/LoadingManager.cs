@@ -3,11 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class LoadingManager : MonoBehaviour
 {
+    // ==================== Constants ====================
+    private const int ReloadSceneIndex = 1;
+    private const KeyCode ReloadKey = KeyCode.F1;
+
+    // ==================== Unity Lifecycle ====================
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(ReloadKey))
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+            SceneManager.LoadScene(ReloadSceneIndex);
         }
     }
 }

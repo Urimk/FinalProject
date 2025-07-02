@@ -1,22 +1,38 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles enemy projectile movement, collision, and animation logic.
+/// </summary>
 public class EnemyProjectile : EnemyDamage
 {
+    // ==================== Constants ====================
+    private const float ColliderGrowDivisor = 2.25f;
+    private const float DefaultColliderGrowTime = 0.3f;
+    private const float LerpComplete = 1f;
+    private const string NoCollisionTag = "NoCollision";
+    private const string EnemyTag = "Enemy";
+
+    // ==================== Serialized Fields ====================
     [SerializeField] private float _speed;
     [SerializeField] private float _size;
     [SerializeField] private float _resetTime;
+
+    // ==================== Private Fields ====================
     private float _lifeTime;
     private Animator _anim;
     private bool _hit;
     private BoxCollider2D _collid;
     private Vector2 _fullColliderSize;
     private bool _isComingOut = false;
-    private float _colliderGrowTime = 0.3f;
+    private float _colliderGrowTime = DefaultColliderGrowTime;
     private float _growTimer = 0f;
     private BoxCollider2D _boxCollider;
     private Vector2 _direction = Vector2.right;
     private bool _useCustomDirection = false;
 
+    /// <summary>
+    /// Initializes references and collider size.
+    /// </summary>
     private void Awake()
     {
         _anim = GetComponent<Animator>();
@@ -25,6 +41,9 @@ public class EnemyProjectile : EnemyDamage
         _fullColliderSize = _boxCollider.size;
     }
 
+    /// <summary>
+    /// Activates the projectile and resets its state.
+    /// </summary>
     public void ActivateProjectile()
     {
         _hit = false;
@@ -35,7 +54,7 @@ public class EnemyProjectile : EnemyDamage
         {
             _boxCollider.size = Vector2.zero;
             _boxCollider.offset = Vector2.zero;
-            _colliderGrowTime = _speed / 2.25f;
+            _colliderGrowTime = _speed / ColliderGrowDivisor;
             _growTimer = 0f;
         }
         else
@@ -44,6 +63,9 @@ public class EnemyProjectile : EnemyDamage
         }
     }
 
+    /// <summary>
+    /// Sets the projectile's direction and visual orientation.
+    /// </summary>
     public void SetDirection(Vector2 newDirection, bool invertMovement = false, bool invertVisual = false, bool invertY = false)
     {
         newDirection = newDirection.normalized;
@@ -58,11 +80,17 @@ public class EnemyProjectile : EnemyDamage
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
+    /// <summary>
+    /// Sets whether the projectile is in the 'coming out' state.
+    /// </summary>
     public void SetComingOut(bool value)
     {
         _isComingOut = value;
     }
 
+    /// <summary>
+    /// Handles projectile movement, collider growth, and lifetime.
+    /// </summary>
     private void Update()
     {
         if (_hit) return;
@@ -85,7 +113,7 @@ public class EnemyProjectile : EnemyDamage
             _boxCollider.size = newSize;
             _boxCollider.size = newSize;
             _boxCollider.offset = newOffset;
-            if (t >= 1f)
+            if (t >= LerpComplete)
             {
                 _isComingOut = false;
                 _boxCollider.size = _fullColliderSize;
@@ -110,9 +138,12 @@ public class EnemyProjectile : EnemyDamage
         }
     }
 
+    /// <summary>
+    /// Handles collision with other objects, triggers explosion/fade animation, and disables the projectile.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "NoCollision" || collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag)
         {
             return;
         }
@@ -130,21 +161,33 @@ public class EnemyProjectile : EnemyDamage
         }
     }
 
+    /// <summary>
+    /// Sets the projectile's damage value.
+    /// </summary>
     public void SetDamage(int newDamage)
     {
         _damage = newDamage;
     }
 
+    /// <summary>
+    /// Sets the projectile's speed value.
+    /// </summary>
     public void SetSpeed(float newSpeed)
     {
         _speed = newSpeed;
     }
 
+    /// <summary>
+    /// Sets the projectile's size value.
+    /// </summary>
     public void SetSize(float newSize)
     {
         _size = newSize;
     }
 
+    /// <summary>
+    /// Deactivates the projectile and resets its state.
+    /// </summary>
     private void Deactivate()
     {
         gameObject.SetActive(false);
