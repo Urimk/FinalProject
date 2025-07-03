@@ -5,15 +5,21 @@
 /// </summary>
 public class OptionsMenu : MonoBehaviour
 {
+    // ==================== Constants ====================
     private const string DifficultyKey = "GameDifficulty";
     private const string EasyDifficulty = "Easy";
     private const string NormalDifficulty = "Normal";
     private const string HardDifficulty = "Hard";
 
+    // ==================== Inspector Fields ====================
+    [Tooltip("Sound effect to play when a button is clicked.")]
     [SerializeField] private AudioClip _buttonClickSound;
+    [Tooltip("Reference to the MainMenu GameObject.")]
     [SerializeField] private GameObject _mainMenu;
+    [Tooltip("Reference to the OptionsMenu GameObject.")]
     [SerializeField] private GameObject _optionsMenu;
 
+    // ==================== Menu Navigation ====================
     /// <summary>
     /// Returns to the main menu from the options menu.
     /// </summary>
@@ -48,9 +54,11 @@ public class OptionsMenu : MonoBehaviour
         SetDifficulty(HardDifficulty);
     }
 
+    // ==================== Utility ====================
     /// <summary>
     /// Sets the game difficulty and saves it in PlayerPrefs.
     /// </summary>
+    /// <param name="difficulty">The difficulty to set.</param>
     private void SetDifficulty(string difficulty)
     {
         SoundManager.instance.PlaySound(_buttonClickSound, gameObject);

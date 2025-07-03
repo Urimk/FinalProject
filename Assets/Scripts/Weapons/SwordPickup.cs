@@ -5,9 +5,13 @@
 /// </summary>
 public class SwordPickup : MonoBehaviour
 {
+    // === Constants ===
     private const float DefaultRotationSpeed = 90f; // degrees per second
     private const string PlayerTag = "Player";
 
+    // === Inspector Fields ===
+    [Header("Sword Pickup Settings")]
+    [Tooltip("Rotation speed of the sword in degrees per second.")]
     [SerializeField] private float _rotationSpeed = DefaultRotationSpeed;
 
     /// <summary>
@@ -21,6 +25,7 @@ public class SwordPickup : MonoBehaviour
     /// <summary>
     /// Equips the sword to the player when they collide with the pickup.
     /// </summary>
+    /// <param name="collision">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(PlayerTag))

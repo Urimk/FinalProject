@@ -4,6 +4,7 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Manages the ground, spikes, and sorting sequences for the spike sorting puzzle.
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 /// </summary>
 public class GroundManager : MonoBehaviour
 {
-    // Constants
+    // === Constants ===
     private const float DefaultSpikeMoveTime = 0.4f;
     private const float DefaultSwapTime = 0.2f;
     private const int DefaultTimesToSort = 3;
@@ -21,18 +22,42 @@ public class GroundManager : MonoBehaviour
     private const int MinSortsBeforeReset = 2;
     private const int RadixDigitCount = 10;
 
-    // Serialized fields
+    // === Inspector Fields ===
+    [Header("Platform Settings")]
+    [Tooltip("Reference to the falling platform for reset behavior.")]
     [SerializeField] private FallingPlatform _fallingPlatform;
+
+    [Header("Sorting Settings")]
+    [Tooltip("Number of times to sort the spikes before finishing.")]
     [SerializeField] private int _timesToSort = DefaultTimesToSort;
+
+    [Tooltip("Trophy GameObject to activate when sorting is complete.")]
     [SerializeField] private GameObject _trophy;
 
-    // Public fields
-    [SerializeField] public float SpikeMoveTime = DefaultSpikeMoveTime;
-    [SerializeField] public float SwapTime = DefaultSwapTime;
-    [SerializeField] public List<SortedSpike> Spikes = new List<SortedSpike>();
-    [SerializeField] public Text SortingText;
+    [Header("Spike Animation Settings")]
+    [FormerlySerializedAs("SpikeMoveTime")]
+    [Tooltip("Time in seconds for a spike to move up or down.")]
+    [SerializeField] private float _spikeMoveTime = DefaultSpikeMoveTime;
+    public float SpikeMoveTime { get => _spikeMoveTime; set => _spikeMoveTime = value; }
 
-    // Private fields
+    [FormerlySerializedAs("SwapTime")]
+    [Tooltip("Time in seconds for a spike swap animation.")]
+    [SerializeField] private float _swapTime = DefaultSwapTime;
+    public float SwapTime { get => _swapTime; set => _swapTime = value; }
+
+    [Header("Spike References")]
+    [FormerlySerializedAs("Spikes")]
+    [Tooltip("List of all SortedSpike objects managed by this GroundManager.")]
+    [SerializeField] private List<SortedSpike> _spikes = new List<SortedSpike>();
+    public List<SortedSpike> Spikes { get => _spikes; set => _spikes = value; }
+
+    [Header("UI References")]
+    [FormerlySerializedAs("SortingText")]
+    [Tooltip("UI Text element for displaying the current sorting algorithm.")]
+    [SerializeField] private Text _sortingText;
+    public Text SortingText { get => _sortingText; set => _sortingText = value; }
+
+    // === Private State ===
     private bool _isPlayerDead = false;
     private bool _isFinishingSequence = false;
     private Coroutine _currentSortingCoroutine;

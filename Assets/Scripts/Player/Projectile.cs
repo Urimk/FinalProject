@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class Projectile : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultLifetime = 5f;
     private const int DamageAmount = 1;
     private const string DoorObjectName = "Door";
@@ -16,10 +16,12 @@ public class Projectile : MonoBehaviour
     private const string PlayerTag = "Player";
     private const string AnimatorExplosion = "explosion";
 
-    // === Serialized Fields ===
+    // ==================== Inspector Fields ====================
+    [Header("Projectile Settings")]
+    [Tooltip("Speed of the projectile.")]
     [SerializeField] private float speed;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private float _direction;
     private bool _hit;
     private float _lifetime;

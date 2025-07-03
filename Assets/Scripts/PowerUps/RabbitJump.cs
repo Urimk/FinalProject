@@ -5,18 +5,27 @@
 /// </summary>
 public class RabbitJump : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const string PlayerTag = "Player";
 
-    // === Serialized Fields ===
+    // ==================== Inspector Fields ====================
+    [Tooltip("Number of extra jumps granted by the power-up.")]
+    [FormerlySerializedAs("bonusJumps")]
     [SerializeField] private int _bonusJumps = 1;
+    [Tooltip("Amount of extra jump power granted by the power-up.")]
+    [FormerlySerializedAs("bonusJumpPower")]
     [SerializeField] private float _bonusJumpPower = 1f;
+    [Tooltip("Speed of the hovering animation.")]
+    [FormerlySerializedAs("hoverSpeed")]
     [SerializeField] private float _hoverSpeed = 2f;
+    [Tooltip("Height of the hovering animation.")]
+    [FormerlySerializedAs("hoverHeight")]
     [SerializeField] private float _hoverHeight = 0.2f;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private Vector3 _startPos;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Unity Start callback. Stores the initial position.
     /// </summary>
@@ -34,9 +43,11 @@ public class RabbitJump : MonoBehaviour
         transform.position = _startPos + new Vector3(0, Mathf.Sin(Time.time * _hoverSpeed) * _hoverHeight, 0);
     }
 
+    // ==================== Power-Up Logic ====================
     /// <summary>
     /// Grants the power-up to the player on collision.
     /// </summary>
+    /// <param name="collision">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(PlayerTag))

@@ -1,13 +1,16 @@
 ﻿using System;
+
 using UnityEngine;
 
-// Manages reward calculation for the Boss AI.
-// Other scripts (Boss Health, Player Health, Projectiles, Episode Manager)
-// should call the Report... methods.
-// The Q-Learning Agent calls GetTotalRewardAndReset() each step.
+/// <summary>
+/// Manages reward calculation and reporting for the Boss AI agent.
+/// Other scripts (Boss Health, Player Health, Projectiles, Episode Manager)
+/// should call the Report... methods. The Q-Learning Agent calls GetStepRewardAndReset() each step.
+/// </summary>
 public class BossRewardManager : MonoBehaviour
 {
     // ==================== Constants ====================
+    // Reward and penalty values for various events
     private const float DefaultRewardBossWinsBase = 200.0f;
     private const float DefaultPenaltyBossLosesBase = -200.0f;
     private const float DefaultMaxEpisodeDuration = 45.0f;
@@ -45,17 +48,33 @@ public class BossRewardManager : MonoBehaviour
     private float _pendingTerminalReward = 0f;        // Stores the calculated reward for the episode end.
     private bool _terminalRewardPending = false;      // Flag to indicate a terminal reward is set.
     private float _currentEpisodeStartTime = 0f;
-    private float _totalEpisodeReward = 0f;           // NEW variable for logging the total reward for the entire episode.
+    private float _totalEpisodeReward = 0f;           // Tracks the total reward for the entire episode.
 
     // ==================== Step/Action Reporting Methods ====================
+    /// <summary>
+    /// Call when the boss hits the player.
+    /// </summary>
     public void ReportHitPlayer() => _currentAccumulatedStepReward += _rewardHitPlayer;
+
+    /// <summary>
+    /// Call when the boss takes damage from the player.
+    /// </summary>
+    /// <param name="damageAmount">Amount of damage taken (not currently used).</param>
     public void ReportTookDamage(float damageAmount) => _currentAccumulatedStepReward += _penaltyTookDamage;
+
+    /// <summary>
+    /// Call when the boss fires an attack that misses.
+    /// </summary>
     public void ReportAttackMissed() => _currentAccumulatedStepReward += _penaltyAttackMissed;
+
+    /// <summary>
+    /// Call when the player triggers a flame trap placed by the boss.
+    /// </summary>
     public void ReportTrapTriggered() => _currentAccumulatedStepReward += _rewardTrapTriggered;
 
     // ==================== Episode Management Methods ====================
     /// <summary>
-    /// Call this at the beginning of each new training episode.
+    /// Call at the beginning of each new training episode to reset reward state.
     /// </summary>
     public void StartNewEpisode()
     {
@@ -67,7 +86,7 @@ public class BossRewardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Call this EXACTLY ONCE when the boss wins the episode.
+    /// Call EXACTLY ONCE when the boss wins the episode.
     /// </summary>
     public void ReportBossWin()
     {
@@ -84,28 +103,31 @@ public class BossRewardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Call this EXACTLY ONCE when the boss loses the episode.
+    /// Call EXACTLY ONCE when the boss loses the episode.
     /// </summary>
     public void ReportBossLoss()
     {
         if (_terminalRewardPending) return;
         float duration = Time.time - _currentEpisodeStartTime;
         float finalPenalty = _penaltyBossLosesBase;
-        if (_scaleTerminalRewardByTime && _maxEpisodeDuration > 0)
-        {
-            float timeFactor = Mathf.Clamp01(duration / _maxEpisodeDuration);
-            float additionalTimePenalty = Mathf.Abs(_penaltyBossLosesBase) * (1.0f - timeFactor);
-            finalPenalty -= additionalTimePenalty;
-        }
+        // Optionally scale penalty by time (currently commented out)
+        //if (_scaleTerminalRewardByTime && _maxEpisodeDuration > 0)
+        //{
+        //    float timeFactor = Mathf.Clamp01(duration / _maxEpisodeDuration);
+        //    float additionalTimePenalty = Mathf.Abs(_penaltyBossLosesBase) * (1.0f - timeFactor);
+        //    finalPenalty -= additionalTimePenalty;
+        //}
         _pendingTerminalReward = finalPenalty;
         _terminalRewardPending = true;
     }
 
     // ==================== Q-Learning/Reward Methods ====================
     /// <summary>
-    /// Gets the reward accumulated since the last call. For the Q-Learning agent's step-by-step updates.
+    /// Gets the reward accumulated since the last call, including per-step penalty and any terminal reward.
+    /// Resets the step reward accumulator. Used by the Q-Learning agent each step.
     /// </summary>
-    public float GetTotalRewardAndReset()
+    /// <returns>The reward value for this step.</returns>
+    public float GetStepRewardAndReset()
     {
         float rewardToReturn = _currentAccumulatedStepReward;
         rewardToReturn += _penaltyPerStep;
@@ -120,23 +142,26 @@ public class BossRewardManager : MonoBehaviour
         return rewardToReturn;
     }
 
-    // ==================== Logging Methods ====================
     /// <summary>
-    /// Returns the sum of all rewards given during the current episode. Does NOT reset anything.
-    /// Call this from your logging script at the end of the episode.
+    /// Gets the total reward for the current episode without resetting anything. Useful for logging.
     /// </summary>
+    /// <returns>Total reward for the episode so far.</returns>
     public float GetEpisodeTotalReward()
     {
+        float total = _totalEpisodeReward;
+        // Add any pending terminal reward and current step rewards
         if (_terminalRewardPending)
         {
-            _totalEpisodeReward += _pendingTerminalReward;
-            _pendingTerminalReward = 0f;
-            _terminalRewardPending = false;
+            total += _pendingTerminalReward;
         }
-        return _totalEpisodeReward;
+        total += _currentAccumulatedStepReward;
+        return total;
     }
 
     // ==================== Utility Methods ====================
+    /// <summary>
+    /// Returns true if the episode is done (terminal reward is pending).
+    /// </summary>
     public bool IsEpisodeDone()
     {
         return _terminalRewardPending;

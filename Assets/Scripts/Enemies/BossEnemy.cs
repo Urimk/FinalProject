@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-// Manages the Boss's behavior, attacks, and state.
+/// <summary>
+/// Manages the Boss's behavior, attacks, and state.
+/// </summary>
 public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides base health/damage logic
 {
     // ==================== Constants ====================
@@ -23,41 +25,66 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private const string DashTargetIndicatorTag = "DashTargetIndicator";
 
     // ==================== Serialized Fields ====================
+    [Tooltip("Reference to the boss's Rigidbody2D component.")]
     [SerializeField] private Rigidbody2D _rb;
+    [Tooltip("Movement speed of the boss.")]
     [SerializeField] private float _movementSpeed;
+    [Tooltip("Should the boss reset health on state reset?")]
     [SerializeField] private bool _doRestHealth;
+    [Tooltip("Reference to the player's Health component.")]
     [SerializeField] private Health _playerHealth;
 
     [Header("Attack Parameters")]
+    [Tooltip("Cooldown time between attacks.")]
     [SerializeField] private float _attackCooldown = 6f;
+    [Tooltip("Damage dealt by fireballs.")]
     [SerializeField] private int _fireballDamage = 1;
+    [Tooltip("Speed of projectile attacks.")]
     [SerializeField] private float _projectileSpeed = 5f;
+    [Tooltip("Size of projectile attacks.")]
     [SerializeField] private float _projectileSize = 0.3f;
+    [Tooltip("Attack range for detecting the player.")]
     [SerializeField] private float _attackRange = 10f;
+    [Tooltip("Sound played when firing a fireball.")]
     [SerializeField] private AudioClip _fireballSound;
 
     [Header("Phase Control")]
+    [Tooltip("Reference to the BossHealth component.")]
     [SerializeField] private BossHealth _bossHealth;
     private bool _isPhase2 = false;
 
     [Header("Ranged Attack")]
+    [Tooltip("Transform where fireballs are spawned from.")]
     [SerializeField] private Transform _firepoint;
+    [Tooltip("Projectile prefab for ranged attacks.")]
     [SerializeField] private GameObject _projectilePrefab;
+    [Tooltip("Array of fireball GameObjects for pooling.")]
     [SerializeField] private GameObject[] _fireballs;
+    [Tooltip("Reference to the player Transform.")]
     [SerializeField] private Transform _player;
+    [Tooltip("Reference to the fireball holder Transform.")]
     [SerializeField] private Transform _fireballHolder;
 
     [Header("Flame Attack")]
+    [Tooltip("Reference to the flame GameObject.")]
     [SerializeField] private GameObject _flame;
+    [Tooltip("Prefab for the area marker.")]
     [SerializeField] private GameObject _areaMarkerPrefab;
+    [Tooltip("Cooldown time between flame attacks.")]
     [SerializeField] private float _fireAttackCooldown = 6f;
 
     [Header("Charge Dash Attack")]
+    [Tooltip("Time to charge before dashing.")]
     [SerializeField] private float _dashChargeTime = 2f;
+    [Tooltip("Speed of the dash attack.")]
     [SerializeField] private float _dashSpeed = 10f;
+    [Tooltip("Cooldown time between dash attacks.")]
     [SerializeField] private float _dashCooldown = 10f;
+    [Tooltip("Sound played when charging dash.")]
     [SerializeField] private AudioClip _chargeSound;
+    [Tooltip("Sound played when dashing.")]
     [SerializeField] private AudioClip _dashSound;
+    [Tooltip("Prefab for the target icon.")]
     [SerializeField] private GameObject _targetIconPrefab;
     private GameObject _targetIconInstance;
 
@@ -75,6 +102,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private Coroutine _dashCoroutine;
 
     // ==================== Unity Lifecycle ====================
+    /// <summary>
+    /// Unity Awake callback. Initializes references and validates required components.
+    /// </summary>
     private void Awake()
     {
         _anim = GetComponent<Animator>();
@@ -94,6 +124,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
     }
 
+    /// <summary>
+    /// Unity Start callback. Initializes boss state and timers.
+    /// </summary>
     private void Start()
     {
         _cooldownTimer = _attackCooldown;
@@ -104,8 +137,11 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         _isDashing = false;
         _isDead = false;
     }
-
     // ==================== State Reset & Update ====================
+    /// <summary>
+    /// Handles logic when the player dies. Resets the boss state if the player's health reaches zero.
+    /// </summary>
+    /// <param name="idc">Unused parameter (for event compatibility).</param>
     public void HandlePlayerDeath(float idc)
     {
         if (_playerHealth != null && _playerHealth.currentHealth <= 0)
@@ -114,6 +150,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
     }
 
+    /// <summary>
+    /// Resets the boss's state, health, cooldowns, and position for a new encounter.
+    /// </summary>
     public void ResetState()
     {
         Debug.Log("[BossEnemy] Resetting BossEnemy state.");
@@ -213,12 +252,18 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     }
 
     // ==================== Attack Methods (Called by QL Agent or Hardcoded Triggers) ====================
+    /// <summary>
+    /// Requests the boss to perform a ranged attack (e.g., fireball).
+    /// </summary>
     public void AIRequestRangedAttack()
     {
         if (_isDead || _isChargingDash || _isDashing || _cooldownTimer < _attackCooldown) return;
         RangedAttack();
     }
 
+    /// <summary>
+    /// Performs the actual ranged attack logic (fireball launch).
+    /// </summary>
     private void RangedAttack()
     {
         int fireballIndex = FindFireball();
@@ -245,6 +290,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         _cooldownTimer = 0f;
     }
 
+    /// <summary>
+    /// Finds the index of an inactive fireball in the pool.
+    /// </summary>
+    /// <returns>The index of an available fireball, or -1 if none are available.</returns>
     private int FindFireball()
     {
         if (_fireballs == null) return -1;
@@ -258,12 +307,18 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         return -1;
     }
 
+    /// <summary>
+    /// Requests the boss to perform a flame attack.
+    /// </summary>
     public void AIRequestFlameAttack()
     {
         if (_isDead || _isChargingDash || _isDashing || _fireAttackTimer < _fireAttackCooldown || _flame == null || _flame.activeInHierarchy) return;
         SpawnFireAtPlayer();
     }
 
+    /// <summary>
+    /// Spawns a flame attack at the player's position.
+    /// </summary>
     private void SpawnFireAtPlayer()
     {
         if (_flame == null || _isDead || _player == null) return;
@@ -272,6 +327,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         _fireAttackTimer = 0f;
     }
 
+    /// <summary>
+    /// Coroutine to mark an area and spawn fire after a delay.
+    /// </summary>
+    /// <param name="targetPosition">The position to mark and spawn fire.</param>
     private IEnumerator MarkAreaAndSpawnFire(Vector3 targetPosition)
     {
         if (_isDead) yield break;
@@ -299,6 +358,11 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
     }
 
+    /// <summary>
+    /// Coroutine to deactivate a GameObject after a specified delay.
+    /// </summary>
+    /// <param name="obj">The GameObject to deactivate.</param>
+    /// <param name="delay">The delay in seconds before deactivation.</param>
     private IEnumerator DeactivateAfterDuration(GameObject obj, float delay)
     {
         float timer = 0f;
@@ -319,6 +383,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     }
 
     // ==================== Charge Dash Attack sequence ====================
+    /// <summary>
+    /// Initiates the charge dash attack sequence.
+    /// </summary>
     private void ChargeDashAttack()
     {
         if (_isDead || _isChargingDash || _isDashing) return;
@@ -352,6 +419,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         _dashCoroutine = StartCoroutine(PerformDashAttack());
     }
 
+    /// <summary>
+    /// Coroutine to perform the dash attack sequence.
+    /// </summary>
     private IEnumerator PerformDashAttack()
     {
         yield return new WaitForSeconds(_dashChargeTime);
@@ -390,6 +460,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     }
 
     // ==================== Phase 2 implementation ====================
+    /// <summary>
+    /// Handles the transition to phase 2 of the boss fight.
+    /// </summary>
     private void EnterPhase2()
     {
         Debug.Log("[BossEnemy] Entering Phase 2!");
@@ -400,6 +473,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     }
 
     // ==================== Death Handling ====================
+    /// <summary>
+    /// Handles the boss's death logic, including animation and disabling the boss.
+    /// </summary>
     public void Die()
     {
         if (_isDead) return;
@@ -416,7 +492,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         Destroy(gameObject, DeathDestroyDelay);
     }
 
-    // ==================== Utility ====================
+    /// <summary>
+    /// Deactivates the flame and warning markers in the environment.
+    /// </summary>
     public void DeactivateFlameAndWarning()
     {
         if (_flame != null)
@@ -434,21 +512,87 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
     }
 
-    // ==================== Public Getters ====================
+    /// <summary>
+    /// Returns whether the boss is currently charging or dashing.
+    /// </summary>
     public bool IsCurrentlyChargingOrDashing()
     {
         return _isChargingDash || _isDashing;
     }
+
+    /// <summary>
+    /// Returns whether the boss's fireball attack is ready (off cooldown).
+    /// </summary>
     public bool IsFireballReady()
     {
         return _cooldownTimer >= _attackCooldown;
     }
+
+    /// <summary>
+    /// Returns whether the boss's flame trap attack is ready (off cooldown).
+    /// </summary>
     public bool IsFlameTrapReady()
     {
         return _fireAttackTimer >= _fireAttackCooldown && (_flame == null || !_flame.activeInHierarchy);
     }
+
+    /// <summary>
+    /// Returns whether the boss's dash attack is ready (off cooldown).
+    /// </summary>
     public bool IsDashReady()
     {
         return _dashCooldownTimer >= _dashCooldown && _isPhase2;
+    }
+
+    // ==================== State Reset & Update ====================
+    /// <summary>
+    /// Handles logic when the player dies. Resets the boss state if the player's health reaches zero.
+    /// </summary>
+    /// <param name="idc">Unused parameter (for event compatibility).</param>
+    public void HandlePlayerDeath(float idc)
+    {
+        if (_playerHealth != null && _playerHealth.currentHealth <= 0)
+        {
+            ResetState();
+        }
+    }
+
+    /// <summary>
+    /// Resets the boss's state, health, cooldowns, and position for a new encounter.
+    /// </summary>
+    public void ResetState()
+    {
+        Debug.Log("[BossEnemy] Resetting BossEnemy state.");
+        _detectedPlayer = false;
+        StopAllCoroutines();
+        _isDead = false;
+        if (_doRestHealth)
+        {
+            _isPhase2 = false;
+        }
+        _isChargingDash = false;
+        _isDashing = false;
+        _attackCooldown = DefaultAttackCooldown;
+        _fireAttackCooldown = DefaultFireAttackCooldown;
+        _dashCooldown = DefaultDashCooldown;
+        _cooldownTimer = _attackCooldown;
+        _fireAttackTimer = _fireAttackCooldown;
+        _dashCooldownTimer = _dashCooldown;
+        if (_rb != null)
+        {
+            _rb.velocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.isKinematic = false;
+        }
+        gameObject.transform.position = _initialBossPosition;
+        if (_bossHealth != null && _doRestHealth) _bossHealth.ResetHealth();
+        DeactivateFlameAndWarning();
+        if (_anim != null)
+        {
+            _anim.Rebind();
+            _anim.Update(0f);
+        }
+        gameObject.SetActive(true);
+        this.enabled = true;
     }
 }

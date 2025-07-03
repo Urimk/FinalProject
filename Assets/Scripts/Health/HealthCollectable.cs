@@ -5,16 +5,22 @@
 /// </summary>
 public class HealthCollectable : MonoBehaviour
 {
+    // ==================== Constants ====================
     private const string PlayerTag = "Player";
 
+    // ==================== Inspector Fields ====================
     [Header("Collectable Info")]
+    [Tooltip("Amount of health restored by this collectable.")]
     [SerializeField] private float _healthValue;
 
     [Header("Sound")]
+    [Tooltip("Sound to play when the collectable is picked up.")]
     [SerializeField] private AudioClip _collectSound;
 
+    // ==================== Private Fields ====================
     private bool _healthAdded;
 
+    // ==================== Unity Events ====================
     /// <summary>
     /// Restores health to the player and plays a sound when collected.
     /// </summary>

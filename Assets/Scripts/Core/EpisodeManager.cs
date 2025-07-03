@@ -6,9 +6,10 @@ using System.Linq; // Needed for Linq methods
 using UnityEngine;
 using UnityEngine.Serialization;
 
-// Manages the start and end of training episodes for the Boss vs Player fight.
-// Resets positions, health, and triggers reward manager resets. Logs performance.
-// Streamlined for use with an ML-Agents Player.
+/// <summary>
+/// Manages the start and end of training episodes for the Boss vs Player fight.
+/// Handles resets, logging, and reward management for ML-Agents training.
+/// </summary>
 public class EpisodeManager : MonoBehaviour
 {
     // ==================== Constants ====================
@@ -23,42 +24,72 @@ public class EpisodeManager : MonoBehaviour
     private const string EpisodeCountKey = "BossEpisodeCount";
 
     // ==================== Singleton ====================
+    /// <summary>
+    /// The global instance of the EpisodeManager.
+    /// </summary>
     public static EpisodeManager Instance { get; private set; }
 
     // ==================== Timeout Settings ====================
     [Header("Episode Timeout")]
+    [Tooltip("Maximum duration (in seconds) for an episode before timeout is triggered.")]
     [SerializeField] private float _maxEpisodeDuration = DefaultMaxEpisodeDuration;
 
     // ==================== Scene References ====================
     [Header("Scene References")]
+    [Tooltip("Reference to the player GameObject.")]
     [FormerlySerializedAs("_playerObject")]
     [SerializeField] private GameObject _playerObject;
+    [Tooltip("Reference to the boss GameObject.")]
     [SerializeField] private GameObject _bossObject;
 
+    [Tooltip("Reference to the AIBoss component.")]
     [SerializeField] private AIBoss _aiBoss;
+    [Tooltip("Reference to the BossEnemy component.")]
     [SerializeField] private BossEnemy _boss;
+    [Tooltip("Reference to the BossHealth component.")]
     [SerializeField] private BossHealth _bossHealth;
+    [Tooltip("Reference to the player Health component.")]
     [SerializeField] private Health _playerHealth;
+    [Tooltip("Reference to the PlayerMovement component.")]
     [SerializeField] private PlayerMovement _playerMovement;
+    [Tooltip("Reference to the PlayerAttack component.")]
     [SerializeField] private PlayerAttack _playerAttack;
+    [Tooltip("Reference to the BossRewardManager component.")]
     [SerializeField] private BossRewardManager _bossRewardManager;
+    [Tooltip("Reference to the BossQLearning component (optional for ML-Agents Player training).")]
     [SerializeField] private BossQLearning _bossQLearning;
 
     // ==================== Episode Start Position ====================
     [Header("Episode Reset Positions")]
-    [SerializeField] public Vector3 initialPlayerPosition = new Vector3(DefaultInitialPlayerX, DefaultInitialPlayerY, 0f);
+    [Tooltip("Initial position for the player at the start of an episode.")]
+    [FormerlySerializedAs("initialPlayerPosition")]
+    [SerializeField] private Vector3 _initialPlayerPosition = new Vector3(DefaultInitialPlayerX, DefaultInitialPlayerY, 0f);
+    [Tooltip("Initial position for the boss at the start of an episode.")]
     [SerializeField] private Vector3 _initialBossPosition = new Vector3(DefaultInitialBossX, DefaultInitialBossY, 0f);
+
+    /// <summary>
+    /// Gets the initial player position for episode resets.
+    /// </summary>
+    public Vector3 InitialPlayerPosition => _initialPlayerPosition;
+    /// <summary>
+    /// Gets the initial boss position for episode resets.
+    /// </summary>
+    public Vector3 InitialBossPosition => _initialBossPosition;
 
     // ==================== Logging Parameters ====================
     [Header("Logging Settings")]
+    [Tooltip("File path for episode log output.")]
     [SerializeField] private string _logFilePath = DefaultLogFileName;
+    [Tooltip("How often (in episodes) to log statistics.")]
     [SerializeField] private int _logFrequency = DefaultLogFrequency;
 
     // ==================== Internal State ====================
-    public int episodeCount = 0;
-    public float averageReward;
-    [FormerlySerializedAs("_accumulatedRewardSinceLastLog")]
-    private float _accumulatedReward = 0f;
+    [Tooltip("Total number of episodes completed.")]
+    [SerializeField, HideInInspector] private int _episodeCount = 0; // Hide in Inspector, but serialize for persistence
+    [Tooltip("Average reward over recent episodes.")]
+    [SerializeField, HideInInspector] private float _averageReward;
+    [Tooltip("Accumulated reward since last log.")]
+    [SerializeField, HideInInspector] private float _accumulatedReward = 0f;
     private int _episodesSinceLastLog = 0;
 
     private float _episodeStartTime;
@@ -66,6 +97,19 @@ public class EpisodeManager : MonoBehaviour
     [FormerlySerializedAs("_episodeCountKey")]
     private string _episodeCountKey = EpisodeCountKey;
 
+    /// <summary>
+    /// Gets the total number of episodes completed.
+    /// </summary>
+    public int EpisodeCount => _episodeCount;
+    /// <summary>
+    /// Gets the average reward over recent episodes.
+    /// </summary>
+    public float AverageReward => _averageReward;
+
+    // ==================== Unity Lifecycle ====================
+    /// <summary>
+    /// Unity Awake callback. Sets up the singleton, validates references, and loads persistent data.
+    /// </summary>
     private void Awake()
     {
         //Time.timeScale = 2f;
@@ -91,8 +135,8 @@ public class EpisodeManager : MonoBehaviour
         Debug.Log($"[EpisodeManager] Training log file path set to: {_logFilePath}");
 
         // Load episode count from PlayerPrefs
-        episodeCount = PlayerPrefs.GetInt(_episodeCountKey, 0);
-        Debug.Log($"[EpisodeManager] Loaded total episode count: {episodeCount}");
+        _episodeCount = PlayerPrefs.GetInt(_episodeCountKey, 0);
+        Debug.Log($"[EpisodeManager] Loaded total episode count: {_episodeCount}");
 
         // Optional: Clear log file on first run or if you want fresh logs each time
         // if (episodeCount == 0 && File.Exists(_logFilePath))
@@ -101,6 +145,10 @@ public class EpisodeManager : MonoBehaviour
         //     catch (Exception ex) { Debug.LogError($"[EpisodeManager] Failed to clear log file: {ex.Message}"); }
         // }
     }
+
+    /// <summary>
+    /// Unity Update callback. Checks for episode timeout each frame.
+    /// </summary>
     private void Update()
     {
         // Only run the timeout check if an episode is in progress:
@@ -111,6 +159,9 @@ public class EpisodeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles logic when an episode times out (e.g., applies penalty, ends episode).
+    /// </summary>
     private void HandleEpisodeTimeout()
     {
         Debug.LogWarning("[EpisodeManager] Episode timed out! Applying penalty and ending episode.");
@@ -133,29 +184,36 @@ public class EpisodeManager : MonoBehaviour
         {
             Debug.LogError("[EpisodeManager] Could not find PlayerAI to EndEpisode on timeout!");
         }
-
     }
 
+    /// <summary>
+    /// Unity callback when the application quits. Saves episode count to PlayerPrefs.
+    /// </summary>
     private void OnApplicationQuit()
     {
         // Save episode count on quit
-        PlayerPrefs.SetInt(_episodeCountKey, episodeCount);
+        PlayerPrefs.SetInt(_episodeCountKey, _episodeCount);
         PlayerPrefs.Save(); // Ensure it's written to disk
-        Debug.Log($"[EpisodeManager] Saved total episode count: {episodeCount}");
+        Debug.Log($"[EpisodeManager] Saved total episode count: {_episodeCount}");
     }
 
+    /// <summary>
+    /// Unity callback when the object is disabled. Saves episode count if this is the active instance.
+    /// </summary>
     private void OnDisable()
     {
         // Avoid saving if called during application quit or from duplicates
         if (Instance == this)
         {
-            PlayerPrefs.SetInt(_episodeCountKey, episodeCount);
+            PlayerPrefs.SetInt(_episodeCountKey, _episodeCount);
             PlayerPrefs.Save();
-            Debug.Log($"[EpisodeManager] Saved total episode count on disable: {episodeCount}");
+            Debug.Log($"[EpisodeManager] Saved total episode count on disable: {_episodeCount}");
         }
     }
 
-
+    /// <summary>
+    /// Unity Start callback. Validates critical references before starting.
+    /// </summary>
     private void Start()
     {
         // Validate critical references one last time before starting
@@ -180,8 +238,7 @@ public class EpisodeManager : MonoBehaviour
     // --- Method for ML-Agents Player to trigger logging/QL reset WITHOUT restarting scene ---
     /// <summary>
     /// Records the outcome of an episode, handles logging (primarily for QL stats),
-    /// and resets Q-Learning state.
-    /// Intended to be called by PlayerAI when an episode ends (PlayerAI.EndEpisode is called).
+    /// and resets Q-Learning state. Intended to be called by PlayerAI when an episode ends.
     /// Does NOT reset the scene environment itself (that's handled by PlayerAI.OnEpisodeBegin
     /// calling ResetEnvironmentForNewEpisode).
     /// </summary>
@@ -211,13 +268,13 @@ public class EpisodeManager : MonoBehaviour
         _episodesSinceLastLog++;
 
         // 3. Increment Total Episode Count
-        episodeCount++;
+        _episodeCount++;
         // Debug.Log($"Episode {episodeCount} ended. Boss {(bossWon ? "WON" : "LOST")}. QL Reward Logged: {episodeTotalReward:F3}");
 
         // 4. Logging (Handles Q-Learning specific stats)
         if (_logFrequency > 0 && _episodesSinceLastLog >= _logFrequency)
         {
-            averageReward = (_episodesSinceLastLog > 0) ? _accumulatedReward / _episodesSinceLastLog : 0f;
+            _averageReward = (_episodesSinceLastLog > 0) ? _accumulatedReward / _episodesSinceLastLog : 0f;
 
             // Get state counts from the Q-Learning script (if assigned)
             int uniqueStates = _bossQLearning != null ? _bossQLearning.GetUniqueStateCount() : -1;
@@ -231,9 +288,9 @@ public class EpisodeManager : MonoBehaviour
                 : "  State visit thresholds not available.";
 
 
-            string logMessage = $"--- Batch Summary (Episodes {episodeCount - _episodesSinceLastLog + 1} to {episodeCount}) ---" +
-                                $"\n  Average QL Reward (last {_episodesSinceLastLog} episodes): {averageReward:F3}" +
-                                $"\n  Total Episodes Trained: {episodeCount}" +
+            string logMessage = $"--- Batch Summary (Episodes {_episodeCount - _episodesSinceLastLog + 1} to {_episodeCount}) ---" +
+                                $"\n  Average QL Reward (last {_episodesSinceLastLog} episodes): {_averageReward:F3}" +
+                                $"\n  Total Episodes Trained: {_episodeCount}" +
                                 $"\n  Current Epsilon: " + (_bossQLearning != null ? _bossQLearning.Epsilon.ToString("F3") : "-1.000") +
                                 $"\n  Unique States in Q-Table: {uniqueStates}" +
                                 $"\n  Total Unique States Visited (All Time): {totalVisitedStates}" +
@@ -252,9 +309,9 @@ public class EpisodeManager : MonoBehaviour
         // This is necessary if the QL boss is active, even if not currently learning.
         if (_bossQLearning != null)
         {
-            _bossQLearning.OnEpisodeEnd(averageReward);
+            _bossQLearning.OnEpisodeEnd(episodeTotalReward);
             _bossQLearning.ResetQLearningState();
-            _bossQLearning.LogEpisode(episodeCount, averageReward, bossWon);
+            _bossQLearning.LogEpisode(_episodeCount, _averageReward, bossWon);
         }
         else
         {
@@ -307,6 +364,9 @@ public class EpisodeManager : MonoBehaviour
 
     // --- Helper Methods for Resetting Specific Parts ---
 
+    /// <summary>
+    /// Resets the boss GameObject, its components, and health for a new episode.
+    /// </summary>
     private void ResetBossState()
     {
         if (_bossObject != null)
@@ -344,6 +404,10 @@ public class EpisodeManager : MonoBehaviour
 
     // Removed ResetPlayerState() - PlayerAI handles its own reset in OnEpisodeBegin
 
+    /// <summary>
+    /// Resets shared hazards in the environment (e.g., projectiles, traps).
+    /// Extend this method based on your game's hazard logic.
+    /// </summary>
     private void ResetSharedHazards()
     {
         // Example: Find and deactivate/destroy projectiles, reset traps, etc.
@@ -368,6 +432,10 @@ public class EpisodeManager : MonoBehaviour
 
 
     // --- Logging Helper --- (Keep existing LogToFile method)
+    /// <summary>
+    /// Appends a message to the episode log file with a timestamp.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     private void LogToFile(string message)
     {
         try
@@ -386,6 +454,9 @@ public class EpisodeManager : MonoBehaviour
     }
 
     // --- Reference Validation --- (Keep existing ValidateReferences method)
+    /// <summary>
+    /// Validates that all required scene references are assigned and logs warnings/errors if not.
+    /// </summary>
     private void ValidateReferences()
     {
         // Use ?. operator for slightly cleaner checks where appropriate
@@ -407,10 +478,13 @@ public class EpisodeManager : MonoBehaviour
 
     }
 
-    // Public getter for episode count (useful for logging in other scripts)
+    /// <summary>
+    /// Gets the total number of episodes completed (for use in other scripts).
+    /// </summary>
+    /// <returns>The current episode count.</returns>
     public int GetTotalEpisodeCount()
     {
-        return episodeCount; // Return current episode count
+        return _episodeCount; // Return current episode count
     }
 
 }

@@ -15,9 +15,13 @@ public class BossFlameAttack : MonoBehaviour
     private const float TimerReset = 0f;
 
     // ==================== Serialized Fields ====================
+    [Tooltip("Damage dealt to the player by the flame.")]
     [SerializeField] private int _damage = 1;
+    [Tooltip("Duration of the warning phase before the flame ignites.")]
     [SerializeField] private float _warningTime = 1.5f;
+    [Tooltip("Duration the flame remains active.")]
     [SerializeField] private float _fireActiveTime = 3f;
+    [Tooltip("Sound played when the flame ignites.")]
     [SerializeField] private AudioClip _fireSound;
 
     // ==================== Private Fields ====================
@@ -75,13 +79,13 @@ public class BossFlameAttack : MonoBehaviour
             AIBoss boss = FindObjectOfType<AIBoss>();
             if (boss != null)
             {
-                boss.flameMissed = false;
+                boss.FlameMissed = false;
                 _timeSinceLastReward += Time.deltaTime;
                 if (_timeSinceLastReward >= _rewardCooldown)
                 {
-                    if (boss.rewardManager != null)
+                    if (boss.RewardManager != null)
                     {
-                        boss.rewardManager.ReportHitPlayer();
+                        boss.RewardManager.ReportHitPlayer();
                     }
                     _timeSinceLastReward = TimerReset;
                 }

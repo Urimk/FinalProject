@@ -13,8 +13,11 @@ public class BossProjectile : EnemyDamage
     private const float RotationZ = 0f;
 
     // ==================== Serialized Fields ====================
+    [Tooltip("Speed of the projectile.")]
     [SerializeField] private float _speed;
+    [Tooltip("Size (scale) of the projectile.")]
     [SerializeField] private float _size;
+    [Tooltip("Time before the projectile resets if it doesn't hit anything.")]
     [SerializeField] private float _resetTime;
 
     // ==================== Private Fields ====================
@@ -30,6 +33,7 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     private void Awake()
     {
+        // Cache references for performance
         _anim = GetComponent<Animator>();
         _collid = GetComponent<BoxCollider2D>();
     }
@@ -39,6 +43,7 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     public void ActivateProjectile()
     {
+        // Reset hit state and timer
         _hit = false;
         _lifeTime = 0;
         gameObject.SetActive(true);
@@ -50,6 +55,7 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     public void Launch(Vector2 startPosition, Vector2 targetPosition, float speed)
     {
+        // Set up projectile for launch
         _hit = false;
         _lifeTime = 0;
         transform.localScale = new Vector3(_size, _size, ScaleZ);
@@ -67,9 +73,11 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     private void Update()
     {
+        // Move the projectile if it hasn't hit anything
         if (_hit) return;
         transform.position += (Vector3)(_direction * _speed * Time.deltaTime);
         _lifeTime += Time.deltaTime;
+        // Check if projectile should reset (missed)
         if (_lifeTime > _resetTime)
         {
             if (rewardManager != null)
@@ -85,11 +93,13 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Ignore collisions with certain tags
         if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag)
         {
             return;
         }
         bool hitPlayer = collision.tag == PlayerTag;
+        // Report hit or miss to reward manager
         if (rewardManager != null)
         {
             if (hitPlayer)
@@ -104,6 +114,7 @@ public class BossProjectile : EnemyDamage
         _hit = true;
         base.OnTriggerStay2D(collision);
         _collid.enabled = false;
+        // Play explosion animation if available
         if (_anim != null)
         {
             _anim.SetTrigger("explosion");
@@ -143,6 +154,7 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     private void Deactivate()
     {
+        // Hide and reset the projectile
         gameObject.SetActive(false);
         transform.rotation = Quaternion.identity;
     }

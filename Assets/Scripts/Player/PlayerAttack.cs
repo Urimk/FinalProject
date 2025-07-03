@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerAttack : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultSwordRange = 1.0f;
     private const float DefaultSwordDamage = 2f;
     private const float SwordSwingDuration = 0.15f;
@@ -24,20 +24,42 @@ public class PlayerAttack : MonoBehaviour
     private const string SpriteWalk05 = "walk_05";
     private const string AnimatorAttack = "attack";
 
-    // === Serialized Fields ===
-    [SerializeField] private bool isAIControlled;
-    [SerializeField] private float attackCooldown;
-    [SerializeField] private Transform firePoint;
-    [SerializeField] private GameObject[] fireballs;
-    [SerializeField] private AudioClip fireballSound;
-    [SerializeField] private GameObject swordPrefab;
-    [SerializeField] private Transform weaponHolder;
-    [SerializeField] private Transform swordHitPoint;
-    [SerializeField] private float swordRange = DefaultSwordRange;
-    [SerializeField] private float swordDamage = DefaultSwordDamage;
-    [SerializeField] private LayerMask enemyLayer;
+    // ==================== Inspector Fields ====================
+    [Tooltip("True if this player is AI controlled.")]
+    [FormerlySerializedAs("isAIControlled")]
+    [SerializeField] private bool _isAIControlled;
+    [Tooltip("Cooldown time between attacks.")]
+    [FormerlySerializedAs("attackCooldown")]
+    [SerializeField] private float _attackCooldown;
+    [Tooltip("Transform where fireballs are spawned.")]
+    [FormerlySerializedAs("firePoint")]
+    [SerializeField] private Transform _firePoint;
+    [Tooltip("Array of fireball GameObjects.")]
+    [FormerlySerializedAs("fireballs")]
+    [SerializeField] private GameObject[] _fireballs;
+    [Tooltip("Sound to play when firing a fireball.")]
+    [FormerlySerializedAs("fireballSound")]
+    [SerializeField] private AudioClip _fireballSound;
+    [Tooltip("Prefab for the sword weapon.")]
+    [FormerlySerializedAs("swordPrefab")]
+    [SerializeField] private GameObject _swordPrefab;
+    [Tooltip("Transform holding the equipped weapon.")]
+    [FormerlySerializedAs("weaponHolder")]
+    [SerializeField] private Transform _weaponHolder;
+    [Tooltip("Transform for the sword's hit point.")]
+    [FormerlySerializedAs("swordHitPoint")]
+    [SerializeField] private Transform _swordHitPoint;
+    [Tooltip("Range of the sword attack.")]
+    [FormerlySerializedAs("swordRange")]
+    [SerializeField] private float _swordRange = DefaultSwordRange;
+    [Tooltip("Damage dealt by the sword.")]
+    [FormerlySerializedAs("swordDamage")]
+    [SerializeField] private float _swordDamage = DefaultSwordDamage;
+    [Tooltip("Layer mask for enemy detection.")]
+    [FormerlySerializedAs("enemyLayer")]
+    [SerializeField] private LayerMask _enemyLayer;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private GameObject _equippedWeaponObject;
     private enum WeaponType { Fireball, Sword }
     private WeaponType _currentWeapon = WeaponType.Fireball;
@@ -47,12 +69,18 @@ public class PlayerAttack : MonoBehaviour
     private SpriteRenderer _playerSpriteRenderer;
     private float _cooldownTimer = Mathf.Infinity;
 
-    // === Properties ===
+    // ==================== Properties ====================
+    /// <summary>True if the game is paused for testing.</summary>
     public bool IsGamePausedForTest { get; set; }
-    public float AttackCooldown { get => attackCooldown; set => attackCooldown = value; }
+    /// <summary>Cooldown time between attacks.</summary>
+    public float AttackCooldown { get => _attackCooldown; set => _attackCooldown = value; }
+    /// <summary>True if the player has a sword equipped.</summary>
     public bool HasSword { get => _hasSword; set => _hasSword = value; }
-    public Transform FirePoint { get => firePoint; set => firePoint = value; }
-    public GameObject[] Fireballs { get => fireballs; set => fireballs = value; }
+    /// <summary>Transform where fireballs are spawned.</summary>
+    public Transform FirePoint { get => _firePoint; set => _firePoint = value; }
+    /// <summary>Array of fireball GameObjects.</summary>
+    public GameObject[] Fireballs { get => _fireballs; set => _fireballs = value; }
+    /// <summary>Current attack cooldown timer.</summary>
     public float CooldownTimer { get => _cooldownTimer; set => _cooldownTimer = value; }
 
     /// <summary>
@@ -60,10 +88,10 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     public void TestAttack()
     {
-        if (_cooldownTimer >= attackCooldown)
+        if (_cooldownTimer >= _attackCooldown)
         {
-            fireballs[FindFireballs()].transform.position = firePoint.position;
-            fireballs[FindFireballs()].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
+            _fireballs[FindFireballs()].transform.position = _firePoint.position;
+            _fireballs[FindFireballs()].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
             _cooldownTimer = 0;
         }
     }
@@ -87,9 +115,9 @@ public class PlayerAttack : MonoBehaviour
         {
             return;
         }
-        if (!isAIControlled)
+        if (!_isAIControlled)
         {
-            if (Input.GetKey(KeyCode.LeftControl) && _cooldownTimer > attackCooldown && _playerMovement.CanAttack())
+            if (Input.GetKey(KeyCode.LeftControl) && _cooldownTimer > _attackCooldown && _playerMovement.CanAttack())
             {
                 Attack();
             }
@@ -107,7 +135,7 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     public void SetAIAttack(bool attackPressed)
     {
-        if (isAIControlled && attackPressed && _cooldownTimer > attackCooldown && _playerMovement.CanAttack())
+        if (_isAIControlled && attackPressed && _cooldownTimer > _attackCooldown && _playerMovement.CanAttack())
         {
             Attack();
         }
@@ -121,12 +149,12 @@ public class PlayerAttack : MonoBehaviour
         _cooldownTimer = 0;
         if (_currentWeapon == WeaponType.Fireball)
         {
-            SoundManager.instance.PlaySound(fireballSound, gameObject);
+            SoundManager.instance.PlaySound(_fireballSound, gameObject);
             _animator.SetTrigger(AnimatorAttack);
             int idx = FindFireballs();
             if (idx < 0) return;
-            fireballs[idx].transform.position = firePoint.position;
-            fireballs[idx].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
+            _fireballs[idx].transform.position = _firePoint.position;
+            _fireballs[idx].GetComponent<Projectile>().SetDirection(Mathf.Sign(transform.localScale.x));
         }
         else if (_currentWeapon == WeaponType.Sword)
         {
@@ -140,7 +168,7 @@ public class PlayerAttack : MonoBehaviour
     private void SwingSword()
     {
         StartCoroutine(AnimateSwordSwing());
-        Collider2D[] hits = Physics2D.OverlapCircleAll(swordHitPoint.position, swordRange, enemyLayer);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(_swordHitPoint.position, _swordRange, _enemyLayer);
         HashSet<GameObject> damagedObjects = new HashSet<GameObject>();
         foreach (Collider2D hit in hits)
         {
@@ -149,7 +177,7 @@ public class PlayerAttack : MonoBehaviour
                 continue;
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TakeDamage(swordDamage);
+                damageable.TakeDamage(_swordDamage);
                 damagedObjects.Add(obj);
             }
         }
@@ -160,16 +188,16 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     private IEnumerator AnimateSwordSwing()
     {
-        Vector3 startPos = weaponHolder.localPosition;
-        Quaternion startRot = weaponHolder.localRotation;
+        Vector3 startPos = _weaponHolder.localPosition;
+        Quaternion startRot = _weaponHolder.localRotation;
         Vector3 endPos = new Vector3(startPos.x, SwordSwingEndY, startPos.z);
         Quaternion endRot = Quaternion.Euler(0f, 0f, SwordSwingEndZ);
         float elapsed = 0f;
         while (elapsed < SwordSwingDuration)
         {
             float t = elapsed / SwordSwingDuration;
-            weaponHolder.localPosition = Vector3.Lerp(startPos, endPos, t);
-            weaponHolder.localRotation = Quaternion.Lerp(startRot, endRot, t);
+            _weaponHolder.localPosition = Vector3.Lerp(startPos, endPos, t);
+            _weaponHolder.localRotation = Quaternion.Lerp(startRot, endRot, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -177,13 +205,13 @@ public class PlayerAttack : MonoBehaviour
         while (elapsed < SwordReturnDuration)
         {
             float t = elapsed / SwordReturnDuration;
-            weaponHolder.localPosition = Vector3.Lerp(endPos, startPos, t);
-            weaponHolder.localRotation = Quaternion.Lerp(endRot, startRot, t);
+            _weaponHolder.localPosition = Vector3.Lerp(endPos, startPos, t);
+            _weaponHolder.localRotation = Quaternion.Lerp(endRot, startRot, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
-        weaponHolder.localPosition = startPos;
-        weaponHolder.localRotation = startRot;
+        _weaponHolder.localPosition = startPos;
+        _weaponHolder.localRotation = startRot;
     }
 
     /// <summary>
@@ -191,21 +219,22 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     private void OnDrawGizmosSelected()
     {
-        if (swordHitPoint != null)
+        if (_swordHitPoint != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(swordHitPoint.position, swordRange);
+            Gizmos.DrawWireSphere(_swordHitPoint.position, _swordRange);
         }
     }
 
+    // ==================== Attack and Weapon Logic ====================
     /// <summary>
     /// Finds an available fireball in the pool.
     /// </summary>
     private int FindFireballs()
     {
-        for (int i = 0; i < fireballs.Length; i++)
+        for (int i = 0; i < _fireballs.Length; i++)
         {
-            if (!fireballs[i].activeInHierarchy)
+            if (!_fireballs[i].activeInHierarchy)
             {
                 return i;
             }
@@ -223,7 +252,7 @@ public class PlayerAttack : MonoBehaviour
         {
             Destroy(_equippedWeaponObject);
         }
-        _equippedWeaponObject = Instantiate(swordPrefab, weaponHolder);
+        _equippedWeaponObject = Instantiate(_swordPrefab, _weaponHolder);
         _equippedWeaponObject.transform.localPosition = Vector3.zero;
     }
 
@@ -276,16 +305,17 @@ public class PlayerAttack : MonoBehaviour
             {
                 newPosition = new Vector3(SwordPosDefaultX, SwordPosAllY, 0f);
             }
-            weaponHolder.localPosition = newPosition;
+            _weaponHolder.localPosition = newPosition;
         }
     }
 
+    // ==================== Utility ====================
     /// <summary>
     /// Returns 1.0 if attack is ready, 0.0 otherwise.
     /// </summary>
     public float IsAttackReady()
     {
-        if (_cooldownTimer >= attackCooldown)
+        if (_cooldownTimer >= _attackCooldown)
             return 1.0f;
         else
             return 0.0f;

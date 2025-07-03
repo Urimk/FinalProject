@@ -6,12 +6,19 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuController : MonoBehaviour
 {
+    // ==================== Inspector Fields ====================
+    [Tooltip("Sound effect to play when a button is clicked.")]
     [SerializeField] private AudioClip _buttonClickSound;
+    [Tooltip("Reference to the MainMenu GameObject.")]
     [SerializeField] private GameObject _mainMenu;
+    [Tooltip("Reference to the LevelSelect GameObject.")]
     [SerializeField] private GameObject _levelSelect;
+    [Tooltip("Reference to the OptionsMenu GameObject.")]
     [SerializeField] private GameObject _optionsMenu;
+    [Tooltip("Reference to the LeaderboardMenu GameObject.")]
     [SerializeField] private GameObject _leaderboardMenu;
 
+    // ==================== Menu Navigation ====================
     /// <summary>
     /// Navigates to the level select menu.
     /// </summary>

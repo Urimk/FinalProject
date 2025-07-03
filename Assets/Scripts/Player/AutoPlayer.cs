@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class AutoPlayer : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultMoveSpeed = 5f;
     private const float DefaultJumpForce = 12f;
     private const float DefaultDetectionRange = 10f;
@@ -20,13 +20,31 @@ public class AutoPlayer : MonoBehaviour
     private const string FireballTag = "Fireball";
     private const string GroundTag = "Ground";
 
-    // === Serialized Fields ===
-    [SerializeField] private Transform boss;
-    public float moveSpeed = DefaultMoveSpeed;
-    public float jumpForce = DefaultJumpForce;
-    public float detectionRange = DefaultDetectionRange;
-    public float fireballDodgeRange = DefaultFireballDodgeRange;
-    public float fireRate = DefaultFireRate;
+    // ==================== Inspector Fields ====================
+    [Tooltip("Reference to the boss Transform.")]
+    [SerializeField] private Transform _boss;
+    [Tooltip("Movement speed of the AI player.")]
+    [SerializeField] private float _moveSpeed = DefaultMoveSpeed;
+    [Tooltip("Jump force of the AI player.")]
+    [SerializeField] private float _jumpForce = DefaultJumpForce;
+    [Tooltip("Detection range for boss proximity.")]
+    [SerializeField] private float _detectionRange = DefaultDetectionRange;
+    [Tooltip("Range for dodging fireballs.")]
+    [SerializeField] private float _fireballDodgeRange = DefaultFireballDodgeRange;
+    [Tooltip("Fire rate for shooting at the boss.")]
+    [SerializeField] private float _fireRate = DefaultFireRate;
+
+    // ==================== Properties ====================
+    /// <summary>Movement speed of the AI player.</summary>
+    public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
+    /// <summary>Jump force of the AI player.</summary>
+    public float JumpForce { get => _jumpForce; set => _jumpForce = value; }
+    /// <summary>Detection range for boss proximity.</summary>
+    public float DetectionRange { get => _detectionRange; set => _detectionRange = value; }
+    /// <summary>Range for dodging fireballs.</summary>
+    public float FireballDodgeRange { get => _fireballDodgeRange; set => _fireballDodgeRange = value; }
+    /// <summary>Fire rate for shooting at the boss.</summary>
+    public float FireRate { get => _fireRate; set => _fireRate = value; }
 
     // === Private Fields ===
     private Rigidbody2D _rigidbody2D;
@@ -46,11 +64,11 @@ public class AutoPlayer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (boss == null) return;
+        if (_boss == null) return;
         _fireTimer += Time.deltaTime;
         MoveAI();
         AvoidFireballs();
-        if (_fireTimer >= fireRate)
+        if (_fireTimer >= _fireRate)
         {
             _fireTimer = 0;
             ShootBoss();
@@ -62,11 +80,11 @@ public class AutoPlayer : MonoBehaviour
     /// </summary>
     void MoveAI()
     {
-        float distanceToBoss = Vector2.Distance(transform.position, boss.position);
-        float direction = boss.position.x > transform.position.x ? 1 : -1;
-        if (distanceToBoss > detectionRange)
+        float distanceToBoss = Vector2.Distance(transform.position, _boss.position);
+        float direction = _boss.position.x > transform.position.x ? 1 : -1;
+        if (distanceToBoss > _detectionRange)
         {
-            MoveTowards(boss.position.x);
+            MoveTowards(_boss.position.x);
             transform.localScale = new Vector3(direction, 1, 1);
         }
         else if (distanceToBoss < MinBossDistance)
@@ -77,7 +95,7 @@ public class AutoPlayer : MonoBehaviour
             }
             else
             {
-                MoveAwayFrom(boss.position.x);
+                MoveAwayFrom(_boss.position.x);
                 transform.localScale = new Vector3(-direction, 1, 1);
             }
         }
@@ -114,7 +132,7 @@ public class AutoPlayer : MonoBehaviour
             Vector2 fireballPosition = fireball.transform.position;
             Vector2 fireballVelocity = fireball.GetComponent<Rigidbody2D>().velocity;
             float timeToImpact = Mathf.Abs((transform.position.x - fireballPosition.x) / fireballVelocity.x);
-            if (timeToImpact > 0 && timeToImpact < TimeToImpactThreshold && Mathf.Abs(transform.position.y - fireballPosition.y) < fireballDodgeRange)
+            if (timeToImpact > 0 && timeToImpact < TimeToImpactThreshold && Mathf.Abs(transform.position.y - fireballPosition.y) < _fireballDodgeRange)
             {
                 Jump();
                 return;
@@ -128,7 +146,7 @@ public class AutoPlayer : MonoBehaviour
     void MoveTowards(float targetX)
     {
         float direction = targetX > transform.position.x ? 1 : -1;
-        _rigidbody2D.velocity = new Vector2(direction * moveSpeed, _rigidbody2D.velocity.y);
+        _rigidbody2D.velocity = new Vector2(direction * _moveSpeed, _rigidbody2D.velocity.y);
     }
 
     /// <summary>
@@ -137,7 +155,7 @@ public class AutoPlayer : MonoBehaviour
     void MoveAwayFrom(float targetX)
     {
         float direction = targetX > transform.position.x ? -1 : 1;
-        _rigidbody2D.velocity = new Vector2(direction * moveSpeed, _rigidbody2D.velocity.y);
+        _rigidbody2D.velocity = new Vector2(direction * _moveSpeed, _rigidbody2D.velocity.y);
     }
 
     /// <summary>
@@ -147,7 +165,7 @@ public class AutoPlayer : MonoBehaviour
     {
         if (_isGrounded)
         {
-            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, jumpForce);
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpForce);
             _isGrounded = false;
         }
     }

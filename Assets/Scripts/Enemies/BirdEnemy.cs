@@ -16,11 +16,15 @@ public class EggLayingBird : MonoBehaviour
 
     // ==================== Serialized Fields ====================
     [Header("Egg Laying Parameters")]
+    [Tooltip("Cooldown time between egg lays.")]
     [SerializeField] private float _layCooldown = 2f;
+    [Tooltip("Transform where eggs are dropped from.")]
     [SerializeField] private Transform _eggDropPoint;
+    [Tooltip("Array of egg prefabs for pooling.")]
     [SerializeField] private GameObject[] _eggPrefabs;
 
     [Header("Sound")]
+    [Tooltip("Sound played when an egg is dropped.")]
     [SerializeField] private AudioClip _eggDropSound;
 
     // ==================== Private Fields ====================

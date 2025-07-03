@@ -5,18 +5,26 @@
 /// </summary>
 public class BombTrap : MonoBehaviour
 {
+    // === Constants ===
     private const string PlayerTag = "Player";
     private const string TriggerBombAnim = "TriggerBomb";
     private const string HideAnim = "hide";
     private const float DefaultDelayBeforeExplosion = 1.5f;
 
+    // === Inspector Fields ===
+    [Header("Explosion Settings")]
+    [Tooltip("Prefab to instantiate when the bomb explodes.")]
     [SerializeField] private GameObject _explosionPrefab;
+
+    [Tooltip("Delay in seconds before the bomb explodes after being triggered.")]
     [SerializeField] private float _delayBeforeExplosion = DefaultDelayBeforeExplosion;
 
+    // === Private State ===
     private bool _triggered = false;
 
     /// <summary>
-    /// Triggers the bomb when the player enters the trigger.
+    /// Called by Unity when another collider enters this trigger.
+    /// Triggers the bomb if the player enters and it hasn't already been triggered.
     /// </summary>
     /// <param name="other">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D other)
@@ -29,7 +37,8 @@ public class BombTrap : MonoBehaviour
     }
 
     /// <summary>
-    /// Instantiates the explosion and hides the bomb.
+    /// Instantiates the explosion prefab, hides the bomb, and resets the triggered state.
+    /// Should be called by an animation event.
     /// </summary>
     private void Explode()
     {

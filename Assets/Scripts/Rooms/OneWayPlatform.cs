@@ -5,7 +5,7 @@
 /// </summary>
 public class OneWayPlatform : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultWaitTime = 0.4f;
     private const float PlatformTopYOffset = 1.1f;
     private const float EffectorFallThroughRotation = 180f;
@@ -14,17 +14,26 @@ public class OneWayPlatform : MonoBehaviour
     private const string GroundLayerName = "Ground";
     private const KeyCode FallThroughKey = KeyCode.S;
 
-    // === Serialized Fields ===
+    // ==================== Inspector Fields ====================
+    [Tooltip("True if this platform is controlled by AI.")]
+    [FormerlySerializedAs("isAIControlled")]
     [SerializeField] private bool _isAIControlled;
+    [Tooltip("True if the platform can be fallen through.")]
+    [FormerlySerializedAs("isFallable")]
     [SerializeField] private bool _isFallable = true;
+    [Tooltip("Wait time before resetting the platform.")]
+    [FormerlySerializedAs("waitTime")]
     [SerializeField] private float _waitTime = DefaultWaitTime;
+    [Tooltip("Reference to the player Transform.")]
+    [FormerlySerializedAs("player")]
     [SerializeField] private Transform _player;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private PlatformEffector2D _effector;
     private EdgeCollider2D _edgeCollider;
     private PlayerMovement _playerMovement;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Unity Start callback. Initializes platform and player references.
     /// </summary>
@@ -50,9 +59,11 @@ public class OneWayPlatform : MonoBehaviour
         CheckPlayerPosition();
     }
 
+    // ==================== AI and Platform Logic ====================
     /// <summary>
     /// Allows AI to trigger fall-through.
     /// </summary>
+    /// <param name="shouldFall">True if the AI should fall through.</param>
     public void SetAIFallThrough(bool shouldFall)
     {
         if (_isAIControlled && shouldFall && _isFallable)

@@ -13,23 +13,35 @@ public class FireTrap : MonoBehaviour
     private static readonly Color WarningColor = Color.red;
     private static readonly Color NormalColor = Color.white;
 
-    // === Serialized Fields ===
+    // === Inspector Fields ===
+    [Tooltip("Amount of damage dealt to the player when the trap is active.")]
     [SerializeField] private int _damage;
+
     [Header("FireTrap Timers")]
+    [Tooltip("Delay in seconds before the trap activates after being triggered.")]
     [SerializeField] private float _activationDelay;
+
+    [Tooltip("Duration in seconds the trap remains active.")]
     [SerializeField] private float _activeTime;
 
     [Header("Auto Cycle Settings")]
-    [SerializeField] private bool _alwaysActive = false; // Flag to enable auto-cycling
-    [Tooltip("Time to wait between cycles when in always active mode")]
+    [Tooltip("If true, the trap will automatically cycle between active and inactive states.")]
+    [SerializeField] private bool _alwaysActive = false;
+
+    [Tooltip("Time to wait between cycles when in always active mode.")]
     [SerializeField] private float _cycleWaitTime = 2f;
+
+    [Tooltip("Delay before the auto-cycle starts.")]
     [SerializeField] private float _cycleStartDelay = 0f;
 
-    [Header("Sound")]
+    [Header("Sound Settings")]
+    [Tooltip("Sound to play when the trap activates.")]
     [SerializeField] private AudioClip _fireSound;
+
+    // === Private State ===
     private Animator _anim;
     private SpriteRenderer _spriteRend;
-    private bool _triggered; // when the trap is triggered (can be still inactive)
+    private bool _triggered;
     private bool _active;
     private Health _playerHealth;
 
@@ -79,6 +91,7 @@ public class FireTrap : MonoBehaviour
     /// <summary>
     /// Handles player entering the trap trigger.
     /// </summary>
+    /// <param name="collision">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == PlayerTag)
@@ -101,6 +114,7 @@ public class FireTrap : MonoBehaviour
     /// <summary>
     /// Handles player exiting the trap trigger.
     /// </summary>
+    /// <param name="collision">The collider that exited the trigger.</param>
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.tag == PlayerTag)

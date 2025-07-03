@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-// This script handles the boss's mechanics, state, and execution of actions requested by the Q-learning agent.
+/// <summary>
+/// Handles the boss's mechanics, state, and execution of actions requested by the Q-learning agent.
+/// </summary>
 public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health or similar
 {
     // ==================== Constants ====================
@@ -21,58 +24,117 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     // ==================== Serialized Fields ====================
     [Header("Boss Parameters")]
+    [Tooltip("Movement speed of the boss.")]
     [SerializeField] private float _movementSpeed = 3.0f;
+    [Tooltip("Should the boss reset health on state reset?")]
     [SerializeField] private bool _doRestHealth;
+    [Tooltip("Attack range for detecting the player.")]
     [SerializeField] private float _attackRange = 10f;
 
     [Header("References")]
+    [Tooltip("Reference to the player Transform.")]
     [SerializeField] private Transform _player;
+    [Tooltip("Reference to the player's Health component.")]
     [SerializeField] private Health _playerHealth;
+    [Tooltip("Reference to the boss's energy UI slider.")]
     [SerializeField] private Slider _energySlider;
+    [Tooltip("Reference to the boss's Animator component.")]
     [SerializeField] private Animator _anim;
+    [Tooltip("Reference to the boss's Rigidbody2D component.")]
     [SerializeField] private Rigidbody2D _rb;
-    [SerializeField] public BossRewardManager rewardManager; // CRUCIAL - Assign in Inspector!
+    [Tooltip("Reference to the BossRewardManager (must be assigned in Inspector).")]
+    [FormerlySerializedAs("rewardManager")]
+    [SerializeField] private BossRewardManager _rewardManager;
+    /// <summary>
+    /// Gets the BossRewardManager reference.
+    /// </summary>
+    public BossRewardManager RewardManager => _rewardManager;
+    [Tooltip("Reference to the BossHealth component.")]
     [SerializeField] private BossHealth _bossHealth;
+    [Tooltip("Reference to the firepoint Transform.")]
     [SerializeField] private Transform _firepoint;
+    [Tooltip("Reference to the fireball holder Transform.")]
     [SerializeField] private Transform _fireballHolder;
+    [Tooltip("Array of fireball GameObjects.")]
     [SerializeField] private GameObject[] _fireballs;
+    [Tooltip("Reference to the flame GameObject.")]
     [SerializeField] private GameObject _flame;
+    [Tooltip("Prefab for the area marker.")]
     [SerializeField] private GameObject _areaMarkerPrefab;
+    [Tooltip("Reference to the left wall Transform.")]
     [SerializeField] private Transform _leftWall;
+    [Tooltip("Reference to the right wall Transform.")]
     [SerializeField] private Transform _rightWall;
+    [Tooltip("Prefab for the target icon.")]
     [SerializeField] private GameObject _targetIconPrefab;
 
     [Header("Attack Parameters")]
-    [SerializeField] public float attackCooldown = 4f;
+    [Tooltip("Cooldown time between attacks.")]
+    [FormerlySerializedAs("attackCooldown")]
+    [SerializeField] private float _attackCooldown = 4f;
+    /// <summary>
+    /// Gets the attack cooldown value.
+    /// </summary>
+    public float AttackCooldown => _attackCooldown;
+    [Tooltip("Damage dealt by fireballs.")]
     [SerializeField] private int _fireballDamage = 1;
+    [Tooltip("Speed of projectile attacks.")]
     [SerializeField] private float _projectileSpeed = 5f;
+    [Tooltip("Size of projectile attacks.")]
     [SerializeField] private float _projectileSize = 0.3f;
+    [Tooltip("Sound played when firing a fireball.")]
     [SerializeField] private AudioClip _fireballSound;
     [Tooltip("How far ahead (in seconds) to predict player movement for aiming fireballs.")]
     [SerializeField] private float _predictionTime = 0.3f;
 
     [Header("Flame Attack Parameters")]
-    [SerializeField] public float fireAttackCooldown = 4f;
+    [Tooltip("Cooldown time between flame attacks.")]
+    [FormerlySerializedAs("fireAttackCooldown")]
+    [SerializeField] private float _fireAttackCooldown = 4f;
+    /// <summary>
+    /// Gets the flame attack cooldown value.
+    /// </summary>
+    public float FireAttackCooldown => _fireAttackCooldown;
 
     [Header("Charge Dash Attack Parameters")]
+    [Tooltip("Time to charge before dashing.")]
     [SerializeField] private float _dashChargeTime = 2f;
+    [Tooltip("Speed of the dash attack.")]
     [SerializeField] private float _dashSpeed = 10f;
-    [SerializeField] public float dashCooldown = 8f;
+    [Tooltip("Cooldown time between dash attacks.")]
+    [FormerlySerializedAs("dashCooldown")]
+
+    [SerializeField] private float _dashCooldown = 8f;
+    /// <summary>
+    /// Gets the dash cooldown value.
+    /// </summary>
+    public float DashCooldown => _dashCooldown;
+    [Tooltip("Sound played when charging dash.")]
     [SerializeField] private AudioClip _chargeSound;
+    [Tooltip("Sound played when dashing.")]
     [SerializeField] private AudioClip _dashSound;
 
     [Header("Energy System (Optional - Enable Checks Below)")]
+    [Tooltip("Maximum energy for the boss.")]
     [SerializeField] private float _maxEnergy = 100f;
+    [Tooltip("Energy regeneration rate per second.")]
     [SerializeField] private float _energyRegenRate = 5f;
+    [Tooltip("Energy cost for firing a fireball.")]
     [SerializeField] private float _fireballEnergyCost = 10f;
+    [Tooltip("Energy cost for using a flame trap.")]
     [SerializeField] private float _flameTrapEnergyCost = 25;
+    [Tooltip("Energy cost for dashing.")]
     [SerializeField] private float _dashEnergyCost = 35f;
     private float _currentEnergy;
 
     [Header("Movement & Targeting")]
+    [Tooltip("Center position of the boss arena.")]
     [SerializeField] private Vector3 _arenaCenterPosition = Vector3.zero;
+    [Tooltip("Offset distance for boss actions.")]
     [SerializeField] private float _actionDistanceOffset = 3.0f;
+    [Tooltip("Y level for placing flame traps.")]
     [SerializeField] private float _flameTrapGroundYLevel = -11.5f;
+    [Tooltip("Distance for dash attacks.")]
     [SerializeField] private float _dashDistance = 6.0f;
 
     // ==================== Private Fields ====================
@@ -82,7 +144,11 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     private bool _isChargingDash = false;
     private bool _isDashing = false;
     private bool _dashMissed = true;
-    public bool flameMissed = true; // Public so BossFlameAttack can set it to false on hit
+    private bool _flameMissed = true; // TODO: Confirm if this needs to be public for BossFlameAttack
+    /// <summary>
+    /// Gets or sets whether the flame attack missed (for BossFlameAttack interaction).
+    /// </summary>
+    public bool FlameMissed { get => _flameMissed; set => _flameMissed = value; } // TODO: Confirm if setter is needed externally
     private Vector2 _dashTarget;
     private GameObject _targetIconInstance;
     private bool _isDead = false;
@@ -94,6 +160,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     private Coroutine _dashCoroutine;
 
     // ==================== Unity Lifecycle ====================
+    /// <summary>
+    /// Unity Awake callback. Initializes references and validates required components.
+    /// </summary>
     private void Awake()
     {
         _anim = GetComponent<Animator>();
@@ -110,7 +179,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         {
             _playerMovement = _player.GetComponent<PlayerMovement>();
         }
-        if (rewardManager == null)
+        if (_rewardManager == null)
         {
             Debug.LogError("[AIBoss] BossRewardManager (rewardManager) not assigned! Learning will fail.");
             this.enabled = false;
@@ -128,11 +197,14 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         _currentEnergy = _maxEnergy;
     }
 
+    /// <summary>
+    /// Unity Start callback. Initializes boss state and timers.
+    /// </summary>
     private void Start()
     {
-        _cooldownTimer = attackCooldown;
-        _fireAttackTimer = fireAttackCooldown;
-        _dashCooldownTimer = dashCooldown;
+        _cooldownTimer = _attackCooldown;
+        _fireAttackTimer = _fireAttackCooldown;
+        _dashCooldownTimer = _dashCooldown;
         _isPhase2 = false;
         _isChargingDash = false;
         _isDashing = false;
@@ -180,6 +252,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         this.enabled = true;
     }
 
+    /// <summary>
+    /// Unity Update callback. Handles boss state updates, detection, and energy regeneration.
+    /// </summary>
     private void Update()
     {
         if (_isDead || _player == null) return;
@@ -241,6 +316,13 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     }
 
     // ==================== Q-Learning Action Requests ====================
+    /// <summary>
+    /// Requests the boss to move according to the specified Q-learning action.
+    /// </summary>
+    /// <param name="moveAction">The movement action type.</param>
+    /// <param name="playerPos">The player's position.</param>
+    /// <param name="bossPos">The boss's position.</param>
+    /// <param name="offsetDistance">The offset distance for movement.</param>
     public void AIRequestMove(BossQLearning.ActionType moveAction, Vector2 playerPos, Vector2 bossPos, float offsetDistance)
     {
         if (_player == null || !_detectedPlayer || _isChargingDash || _isDashing || _isDead) return;
@@ -292,15 +374,23 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if ((targetPosition - bossPos).sqrMagnitude > TargetReachedThresholdSqr)
         {
             _rb.velocity = (targetPosition - bossPos).normalized * _movementSpeed;
-            if (_anim != null) _anim.SetBool("IsMoving", true);
+            //if (_anim != null) _anim.SetBool("IsMoving", true);
         }
         else
         {
             _rb.velocity = Vector2.zero;
-            if (_anim != null) _anim.SetBool("IsMoving", false);
+            //if (_anim != null) _anim.SetBool("IsMoving", false);
         }
     }
 
+    /// <summary>
+    /// Requests the boss to perform a ranged attack according to the specified Q-learning action.
+    /// </summary>
+    /// <param name="aimAction">The aiming action type.</param>
+    /// <param name="playerPos">The player's position.</param>
+    /// <param name="playerVel">The player's velocity.</param>
+    /// <param name="offsetDistance">The offset distance for aiming.</param>
+    /// <returns>True if the attack was performed, false otherwise.</returns>
     public bool AIRequestRangedAttack(BossQLearning.ActionType aimAction, Vector2 playerPos, Vector2 playerVel, float offsetDistance)
     {
         if (!IsFireballReady() || !_detectedPlayer || _isChargingDash || _isDashing || _isDead || _player == null) return false;
@@ -366,7 +456,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         projectile.transform.parent = null;
         BossProjectile bossProjectile = projectile.GetComponent<BossProjectile>();
         if (bossProjectile == null) { Debug.LogError("[AIBoss] Fireball prefab missing BossProjectile script!"); return false; }
-        bossProjectile.rewardManager = this.rewardManager;
+        bossProjectile.rewardManager = this._rewardManager;
         bossProjectile.SetDamage(_fireballDamage);
         bossProjectile.SetSize(_projectileSize);
         bossProjectile.Launch(_firepoint.position, targetPosition, _projectileSpeed);
@@ -378,6 +468,15 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         return true;
     }
 
+    /// <summary>
+    /// Requests the boss to perform a flame attack according to the specified Q-learning action.
+    /// </summary>
+    /// <param name="placeAction">The flame placement action type.</param>
+    /// <param name="playerPos">The player's position.</param>
+    /// <param name="bossPos">The boss's position.</param>
+    /// <param name="playerVel">The player's velocity.</param>
+    /// <param name="offsetDistance">The offset distance for placement.</param>
+    /// <returns>True if the attack was performed, false otherwise.</returns>
     public bool AIRequestFlameAttack(BossQLearning.ActionType placeAction, Vector2 playerPos, Vector2 bossPos, Vector2 playerVel, float offsetDistance)
     {
         if (!IsFlameTrapReady() || !_detectedPlayer || _isChargingDash || _isDashing || _isDead || _flame == null || _player == null) return false;
@@ -415,6 +514,14 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         return true;
     }
 
+    /// <summary>
+    /// Requests the boss to perform a dash attack according to the specified Q-learning action.
+    /// </summary>
+    /// <param name="dashAction">The dash action type.</param>
+    /// <param name="playerPos">The player's position.</param>
+    /// <param name="bossPos">The boss's position.</param>
+    /// <param name="offsetDistance">The offset distance for dashing.</param>
+    /// <returns>True if the attack was performed, false otherwise.</returns>
     public bool AIRequestDashAttack(BossQLearning.ActionType dashAction, Vector2 playerPos, Vector2 bossPos, float offsetDistance)
     {
         if (!IsDashReady() || !_detectedPlayer || _isChargingDash || _isDashing || _isDead || _player == null) return false;
@@ -465,6 +572,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         return true;
     }
 
+    /// <summary>
+    /// Requests the boss to idle (do nothing) for this step.
+    /// </summary>
     public void AIRequestIdle()
     {
         if (_isChargingDash || _isDashing || _isDead) return;
@@ -473,13 +583,35 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     }
 
     // ==================== Ability Readiness Checks ====================
-    public bool IsFireballReady() { return _cooldownTimer >= attackCooldown; }
-    public bool IsFlameTrapReady() { return _fireAttackTimer >= fireAttackCooldown; }
-    public bool IsDashReady() { return _dashCooldownTimer >= dashCooldown; }
+    /// <summary>
+    /// Returns whether the boss's fireball attack is ready (off cooldown).
+    /// </summary>
+    public bool IsFireballReady() { return _cooldownTimer >= _attackCooldown; }
+
+    /// <summary>
+    /// Returns whether the boss's flame trap attack is ready (off cooldown).
+    /// </summary>
+    public bool IsFlameTrapReady() { return _fireAttackTimer >= _fireAttackCooldown; }
+
+    /// <summary>
+    /// Returns whether the boss's dash attack is ready (off cooldown).
+    /// </summary>
+    public bool IsDashReady() { return _dashCooldownTimer >= _dashCooldown; }
+
+    /// <summary>
+    /// Returns whether the boss is currently charging or dashing.
+    /// </summary>
     public bool IsCurrentlyChargingOrDashing() { return _isChargingDash || _isDashing; }
 
     // ==================== State Information Providers ====================
+    /// <summary>
+    /// Gets the boss's current energy as a normalized value (0 to 1).
+    /// </summary>
     public float GetCurrentEnergyNormalized() { if (_maxEnergy <= 0) return 1.0f; return Mathf.Clamp01(_currentEnergy / _maxEnergy); }
+
+    /// <summary>
+    /// Returns whether the player is currently grounded.
+    /// </summary>
     public bool IsPlayerGrounded() { if (_playerMovement != null) { return _playerMovement.IsGrounded(); } Debug.LogWarning("[AIBoss] Cannot check player grounded status: PlayerMovement reference missing."); return true; }
 
     // ==================== Coroutines and Internal Logic ====================
@@ -495,6 +627,10 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         return -1;
     }
 
+    /// <summary>
+    /// Coroutine to mark an area and spawn fire after a delay.
+    /// </summary>
+    /// <param name="targetPosition">The position to mark and spawn fire.</param>
     private IEnumerator MarkAreaAndSpawnFire(Vector2 targetPosition)
     {
         if (_isDead) yield break;
@@ -532,6 +668,11 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
     }
 
+    /// <summary>
+    /// Coroutine to deactivate a GameObject after a specified delay.
+    /// </summary>
+    /// <param name="obj">The GameObject to deactivate.</param>
+    /// <param name="delay">The delay in seconds before deactivation.</param>
     private IEnumerator DeactivateAfterDuration(GameObject obj, float delay)
     {
         _isFlameDeactivationCanceled = false;
@@ -550,17 +691,20 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if (!_isFlameDeactivationCanceled && obj != null)
         {
             obj.SetActive(false);
-            if (rewardManager != null)
+            if (_rewardManager != null)
             {
-                if (flameMissed)
+                if (_flameMissed)
                 {
-                    rewardManager.ReportAttackMissed();
+                    _rewardManager.ReportAttackMissed();
                 }
-                flameMissed = true;
+                _flameMissed = true;
             }
         }
     }
 
+    /// <summary>
+    /// Coroutine to perform the dash attack sequence.
+    /// </summary>
     private IEnumerator PerformDashAttack()
     {
         _isChargingDash = true;
@@ -586,25 +730,32 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
         _isDashing = false;
         _rb.velocity = Vector2.zero;
-        if (rewardManager != null && _dashMissed && !_isDead)
+        if (_rewardManager != null && _dashMissed && !_isDead)
         {
-            rewardManager.ReportAttackMissed();
+            _rewardManager.ReportAttackMissed();
         }
         _dashMissed = true;
     }
 
     // ==================== Phase Logic ====================
+    /// <summary>
+    /// Handles the transition to phase 2 of the boss fight.
+    /// </summary>
     private void EnterPhase2() { /* ... as before ... */ }
 
     // ==================== Collision Handling ====================
-    void OnTriggerEnter2D(Collider2D other)
+    /// <summary>
+    /// Unity OnTriggerEnter2D callback. Handles collision logic for the boss.
+    /// </summary>
+    /// <param name="other">The collider that entered the trigger.</param>
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (_isDead) return;
         if (other.CompareTag("Player"))
         {
             Health playerHealth = other.GetComponent<Health>();
             if (playerHealth != null) playerHealth.TakeDamage(_damage);
-            if (rewardManager != null) rewardManager.ReportHitPlayer();
+            if (_rewardManager != null) _rewardManager.ReportHitPlayer();
             if (_isDashing)
             {
                 _dashMissed = false;
@@ -620,6 +771,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     }
 
     // ==================== Death Handling ====================
+    /// <summary>
+    /// Handles the boss's death logic, including animation and disabling the boss.
+    /// </summary>
     public void Die()
     {
         if (_isDead) return;
@@ -634,7 +788,9 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         this.enabled = false;
     }
 
-    // Utility to clean up flame visuals immediately
+    /// <summary>
+    /// Deactivates the flame and warning markers in the environment.
+    /// </summary>
     public void DeactivateFlameAndWarning()
     {
         if (_flame != null) _flame.SetActive(false);
@@ -645,15 +801,22 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         }
     }
 
+    /// <summary>
+    /// Resets the boss's ability states (e.g., dash, flame, etc.).
+    /// </summary>
     public void ResetAbilityStates()
     {
-        attackCooldown = 4f;
-        fireAttackCooldown = 4f;
-        dashCooldown = 8f;
-        _cooldownTimer = attackCooldown;
-        _fireAttackTimer = fireAttackCooldown;
-        _dashCooldownTimer = dashCooldown;
+        _attackCooldown = 4f;
+        _fireAttackCooldown = 4f;
+        _dashCooldown = 8f;
+        _cooldownTimer = _attackCooldown;
+        _fireAttackTimer = _fireAttackCooldown;
+        _dashCooldownTimer = _dashCooldown;
     }
+
+    /// <summary>
+    /// Updates the boss's energy bar UI.
+    /// </summary>
     private void UpdateEnergyBar()
     {
         if (_energySlider != null)

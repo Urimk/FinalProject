@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class UsernameInputMenu : MonoBehaviour
 {
+    // === Constants ===
     private const int UsernameCharacterLimit = 12;
     private const int MaxUsernameLength = 25;
     private const string LeaderboardNameKey = "LeaderboardName";
@@ -21,11 +22,17 @@ public class UsernameInputMenu : MonoBehaviour
     private const string FullUsernameKey = "FullUsername";
     private static readonly Regex ValidCharacters = new Regex("^[a-zA-Z0-9]*$");
 
-    [SerializeField] private GameObject _usernameInputScreen; // The menu itself
+    // === Inspector Fields ===
+    [Header("Username Input UI")]
+    [Tooltip("Reference to the username input screen GameObject.")]
+    [SerializeField] private GameObject _usernameInputScreen;
+    [Tooltip("TMP_InputField for entering the username.")]
     [SerializeField] private TMP_InputField _usernameInputField;
-    [SerializeField] private TextMeshProUGUI _errorText; // Display errors if submission fails
+    [Tooltip("TextMeshProUGUI for displaying error messages.")]
+    [SerializeField] private TextMeshProUGUI _errorText;
 
-    private bool _isSubmitting = false; // Prevent multiple submissions
+    // === Private State ===
+    private bool _isSubmitting = false;
     private string _leaderboardName;
 
     /// <summary>

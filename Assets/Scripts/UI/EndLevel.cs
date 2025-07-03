@@ -6,18 +6,36 @@ using UnityEngine.UI;
 /// </summary>
 public class LevelEndTrigger : MonoBehaviour
 {
+    // === Constants ===
     private const int HealthBonusValue = 500; // Points per heart
     private const int TimeBonusValue = 5;     // Points per second left
     private const string PlayerTag = "Player";
 
+    // === Inspector Fields ===
+    [Header("UI Screens")]
+    [Tooltip("Reference to the username input screen GameObject.")]
     [SerializeField] private GameObject _usernameInputScreen;
+
+    [Tooltip("Reference to the win screen GameObject.")]
     [SerializeField] private GameObject _winScreen;
+
+    [Header("UI Texts")]
+    [Tooltip("Text displaying the win score.")]
     [SerializeField] private Text _winScoreText;
+
+    [Tooltip("Text displaying the health bonus.")]
     [SerializeField] private Text _healthBonusText;
+
+    [Tooltip("Text displaying the time bonus.")]
     [SerializeField] private Text _timeBonusText;
+
+    [Tooltip("Reference to the player's Health component.")]
     [SerializeField] private Health _playerHealth;
+
+    [Tooltip("Text displaying the total score.")]
     [SerializeField] private Text _totalScoreText;
 
+    // === Private State ===
     private bool _isWinScreenActive = false;
     private int _totalScore;
 

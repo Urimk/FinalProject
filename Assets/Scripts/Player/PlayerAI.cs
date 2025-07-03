@@ -12,7 +12,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerAI : Agent
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultRaycastDistance = 10f;
     private const int DefaultGroundLayer = 3;
     private const int DefaultPlatformLayer = 7;
@@ -34,43 +34,89 @@ public class PlayerAI : Agent
     private const string DebugOnEpisodeBegin = "[PlayerAI] OnEpisodeBegin completed.";
     private const string DebugProjectilesNull = "[PlayerAI] Projectiles array is null in ObserveClosestProjectiles.";
 
-    // === Serialized Fields ===
+    // ==================== Inspector Fields ====================
     [Header("References")]
+    [Tooltip("Reference to the PlayerMovement component.")]
+    [FormerlySerializedAs("playerMovement")]
     [SerializeField] private PlayerMovement _playerMovement;
+    [Tooltip("Reference to the PlayerAttack component.")]
+    [FormerlySerializedAs("playerAttack")]
     [SerializeField] private PlayerAttack _playerAttack;
+    [Tooltip("Reference to the Health component.")]
+    [FormerlySerializedAs("playerHealth")]
     [SerializeField] private Health _playerHealth;
+    [Tooltip("Reference to the OneWayPlatform component.")]
+    [FormerlySerializedAs("oneWayPlatform")]
     [SerializeField] private OneWayPlatform _oneWayPlatform;
+    [Tooltip("Reference to the BossHealth component.")]
+    [FormerlySerializedAs("bossHealth")]
     [SerializeField] private BossHealth _bossHealth;
+    [Tooltip("Reference to the AIBoss component.")]
+    [FormerlySerializedAs("aiBoss")]
     [SerializeField] private AIBoss _aiBoss;
+    [Tooltip("Reference to the boss Transform.")]
+    [FormerlySerializedAs("boss")]
     [SerializeField] private Transform _boss;
+    [Tooltip("Reference to the flames Transform.")]
+    [FormerlySerializedAs("flames")]
     [SerializeField] private Transform _flames;
+    [Tooltip("Array of boss fireball GameObjects.")]
+    [FormerlySerializedAs("bossFireballs")]
     [SerializeField] private GameObject[] _bossFireballs;
+    [Tooltip("Array of player fireball GameObjects.")]
+    [FormerlySerializedAs("playerFireballs")]
     [SerializeField] private GameObject[] _playerFireballs;
 
     [Header("Manual Raycast Perception")]
+    [Tooltip("Distance for manual raycasts.")]
+    [FormerlySerializedAs("raycastDistance")]
     [SerializeField] private float _raycastDistance = DefaultRaycastDistance;
+    [Tooltip("Layer mask for environment raycasts.")]
+    [FormerlySerializedAs("environmentLayerMask")]
     [SerializeField] private LayerMask _environmentLayerMask;
     private readonly float[] _rayAngles = { 0f, -45f, 180f };
 
     [Header("Environment Layers (for Observation)")]
+    [Tooltip("Layer index for ground.")]
+    [FormerlySerializedAs("groundLayer")]
     [SerializeField] private int _groundLayer = DefaultGroundLayer;
+    [Tooltip("Layer index for platforms.")]
+    [FormerlySerializedAs("platformLayer")]
     [SerializeField] private int _platformLayer = DefaultPlatformLayer;
+    [Tooltip("Layer index for walls.")]
+    [FormerlySerializedAs("wallLayer")]
     [SerializeField] private int _wallLayer = DefaultWallLayer;
 
     [Header("Reward Settings")]
+    [Tooltip("Reward for winning.")]
+    [FormerlySerializedAs("rewardWin")]
     [SerializeField] private float _rewardWin = DefaultRewardWin;
+    [Tooltip("Penalty for losing.")]
+    [FormerlySerializedAs("penaltyLose")]
     [SerializeField] private float _penaltyLose = DefaultPenaltyLose;
+    [Tooltip("Reward for damaging the boss.")]
+    [FormerlySerializedAs("rewardDamageBoss")]
     [SerializeField] private float _rewardDamageBoss = DefaultRewardDamageBoss;
+    [Tooltip("Penalty for taking damage.")]
+    [FormerlySerializedAs("penaltyTakeDamage")]
     [SerializeField] private float _penaltyTakeDamage = DefaultPenaltyTakeDamage;
+    [Tooltip("Penalty per step.")]
+    [FormerlySerializedAs("penaltyPerStep")]
     [SerializeField] private float _penaltyPerStep = DefaultPenaltyPerStep;
 
     [Header("Observation Settings")]
+    [Tooltip("Maximum number of boss fireballs to observe.")]
+    [FormerlySerializedAs("maxBossFireballsToObserve")]
     [SerializeField] private int _maxBossFireballsToObserve = DefaultMaxBossFireballsToObserve;
     [Header("Physics Detection")]
+    [Tooltip("Radius for hazard detection.")]
+    [FormerlySerializedAs("hazardDetectionRadius")]
     [SerializeField] private float _hazardDetectionRadius = DefaultHazardDetectionRadius;
+    [Tooltip("Layer mask for hazard detection.")]
+    [FormerlySerializedAs("hazardDetectionLayerMask")]
     [SerializeField] private LayerMask _hazardDetectionLayerMask = DefaultHazardDetectionLayerMask;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private int _numRaycasts;
     private int _numEnvironmentLayersToObserve;
     private Collider2D[] _overlapResults = new Collider2D[OverlapResultsBufferSize];
@@ -103,7 +149,7 @@ public class PlayerAI : Agent
     {
         _isBossDefeated = false;
         _isPlayerDead = false;
-        transform.position = EpisodeManager.Instance != null ? EpisodeManager.Instance.initialPlayerPosition : Vector3.zero;
+        transform.position = EpisodeManager.Instance != null ? EpisodeManager.Instance.InitialPlayerPosition : Vector3.zero;
         transform.rotation = Quaternion.identity;
         _rigidbody2D.velocity = Vector2.zero;
         _rigidbody2D.angularVelocity = 0f;
@@ -236,6 +282,7 @@ public class PlayerAI : Agent
         ObserveClosestProjectiles(sensor, _bossFireballs, _maxBossFireballsToObserve);
     }
 
+    // ==================== Observation and Action Logic ====================
     /// <summary>
     /// Draws a debug ray in the Scene view.
     /// </summary>
@@ -247,6 +294,9 @@ public class PlayerAI : Agent
     /// <summary>
     /// Observes the closest projectiles and adds their data to the sensor.
     /// </summary>
+    /// <param name="sensor">The ML-Agents vector sensor.</param>
+    /// <param name="projectiles">Array of projectile GameObjects.</param>
+    /// <param name="maxToObserve">Maximum number of projectiles to observe.</param>
     private void ObserveClosestProjectiles(VectorSensor sensor, GameObject[] projectiles, int maxToObserve)
     {
         if (projectiles == null)
@@ -287,9 +337,11 @@ public class PlayerAI : Agent
         }
     }
 
+    // ==================== ML-Agents Action Handling ====================
     /// <summary>
     /// Receives actions from the ML-Agents policy and applies them to the player.
     /// </summary>
+    /// <param name="actions">ActionBuffers from ML-Agents.</param>
     public override void OnActionReceived(ActionBuffers actions)
     {
         AddReward(_penaltyPerStep);
@@ -312,9 +364,11 @@ public class PlayerAI : Agent
         _playerAttack?.SetAIAttack(attackPressed);
     }
 
+    // ==================== Reward and Episode Logic ====================
     /// <summary>
     /// Handles player damage, applies penalty, and ends episode if dead.
     /// </summary>
+    /// <param name="damage">Amount of damage taken.</param>
     public void HandlePlayerDamaged(float damage)
     {
         if (_isPlayerDead || _isBossDefeated) return;
@@ -332,6 +386,7 @@ public class PlayerAI : Agent
     /// <summary>
     /// Handles boss damage, applies reward.
     /// </summary>
+    /// <param name="damage">Amount of damage dealt to boss.</param>
     private void HandleBossDamaged(float damage)
     {
         if (_isPlayerDead || _isBossDefeated) return;

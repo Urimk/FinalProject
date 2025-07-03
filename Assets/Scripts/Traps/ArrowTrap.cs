@@ -6,31 +6,51 @@ using UnityEngine;
 /// </summary>
 public class ArrowTrap : MonoBehaviour
 {
+    // === Constants ===
     private const string PlayerTag = "Player";
     private const float DefaultSpeed = 5f;
     private const float DefaultRotationAngle = 40f;
     private const float DefaultRotationDuration = 3f;
 
+    // === Inspector Fields ===
+    [Header("Attack Settings")]
+    [Tooltip("Cooldown time in seconds between arrow attacks.")]
     [SerializeField] private float _attackCooldown;
+
+    [Header("Firepoint Settings")]
+    [Tooltip("Transform from which arrows are fired.")]
     [SerializeField] private Transform _firepoint;
+
+    [Tooltip("Array of arrow GameObjects used as a pool for firing.")]
     [SerializeField] private GameObject[] _arrows;
+
+    [Tooltip("Speed at which arrows are fired.")]
     [SerializeField] private float _speed = DefaultSpeed;
+
+    [Tooltip("If true, arrows are marked as 'coming out' for special behavior.")]
     [SerializeField] private bool _isComingOut = false;
 
-    [Header("Sound")]
+    [Header("Sound Settings")]
+    [Tooltip("Sound to play when an arrow is fired.")]
     [SerializeField] private AudioClip _arrowSound;
 
-    [Header("Rotation")]
+    [Header("Rotation Settings")]
+    [Tooltip("If true, the firepoint will rotate back and forth.")]
     [SerializeField] private bool _rotateFirepoint = false;
+
+    [Tooltip("Maximum angle to rotate the firepoint.")]
     [SerializeField] private float _rotationAngle = DefaultRotationAngle;
+
+    [Tooltip("Duration in seconds for each rotation segment.")]
     [SerializeField] private float _rotationDuration = DefaultRotationDuration;
 
+    // === Private State ===
     private float _cooldownTimer;
     private bool _rotatingForward = true;
     private Coroutine _rotationCoroutine;
 
     /// <summary>
-    /// Fires an arrow from the trap.
+    /// Fires an arrow from the trap and plays the arrow sound.
     /// </summary>
     private void Attack()
     {
@@ -91,7 +111,7 @@ public class ArrowTrap : MonoBehaviour
     }
 
     /// <summary>
-    /// Coroutine to rotate the firepoint back and forth.
+    /// Coroutine to rotate the firepoint back and forth between angles.
     /// </summary>
     private IEnumerator RotateFirepointCoroutine()
     {

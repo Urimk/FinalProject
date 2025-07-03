@@ -13,8 +13,12 @@ public class EnemyProjectile : EnemyDamage
     private const string EnemyTag = "Enemy";
 
     // ==================== Serialized Fields ====================
+    [Header("Projectile Parameters")]
+    [Tooltip("Movement speed of the projectile.")]
     [SerializeField] private float _speed;
+    [Tooltip("Visual and collision size of the projectile.")]
     [SerializeField] private float _size;
+    [Tooltip("Time in seconds before the projectile is automatically reset.")]
     [SerializeField] private float _resetTime;
 
     // ==================== Private Fields ====================
@@ -30,6 +34,7 @@ public class EnemyProjectile : EnemyDamage
     private Vector2 _direction = Vector2.right;
     private bool _useCustomDirection = false;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Initializes references and collider size.
     /// </summary>
@@ -41,6 +46,7 @@ public class EnemyProjectile : EnemyDamage
         _fullColliderSize = _boxCollider.size;
     }
 
+    // ==================== Projectile Activation & Direction ====================
     /// <summary>
     /// Activates the projectile and resets its state.
     /// </summary>
@@ -88,6 +94,7 @@ public class EnemyProjectile : EnemyDamage
         _isComingOut = value;
     }
 
+    // ==================== Movement, Collision, and Lifetime ====================
     /// <summary>
     /// Handles projectile movement, collider growth, and lifetime.
     /// </summary>
@@ -161,6 +168,7 @@ public class EnemyProjectile : EnemyDamage
         }
     }
 
+    // ==================== Utility ====================
     /// <summary>
     /// Sets the projectile's damage value.
     /// </summary>

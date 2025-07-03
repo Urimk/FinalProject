@@ -5,14 +5,21 @@
 /// </summary>
 public class Explosion : MonoBehaviour
 {
+    // === Constants ===
     private const float DefaultDamage = 1f;
     private const float DefaultLifetime = 0.5f;
 
+    // === Inspector Fields ===
+    [Header("Explosion Settings")]
+    [Tooltip("Amount of damage dealt to the player.")]
     [SerializeField] private float _damage = DefaultDamage;
+
+    [Tooltip("Lifetime of the explosion in seconds before it is destroyed.")]
     [SerializeField] private float _lifetime = DefaultLifetime;
 
     /// <summary>
-    /// Destroys the explosion object after its lifetime expires.
+    /// Called by Unity when the object is instantiated.
+    /// Schedules the destruction of the explosion object after its lifetime expires.
     /// </summary>
     private void Start()
     {
@@ -20,7 +27,8 @@ public class Explosion : MonoBehaviour
     }
 
     /// <summary>
-    /// Damages the player if they enter the explosion's trigger.
+    /// Called by Unity when another collider enters this trigger.
+    /// Damages the player if they enter the explosion's trigger area.
     /// </summary>
     /// <param name="other">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D other)

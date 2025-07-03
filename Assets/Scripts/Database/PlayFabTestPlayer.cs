@@ -11,14 +11,21 @@ using UnityEngine;
 public class PlayFabTestPlayer : MonoBehaviour
 {
     // ==================== Constants ====================
-    private const string TestPlayerPrefix = "John_";
-    private const string LeaderboardName = "Level1_Easy";
-    private const int MinTestScore = 500;
-    private const int MaxTestScore = 2000;
+    private const string DefaultTestPlayerPrefix = "John_";
+    private const string DefaultLeaderboardName = "Level1_Easy";
+    private const int DefaultMinTestScore = 500;
+    private const int DefaultMaxTestScore = 2000;
 
-    // ==================== Private Fields ====================
-    private string _testPlayerPrefix = TestPlayerPrefix;
-    private string _leaderboardName = LeaderboardName;
+    // ==================== Configurable Fields ====================
+    [Header("Test Player Settings")]
+    [Tooltip("Prefix for the test player's custom ID.")]
+    [SerializeField] private string _testPlayerPrefix = DefaultTestPlayerPrefix;
+    [Tooltip("Leaderboard name to submit scores to.")]
+    [SerializeField] private string _leaderboardName = DefaultLeaderboardName;
+    [Tooltip("Minimum random test score to submit.")]
+    [SerializeField] private int _minTestScore = DefaultMinTestScore;
+    [Tooltip("Maximum random test score to submit.")]
+    [SerializeField] private int _maxTestScore = DefaultMaxTestScore;
 
     /// <summary>
     /// Logs in with a unique custom ID on start.
@@ -32,6 +39,7 @@ public class PlayFabTestPlayer : MonoBehaviour
     /// <summary>
     /// Logs in to PlayFab with a custom ID, creating an account if needed.
     /// </summary>
+    /// <param name="customId">The custom ID to use for login.</param>
     private void LoginWithCustomID(string customId)
     {
         var request = new LoginWithCustomIDRequest
@@ -54,6 +62,7 @@ public class PlayFabTestPlayer : MonoBehaviour
     /// <summary>
     /// Sets the PlayFab display name to the custom ID.
     /// </summary>
+    /// <param name="customId">The custom ID to set as the display name.</param>
     private void SetDisplayName(string customId)
     {
         string displayName = customId;
@@ -68,7 +77,7 @@ public class PlayFabTestPlayer : MonoBehaviour
     /// </summary>
     private void SubmitTestScore()
     {
-        int randomScore = Random.Range(MinTestScore, MaxTestScore);
+        int randomScore = Random.Range(_minTestScore, _maxTestScore);
         var request = new UpdatePlayerStatisticsRequest
         {
             Statistics = new List<StatisticUpdate>

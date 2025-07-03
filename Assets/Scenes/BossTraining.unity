@@ -5181,15 +5181,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae38c68c254f3c84b8b0c8740b396363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rewardBossWinsBase: 100
+  _rewardBossWinsBase: 150
   _penaltyBossLosesBase: -100
-  _maxEpisodeDuration: 30
+  _maxEpisodeDuration: 60
   _scaleTerminalRewardByTime: 1
-  _rewardHitPlayer: 20
-  _penaltyTookDamage: -2
-  _penaltyAttackMissed: -0.5
+  _rewardHitPlayer: 75
+  _penaltyTookDamage: -3
+  _penaltyAttackMissed: -0.2
   _rewardTrapTriggered: 3
-  _penaltyPerStep: -0.01
+  _penaltyPerStep: -0.025
 --- !u!224 &1079023051
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5643,7 +5643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78baca109d7fd24ba1dd83e5b3699ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxEpisodeDuration: 30
+  _maxEpisodeDuration: 60
   _playerObject: {fileID: 1393604978}
   _bossObject: {fileID: 1957706213}
   _aiBoss: {fileID: 1957706221}
@@ -5654,12 +5654,13 @@ MonoBehaviour:
   _playerAttack: {fileID: 1393604983}
   _bossRewardManager: {fileID: 1079023050}
   _bossQLearning: {fileID: 1957706214}
-  initialPlayerPosition: {x: -30, y: -10, z: 0}
+  _initialPlayerPosition: {x: -30, y: -10, z: 0}
   _initialBossPosition: {x: -25, y: -8, z: 0}
   _logFilePath: BossTrainingLog.txt
   _logFrequency: 10
-  episodeCount: 0
-  averageReward: 0
+  _episodeCount: 0
+  _averageReward: 0
+  _accumulatedReward: 0
 --- !u!1 &1207742820
 GameObject:
   m_ObjectHideFlags: 0
@@ -6220,6 +6221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53ba958751605ed4ba6eea7b601c26d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _reloadSceneIndex: 1
+  _reloadKey: 282
 --- !u!1 &1292831299 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
@@ -9931,30 +9934,30 @@ MonoBehaviour:
   _actionDistanceOffset: 3
   curriculumStages:
   - numActions: 9
-    positionDiscretization: 4
-    velocityThresholdLow: 3.5
-    velocityThresholdHigh: 8
+    positionDiscretization: 2
+    velocityThresholdLow: 1
+    velocityThresholdHigh: 10
     playerSpeed: 3
     minEpisodes: 100
     minAverageReward: 150
   - numActions: 22
-    positionDiscretization: 3.5
-    velocityThresholdLow: 3
-    velocityThresholdHigh: 7
+    positionDiscretization: 2
+    velocityThresholdLow: 1
+    velocityThresholdHigh: 10
     playerSpeed: 3
     minEpisodes: 200
     minAverageReward: 175
   - numActions: 26
-    positionDiscretization: 3
-    velocityThresholdLow: 2.5
-    velocityThresholdHigh: 6
+    positionDiscretization: 2
+    velocityThresholdLow: 1
+    velocityThresholdHigh: 10
     playerSpeed: 3
     minEpisodes: 300
     minAverageReward: 190
   - numActions: 29
-    positionDiscretization: 2.5
-    velocityThresholdLow: 2
-    velocityThresholdHigh: 5
+    positionDiscretization: 2
+    velocityThresholdLow: 1
+    velocityThresholdHigh: 10
     playerSpeed: 3
     minEpisodes: 400
     minAverageReward: 200
@@ -10104,7 +10107,7 @@ MonoBehaviour:
   _energySlider: {fileID: 1494413810}
   _anim: {fileID: 1957706225}
   _rb: {fileID: 1957706216}
-  rewardManager: {fileID: 1079023050}
+  _rewardManager: {fileID: 1079023050}
   _bossHealth: {fileID: 1957706222}
   _firepoint: {fileID: 72478224}
   _fireballHolder: {fileID: 739563515}
@@ -10124,16 +10127,16 @@ MonoBehaviour:
   _leftWall: {fileID: 1077036129}
   _rightWall: {fileID: 782904748}
   _targetIconPrefab: {fileID: 434469124}
-  attackCooldown: 4
+  _attackCooldown: 4
   _fireballDamage: 1
   _projectileSpeed: 2.5
   _projectileSize: 0.7
   _fireballSound: {fileID: 0}
   _predictionTime: 0.3
-  fireAttackCooldown: 4
+  _fireAttackCooldown: 4
   _dashChargeTime: 1.5
   _dashSpeed: 10
-  dashCooldown: 9
+  _dashCooldown: 9
   _chargeSound: {fileID: 0}
   _dashSound: {fileID: 0}
   _maxEnergy: 100
@@ -10141,7 +10144,6 @@ MonoBehaviour:
   _fireballEnergyCost: 10
   _flameTrapEnergyCost: 25
   _dashEnergyCost: 25
-  flameMissed: 1
   _arenaCenterPosition: {x: -30, y: -8, z: 0}
   _actionDistanceOffset: 3
   _flameTrapGroundYLevel: -11.5

@@ -6,22 +6,29 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class UIManager : MonoBehaviour
 {
-    // Constants
+    // === Constants ===
     private const int MainMenuSceneIndex = 0;
     private const float VolumeStep = 0.2f;
 
-    // Singleton
+    // === Singleton ===
+    /// <summary>
+    /// Singleton instance of the UIManager.
+    /// </summary>
     public static UIManager Instance;
 
-    // Serialized fields
+    // === Inspector Fields ===
     [Header("Game Over")]
+    [Tooltip("GameObject for the game over screen.")]
     [SerializeField] private GameObject _gameOverScreen;
+    [Tooltip("Sound to play when game over occurs.")]
     [SerializeField] private AudioClip _gameOverSound;
     [Header("Pause")]
+    [Tooltip("GameObject for the pause screen.")]
     [SerializeField] private GameObject _pauseScreen;
+    [Tooltip("GameObject for the win screen.")]
     [SerializeField] private GameObject _winScreen;
 
-    // Private fields
+    // === Private State ===
     private bool _isGamePaused = false;
 
     // Properties for testing
@@ -96,7 +103,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void MainMenu()
     {
-        SoundManager.instance.ChangeMusic(SoundManager.instance.menuMusic);
+        SoundManager.instance.ChangeMusic(SoundManager.instance.MenuMusic);
         SceneManager.LoadScene(MainMenuSceneIndex);
     }
 

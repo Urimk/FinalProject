@@ -1,14 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Controls the settings UI, specifically music and sound volume sliders.
+/// Handles initialization, value changes, and cleanup of slider listeners.
+/// </summary>
 public class SettingsController : MonoBehaviour
 {
     // ==================== Constants ====================
     private const float DefaultVolume = 1f;
 
     // ==================== Serialized Fields ====================
-    [SerializeField] private Slider _musicVolumeSlider; // Assign the Music Volume Slider in the Inspector
-    [SerializeField] private Slider _audioVolumeSlider; // Assign the Audio Volume Slider in the Inspector
+    [Header("Volume Sliders")]
+    [Tooltip("Slider controlling the music volume.")]
+    [SerializeField] private Slider _musicVolumeSlider;
+
+    [Tooltip("Slider controlling the sound effects volume.")]
+    [SerializeField] private Slider _audioVolumeSlider;
 
     // ==================== Unity Lifecycle ====================
     private void Start()
@@ -27,22 +35,34 @@ public class SettingsController : MonoBehaviour
     }
 
     // ==================== Public Methods ====================
+    /// <summary>
+    /// Called when the music volume slider value changes. Updates the music volume in SoundManager.
+    /// </summary>
+    /// <param name="value">The new slider value for music volume.</param>
     public void SetMusicVolume(float value)
     {
         // Update the SoundManager
+        // Subtracts the saved PlayerPrefs value to get the delta for SoundManager
         SoundManager.instance.ChangeMusicVolume(value - PlayerPrefs.GetFloat("musicVolume", DefaultVolume));
     }
 
+    /// <summary>
+    /// Called when the sound volume slider value changes. Updates the sound volume in SoundManager.
+    /// </summary>
+    /// <param name="value">The new slider value for sound effects volume.</param>
     public void SetSoundVolume(float value)
     {
         // Update the SoundManager
+        // Subtracts the saved PlayerPrefs value to get the delta for SoundManager
         SoundManager.instance.ChangeSoundVolume(value - PlayerPrefs.GetFloat("soundVolume", DefaultVolume));
     }
 
     // ==================== Unity Cleanup ====================
+    /// <summary>
+    /// Removes slider listeners to avoid memory leaks when the object is destroyed.
+    /// </summary>
     private void OnDestroy()
     {
-        // Remove listeners to avoid memory leaks
         _musicVolumeSlider.onValueChanged.RemoveListener(SetMusicVolume);
         _audioVolumeSlider.onValueChanged.RemoveListener(SetSoundVolume);
     }

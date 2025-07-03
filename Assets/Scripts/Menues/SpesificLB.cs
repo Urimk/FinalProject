@@ -12,6 +12,7 @@ using UnityEngine;
 /// </summary>
 public class SpesificLB : MonoBehaviour
 {
+    // ==================== Constants ====================
     private const int MaxResultsCount = 10;
     private const int LeaderboardNameParts = 2;
     private const int DisplayNamePart = 0;
@@ -23,17 +24,26 @@ public class SpesificLB : MonoBehaviour
     private const string LeaderboardNotFoundText = "Leaderboard not found or empty";
     private const string ErrorLoadingLeaderboardText = "Error loading leaderboard";
 
+    // ==================== Inspector Fields ====================
+    [Tooltip("Sound effect to play when a button is clicked.")]
     [SerializeField] private AudioClip _buttonClickSound;
+    [Tooltip("Reference to the Leaderboards GameObject.")]
     [SerializeField] private GameObject _leaderboards;
+    [Tooltip("Reference to the SpesificLB GameObject.")]
     [SerializeField] private GameObject _spesificLB;
+    [Tooltip("Text fields for the top 10 leaderboard entries.")]
     [SerializeField] private TMP_Text[] _top10Texts;
+    [Tooltip("Text field for the leaderboard title.")]
     [SerializeField] private TMP_Text _leaderboardTitle;
 
+    // ==================== Private Fields ====================
     private string _leaderboardName;
 
+    // ==================== Leaderboard Logic ====================
     /// <summary>
     /// Sets the leaderboard to display and updates the title.
     /// </summary>
+    /// <param name="name">The name of the leaderboard to display.</param>
     public void SetLeaderboard(string name)
     {
         _leaderboardName = name;
@@ -47,6 +57,7 @@ public class SpesificLB : MonoBehaviour
         LoadTop10Players();
     }
 
+    // ==================== Menu Navigation ====================
     /// <summary>
     /// Returns to the main leaderboards menu.
     /// </summary>
@@ -57,6 +68,7 @@ public class SpesificLB : MonoBehaviour
         _leaderboards.SetActive(true);
     }
 
+    // ==================== PlayFab Logic ====================
     /// <summary>
     /// Loads and displays the top 10 players for the current leaderboard.
     /// </summary>

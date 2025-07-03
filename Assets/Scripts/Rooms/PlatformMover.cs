@@ -6,7 +6,7 @@
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlatformMover : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultMoveDistance = 3f;
     private const float DefaultMoveSpeed = 2f;
     private const float DefaultAttachDistance = 2f;
@@ -15,19 +15,32 @@ public class PlatformMover : MonoBehaviour
     private const string PlayerTag = "Player";
     private const string AttachPointName = "PlayerAttachPoint";
 
-    // === Serialized Fields ===
+    // ==================== Inspector Fields ====================
     [Header("Movement Settings")]
+    [Tooltip("Distance the platform moves from its start position.")]
+    [FormerlySerializedAs("moveDistance")]
     [SerializeField] private float _moveDistance = DefaultMoveDistance;
+    [Tooltip("Speed at which the platform moves.")]
+    [FormerlySerializedAs("moveSpeed")]
     [SerializeField] private float _moveSpeed = DefaultMoveSpeed;
+    [Tooltip("If true, platform starts from the positive direction.")]
+    [FormerlySerializedAs("startFromPositive")]
     [SerializeField] private bool _startFromPositive = false;
+    [Tooltip("If true, platform moves vertically.")]
+    [FormerlySerializedAs("isVertical")]
     [SerializeField] private bool _isVertical = true;
+    [Tooltip("If true, platform moves in the negative direction.")]
+    [FormerlySerializedAs("isNegative")]
     [SerializeField] private bool _isNegative = false;
     [Header("Attachment Settings")]
+    [Tooltip("Tag used to find the player GameObject.")]
+    [FormerlySerializedAs("playerTag")]
     [SerializeField] private string _playerTag = PlayerTag;
     [Tooltip("Distance threshold for attaching when player is on ground and close enough.")]
+    [FormerlySerializedAs("attachDistance")]
     [SerializeField] private float _attachDistance = DefaultAttachDistance;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private Vector3 _startPos;
     private Vector3 _targetPos;
     private bool _movingPositive;
@@ -36,6 +49,7 @@ public class PlatformMover : MonoBehaviour
     private Transform _currentPlatformParent;
     private Rigidbody2D _rigidbody2D;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Unity Start callback. Initializes movement and player references.
     /// </summary>
@@ -78,6 +92,7 @@ public class PlatformMover : MonoBehaviour
         HandleAttachment();
     }
 
+    // ==================== Platform Logic ====================
     /// <summary>
     /// Handles attaching and detaching the player to the platform.
     /// </summary>

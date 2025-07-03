@@ -5,31 +5,39 @@
 /// </summary>
 public class EnemyPatrol : MonoBehaviour
 {
-    // Direction constants for clarity
+    // ==================== Constants ====================
     private const int DirectionLeft = -1;
     private const int DirectionRight = 1;
 
+    // ==================== Serialized Fields ====================
     [Header("Patrol Points")]
+    [Tooltip("Transform marking the left patrol edge.")]
     [SerializeField] private Transform _leftEdge;
+    [Tooltip("Transform marking the right patrol edge.")]
     [SerializeField] private Transform _rightEdge;
 
     [Header("Enemy")]
+    [Tooltip("Transform of the enemy to move.")]
     [SerializeField] private Transform _enemy;
 
     [Header("Movement Parameters")]
+    [Tooltip("Patrol movement speed.")]
     [SerializeField] private float _speed;
 
     [Header("Idle Behaviour")]
+    [Tooltip("Duration to idle at each patrol edge.")]
     [SerializeField] private float _idleDuration;
 
     [Header("Enemy Animator")]
+    [Tooltip("Animator for controlling enemy movement animation.")]
     [SerializeField] private Animator _anim;
 
-    // Private fields
+    // ==================== Private Fields ====================
     private Vector3 _initScale;
     private bool _movingLeft = false;
     private float _idleTimer;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Initializes the enemy's scale.
     /// </summary>
@@ -67,6 +75,7 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
+    // ==================== Patrol Logic ====================
     /// <summary>
     /// Handles the idle timer and toggles direction after idling.
     /// </summary>
@@ -98,6 +107,7 @@ public class EnemyPatrol : MonoBehaviour
         _enemy.position = new Vector3(_enemy.position.x + Time.deltaTime * direction * _speed, _enemy.position.y, _enemy.position.z);
     }
 
+    // ==================== Utility ====================
     /// <summary>
     /// Resets the moving animation when the object is disabled.
     /// </summary>

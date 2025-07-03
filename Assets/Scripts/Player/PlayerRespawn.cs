@@ -7,20 +7,29 @@ using UnityEngine;
 /// </summary>
 public class PlayerRespawn : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const int DefaultLives = 3;
     private const float DefaultTimeAtCheckpoint = 600f;
     private const string InitialCheckpointName = "InitialCheckpoint";
     private const string CheckpointTag = "Checkpoint";
     private const string AnimatorAppear = "appear";
 
-    // === Serialized Fields ===
-    [SerializeField] private AudioClip checkpointSound;
-    [SerializeField] private GroundManager groundManager;
-    [SerializeField] private int lives = DefaultLives;
-    [SerializeField] private Transform initialRoom;
+    // ==================== Inspector Fields ====================
+    [Header("Checkpoint Settings")]
+    [Tooltip("Sound to play when a checkpoint is activated.")]
+    [FormerlySerializedAs("checkpointSound")]
+    [SerializeField] private AudioClip _checkpointSound;
+    [Tooltip("Reference to the GroundManager for respawn events.")]
+    [FormerlySerializedAs("groundManager")]
+    [SerializeField] private GroundManager _groundManager;
+    [Tooltip("Number of lives the player starts with.")]
+    [FormerlySerializedAs("lives")]
+    [SerializeField] private int _lives = DefaultLives;
+    [Tooltip("Reference to the initial room Transform.")]
+    [FormerlySerializedAs("initialRoom")]
+    [SerializeField] private Transform _initialRoom;
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private Transform _currentCheckpoint;
     private Health _playerHealth;
     private Transform _currentRoom;
@@ -29,6 +38,7 @@ public class PlayerRespawn : MonoBehaviour
     private float _timeAtCheckpoint = DefaultTimeAtCheckpoint;
     private List<Transform> _roomsSinceCheckpoint = new List<Transform>();
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Unity Awake callback. Initializes checkpoint and references.
     /// </summary>
@@ -38,7 +48,7 @@ public class PlayerRespawn : MonoBehaviour
         _uiManager = FindObjectOfType<UIManager>();
         GameObject initialCheckpoint = new GameObject(InitialCheckpointName);
         initialCheckpoint.transform.position = transform.position;
-        _currentRoom = initialRoom;
+        _currentRoom = _initialRoom;
         if (_currentRoom != null)
         {
             initialCheckpoint.transform.parent = _currentRoom;
@@ -46,9 +56,11 @@ public class PlayerRespawn : MonoBehaviour
         _currentCheckpoint = initialCheckpoint.transform;
     }
 
+    // ==================== Checkpoint and Respawn Logic ====================
     /// <summary>
     /// Sets the current room and tracks rooms entered since the last checkpoint.
     /// </summary>
+    /// <param name="newRoom">The new room Transform.</param>
     public void SetCurrentRoom(Transform newRoom)
     {
         _currentRoom = newRoom;
@@ -65,7 +77,7 @@ public class PlayerRespawn : MonoBehaviour
     public void Respawn()
     {
         _playerHealth.SetFirstHealth(0);
-        if (lives <= 0)
+        if (_lives <= 0)
         {
             _uiManager.GameOver();
             return;
@@ -94,7 +106,7 @@ public class PlayerRespawn : MonoBehaviour
         TimerManager.Instance.SetRemainingTime(_timeAtCheckpoint);
         if (respawnRoom != null)
         {
-            groundManager?.OnPlayerRespawn();
+            _groundManager?.OnPlayerRespawn();
             Camera.main.GetComponent<CameraController>().MoveToNewRoom(respawnRoom);
             if (_currentRoom != respawnRoom)
             {
@@ -105,14 +117,16 @@ public class PlayerRespawn : MonoBehaviour
         }
         else
         {
-            Camera.main.GetComponent<CameraController>().MoveToNewRoom(initialRoom);
+            Camera.main.GetComponent<CameraController>().MoveToNewRoom(_initialRoom);
             Debug.LogWarning("Respawn room is null. Skipping room changes for the initial checkpoint.");
         }
     }
 
+    // ==================== Unity Events ====================
     /// <summary>
     /// Handles checkpoint activation and updates checkpoint state.
     /// </summary>
+    /// <param name="collision">The collider that entered the trigger.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(CheckpointTag))
@@ -122,7 +136,7 @@ public class PlayerRespawn : MonoBehaviour
             {
                 checkpoint.IsActivated = true;
                 _currentCheckpoint = collision.transform;
-                SoundManager.instance.PlaySound(checkpointSound, gameObject);
+                SoundManager.instance.PlaySound(_checkpointSound, gameObject);
                 _scoreAtCheckpoint = ScoreManager.Instance.GetScore();
                 _timeAtCheckpoint = TimerManager.Instance.GetRemainingTime();
                 _roomsSinceCheckpoint.Clear();

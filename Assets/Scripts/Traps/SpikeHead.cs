@@ -22,17 +22,27 @@ public class SpikeHead : EnemyDamage
 
     // === Serialized Fields ===
     [Header("Spikehead Attributes")]
+    [Tooltip("Base movement speed of the spike head.")]
     [SerializeField] private float _speed;
+    [Tooltip("Detection range for the player.")]
     [SerializeField] private float _range;
+    [Tooltip("Delay between player detection checks.")]
     [SerializeField] private float _checkDelay;
+    [Tooltip("Duration of the charge back before attacking.")]
     [SerializeField] private float _chargeDuration = DefaultChargeDuration;
+    [Tooltip("Distance to move back before charging forward.")]
     [SerializeField] private float _chargeBackDistance = DefaultChargeBackDistance;
+    [Tooltip("Multiplier applied to speed during attack.")]
     [SerializeField] private float _attackSpeedMultiplier = DefaultAttackSpeedMultiplier;
+    [Tooltip("Layer mask used to detect the player.")]
     [SerializeField] private LayerMask _playerLayer;
     [Header("Sound")]
+    [Tooltip("Sound to play when the spike head crashes.")]
     [SerializeField] private AudioClip _crashSound;
     [Header("Self-Deactivation")]
+    [Tooltip("If true, the spike head will deactivate after charging.")]
     [SerializeField] private bool _deactivateAfterCharge = false;
+    [Tooltip("Delay before self-deactivation after charging.")]
     [SerializeField] private float _deactivateDelay = DefaultDeactivateDelay;
 
     // === Private Fields ===

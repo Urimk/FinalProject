@@ -7,12 +7,18 @@ using UnityEngine;
 /// </summary>
 public class EnemyDamage : MonoBehaviour
 {
+    // ==================== Serialized Fields ====================
+    [Header("Damage Parameters")]
+    [Tooltip("Amount of damage dealt to the player.")]
     [SerializeField] protected float _damage;
+    [Tooltip("If true, applies recoil to the player on hit.")]
     [SerializeField] protected bool _isRecoil = false;
 
+    // ==================== Damage Logic ====================
     /// <summary>
     /// Applies damage to the player and triggers recoil if enabled when the player stays in the trigger.
     /// </summary>
+    /// <param name="collision">Collider of the object staying in the trigger.</param>
     protected void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

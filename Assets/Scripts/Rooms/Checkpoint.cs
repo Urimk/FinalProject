@@ -5,5 +5,16 @@
 /// </summary>
 public class Checkpoint : MonoBehaviour
 {
-    public bool IsActivated = false;
+    // ==================== Fields ====================
+    private bool _isActivated = false;
+
+    // ==================== Properties ====================
+    /// <summary>
+    /// True if the checkpoint has been activated by the player.
+    /// </summary>
+    public bool IsActivated
+    {
+        get => _isActivated;
+        set => _isActivated = value;
+    }
 }

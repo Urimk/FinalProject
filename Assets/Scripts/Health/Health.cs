@@ -15,42 +15,88 @@ public class Health : MonoBehaviour, IDamageable
     private const int DefaultScoreValue = 100;
 
     // ==================== Serialized Fields ====================
-    [SerializeField] private GroundManager groundManager;
-    [SerializeField] private PlayerAttack _playerAttack;
-    [Header("Health")]
-    [SerializeField] public float startingHealth;
-    public float currentHealth { get; private set; }
-    private Animator _animator;
-    public bool dead;
+    [Header("Managers")]
+    [Tooltip("Reference to the ground manager for player death handling.")]
+    [FormerlySerializedAs("groundManager")]
+    [SerializeField] private GroundManager _groundManager;
 
-    [Header("iFrames")]
+    [Header("Player Attack")]
+    [Tooltip("Reference to the PlayerAttack component.")]
+    [SerializeField] private PlayerAttack _playerAttack;
+
+    [Header("Health Settings")]
+    [Tooltip("Starting health value for this character.")]
+    [FormerlySerializedAs("startingHealth")]
+    [SerializeField] private float _startingHealth;
+
+    [Tooltip("Current health value for this character.")]
+    [FormerlySerializedAs("currentHealth")]
+    [SerializeField] private float _currentHealth;
+
+    [Header("iFrames (Invulnerability)")]
+    [Tooltip("Duration of invulnerability frames after taking damage.")]
     [SerializeField] private float _iFramesDuration;
+    [Tooltip("Number of flashes during invulnerability.")]
     [SerializeField] private int _numberOfFlashes;
-    private SpriteRenderer _spriteRenderer;
 
     [Header("Components")]
+    [Tooltip("Array of components to disable on death.")]
     [SerializeField] private Behaviour[] _components;
 
     [Header("Sounds")]
+    [Tooltip("Sound to play on death.")]
     [SerializeField] private AudioClip _deathSound;
+    [Tooltip("Sound to play when hurt.")]
     [SerializeField] private AudioClip _hurtSound;
-    public bool invulnerable;
-    private int _isFirstHealth = 1;
-    private PlayerAI _playerAI;
-    private PlayerMovement _player;
+
     [Header("Score")]
-    [SerializeField] private int scoreValue = DefaultScoreValue;
+    [Tooltip("Score value awarded for defeating this character.")]
+    [FormerlySerializedAs("scoreValue")]
+    [SerializeField] private int _scoreValue = DefaultScoreValue;
 
     // ==================== Private Fields ====================
     private float _maxDamageThisFrame;
     private bool _isDamageQueued;
+
+    // ==================== Properties ====================
+    /// <summary>Current health of the character.</summary>
+    public float CurrentHealth { get => _currentHealth; private set => _currentHealth = value; }
+    /// <summary>Starting health of the character.</summary>
+    public float StartingHealth => _startingHealth;
+    /// <summary>Score value for this character.</summary>
+    public int ScoreValue => _scoreValue;
+
+    private Animator _animator;
+    private bool _dead;
+    private bool _invulnerable;
+    private int _isFirstHealth = 1;
+    private PlayerAI _playerAI;
+    private PlayerMovement _player;
+
+    /// <summary>
+    /// True if the character is dead.
+    /// </summary>
+    public bool Dead
+    {
+        get => _dead;
+        private set => _dead = value;
+    }
+
+    /// <summary>
+    /// True if the character is currently invulnerable.
+    /// </summary>
+    public bool Invulnerable
+    {
+        get => _invulnerable;
+        private set => _invulnerable = value;
+    }
 
     /// <summary>
     /// Initializes health and component references.
     /// </summary>
     private void Awake()
     {
-        currentHealth = startingHealth;
+        CurrentHealth = _startingHealth;
         _playerAI = GetComponent<PlayerAI>();
         _player = GetComponent<PlayerMovement>();
         _animator = GetComponent<Animator>();
@@ -72,7 +118,7 @@ public class Health : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeDamage(float damage)
     {
-        if (invulnerable)
+        if (Invulnerable)
         {
             return;
         }
@@ -86,13 +132,13 @@ public class Health : MonoBehaviour, IDamageable
     public event System.Action<float> OnDamaged;
     private void ApplyDamage(float damage)
     {
-        currentHealth = Mathf.Clamp(currentHealth - damage, 0, startingHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, StartingHealth);
 
         if (_player != null)
         {
             _player.LosePowerUp();
         }
-        if (currentHealth > 0)
+        if (CurrentHealth > 0)
         {
             if (_playerAI != null)
             {
@@ -103,13 +149,13 @@ public class Health : MonoBehaviour, IDamageable
         }
         else
         {
-            if (!dead)
+            if (!Dead)
             {
-                dead = true;
+                Dead = true;
                 _animator.SetTrigger("die");
-                if (groundManager != null)
+                if (_groundManager != null)
                 {
-                    groundManager.OnPlayerDeath();
+                    _groundManager.OnPlayerDeath();
                 }
                 foreach (Behaviour component in _components)
                 {
@@ -117,7 +163,7 @@ public class Health : MonoBehaviour, IDamageable
                 }
                 if (CompareTag("Enemy"))
                 {
-                    ScoreManager.Instance.AddScore(scoreValue);
+                    ScoreManager.Instance.AddScore(ScoreValue);
                 }
                 if (_player != null)
                 {
@@ -134,11 +180,11 @@ public class Health : MonoBehaviour, IDamageable
     /// </summary>
     public bool AddHealth(float health)
     {
-        if (currentHealth == startingHealth || dead)
+        if (CurrentHealth == StartingHealth || Dead)
         {
             return false;
         }
-        currentHealth = Mathf.Clamp(currentHealth + health, 0, startingHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth + health, 0, StartingHealth);
         return true;
     }
 
@@ -147,7 +193,7 @@ public class Health : MonoBehaviour, IDamageable
     /// </summary>
     private IEnumerator Invulnerability()
     {
-        invulnerable = true;
+        Invulnerable = true;
         Physics2D.IgnoreLayerCollision(IgnoreLayerA, IgnoreLayerB, true);
         for (int i = 0; i < _numberOfFlashes; i++)
         {
@@ -157,7 +203,7 @@ public class Health : MonoBehaviour, IDamageable
             yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
         }
         Physics2D.IgnoreLayerCollision(IgnoreLayerA, IgnoreLayerB, false);
-        invulnerable = false;
+        Invulnerable = false;
     }
     private void Deactivate()
     {
@@ -169,8 +215,8 @@ public class Health : MonoBehaviour, IDamageable
     /// </summary>
     public void Respawn()
     {
-        dead = false;
-        AddHealth(startingHealth);
+        Dead = false;
+        AddHealth(StartingHealth);
         _animator.ResetTrigger("die");
         _animator.Play("idle");
         StartCoroutine(Invulnerability());
@@ -181,8 +227,8 @@ public class Health : MonoBehaviour, IDamageable
     }
     public void ResetHealth()
     {
-        currentHealth = startingHealth;
-        dead = false;
+        CurrentHealth = StartingHealth;
+        Dead = false;
     }
 
     public void SetFirstHealth(int firstHealth)
@@ -201,11 +247,11 @@ public class Health : MonoBehaviour, IDamageable
         {
             component.enabled = true;
         }
-        scoreValue = 0;
+        _scoreValue = 0;
     }
 
     public float GetHealth()
     {
-        return currentHealth;
+        return CurrentHealth;
     }
 }

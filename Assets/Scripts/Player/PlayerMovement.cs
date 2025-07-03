@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
-    // === Constants ===
+    // ==================== Constants ====================
     private const float DefaultGroundCheckWidth = 1.0f;
     private const float DefaultGroundCheckHeight = 0.1f;
     private const float DefaultNormalGravity = 2f;
@@ -39,37 +39,77 @@ public class PlayerMovement : MonoBehaviour
     private const string AnimatorJump = "jump";
     private const KeyCode JumpKey = KeyCode.Space;
 
-    // === Serialized Fields ===
-    [SerializeField] private bool isAIControlled;
-    [SerializeField] private float speed;
-    [SerializeField] private float baseJumpPower;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private LayerMask obstacleLayer;
-    [SerializeField] private LayerMask defaultLayer;
-    [SerializeField] private Transform earsSlot;
-    [SerializeField] private GameObject earsPrefab;
-    [SerializeField] private float groundCheckWidth = DefaultGroundCheckWidth;
-    [SerializeField] private float groundCheckHeight = DefaultGroundCheckHeight;
+    // ==================== Inspector Fields ====================
+    [Tooltip("True if this player is AI controlled.")]
+    [FormerlySerializedAs("isAIControlled")]
+    [SerializeField] private bool _isAIControlled;
+    [Tooltip("Movement speed of the player.")]
+    [FormerlySerializedAs("speed")]
+    [SerializeField] private float _speed;
+    [Tooltip("Base jump power for the player.")]
+    [FormerlySerializedAs("baseJumpPower")]
+    [SerializeField] private float _baseJumpPower;
+    [Tooltip("Layer mask for ground detection.")]
+    [FormerlySerializedAs("groundLayer")]
+    [SerializeField] private LayerMask _groundLayer;
+    [Tooltip("Layer mask for wall detection.")]
+    [FormerlySerializedAs("wallLayer")]
+    [SerializeField] private LayerMask _wallLayer;
+    [Tooltip("Layer mask for obstacle detection.")]
+    [FormerlySerializedAs("obstacleLayer")]
+    [SerializeField] private LayerMask _obstacleLayer;
+    [Tooltip("Layer mask for default detection.")]
+    [FormerlySerializedAs("defaultLayer")]
+    [SerializeField] private LayerMask _defaultLayer;
+    [Tooltip("Transform slot for equipped ears.")]
+    [FormerlySerializedAs("earsSlot")]
+    [SerializeField] private Transform _earsSlot;
+    [Tooltip("Prefab for the ears power-up.")]
+    [FormerlySerializedAs("earsPrefab")]
+    [SerializeField] private GameObject _earsPrefab;
+    [Tooltip("Width of the ground check box.")]
+    [FormerlySerializedAs("groundCheckWidth")]
+    [SerializeField] private float _groundCheckWidth = DefaultGroundCheckWidth;
+    [Tooltip("Height of the ground check box.")]
+    [FormerlySerializedAs("groundCheckHeight")]
+    [SerializeField] private float _groundCheckHeight = DefaultGroundCheckHeight;
     [Header("Sounds")]
-    [SerializeField] private AudioClip jumpSound;
+    [Tooltip("Sound to play when jumping.")]
+    [FormerlySerializedAs("jumpSound")]
+    [SerializeField] private AudioClip _jumpSound;
     [Header("Coyote Time")]
-    [SerializeField] private float coyoteTime;
-    [SerializeField] private float groundedGraceTime = DefaultGroundedGraceTime;
+    [Tooltip("Duration of coyote time (extra jump window).")]
+    [FormerlySerializedAs("coyoteTime")]
+    [SerializeField] private float _coyoteTime;
+    [Tooltip("Grace time for being considered grounded.")]
+    [FormerlySerializedAs("groundedGraceTime")]
+    [SerializeField] private float _groundedGraceTime = DefaultGroundedGraceTime;
     [Header("Multiple Jumps")]
-    [SerializeField] private int baseExtraJumps;
+    [Tooltip("Base number of extra jumps allowed.")]
+    [FormerlySerializedAs("baseExtraJumps")]
+    [SerializeField] private int _baseExtraJumps;
     [Header("Recoil Settings")]
-    [SerializeField] private float recoilForce = DefaultRecoilForce;
-    [SerializeField] private float recoilDuration = DefaultRecoilDuration;
-    [SerializeField] private float recoilVerticalForce = DefaultRecoilVerticalForce;
+    [Tooltip("Force applied during recoil.")]
+    [FormerlySerializedAs("recoilForce")]
+    [SerializeField] private float _recoilForce = DefaultRecoilForce;
+    [Tooltip("Duration of recoil effect.")]
+    [FormerlySerializedAs("recoilDuration")]
+    [SerializeField] private float _recoilDuration = DefaultRecoilDuration;
+    [Tooltip("Vertical force applied during recoil.")]
+    [FormerlySerializedAs("recoilVerticalForce")]
+    [SerializeField] private float _recoilVerticalForce = DefaultRecoilVerticalForce;
 
-    // === Public Fields ===
-    public Transform groundCheck;
-    public float normalGrav = DefaultNormalGravity;
-    public float maxFallSpeed = DefaultMaxFallSpeed;
-    public static PlayerMovement instance; // Singleton instance
+    // ==================== Public Properties ====================
+    /// <summary>Transform for ground check (was public field).</summary>
+    public Transform GroundCheck { get; set; }
+    /// <summary>Normal gravity value (was public field).</summary>
+    public float NormalGrav { get; set; } = DefaultNormalGravity;
+    /// <summary>Maximum fall speed (was public field).</summary>
+    public float MaxFallSpeed { get; set; } = DefaultMaxFallSpeed;
+    /// <summary>Singleton instance of PlayerMovement.</summary>
+    public static PlayerMovement Instance { get; private set; }
 
-    // === Private Fields ===
+    // ==================== Private Fields ====================
     private SpriteRenderer _playerSpriteRenderer;
     private int _facingDirection = 1;
     private GameObject _equippedEars;
@@ -90,19 +130,22 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _recoilDirection;
     private Coroutine _currentAIJumpRoutine = null;
 
-    // === Properties ===
-    public float Speed { get => speed; set => speed = value; }
+    // ==================== Properties ====================
+    /// <summary>Movement speed of the player.</summary>
+    public float Speed { get => _speed; set => _speed = value; }
+    /// <summary>Jump power of the player.</summary>
     public float JumpPower { get => _jumpPower; set => _jumpPower = value; }
-    public LayerMask GroundLayer { get => groundLayer; set => groundLayer = value; }
+    /// <summary>Layer mask for ground detection.</summary>
+    public LayerMask GroundLayer { get => _groundLayer; set => _groundLayer = value; }
 
     /// <summary>
     /// Unity Awake callback. Initializes singleton and components.
     /// </summary>
     private void Awake()
     {
-        instance = this;
-        _jumpPower = baseJumpPower;
-        _extraJumps = baseExtraJumps;
+        Instance = this;
+        _jumpPower = _baseJumpPower;
+        _extraJumps = _baseExtraJumps;
         InitializeComponents();
     }
 
@@ -157,10 +200,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 newPosition = new Vector3(EarsDefaultX, EarsDefaultY, 0f);
             }
-            earsSlot.localPosition = newPosition;
+            _earsSlot.localPosition = newPosition;
         }
     }
 
+    // ==================== Movement and Input Logic ====================
     /// <summary>
     /// Updates timers for movement and grounded state.
     /// </summary>
@@ -178,7 +222,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void HandleMovementInput()
     {
-        if (!isAIControlled && _disableMovementTimer <= 0)
+        if (!_isAIControlled && _disableMovementTimer <= 0)
         {
             _horizontalInput = Input.GetAxis("Horizontal");
         }
@@ -188,7 +232,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 transform.position += new Vector3(0f, SmallBumpLift, 0f);
             }
-            _rigidbody2D.velocity = new Vector2(_horizontalInput * speed, _rigidbody2D.velocity.y);
+            _rigidbody2D.velocity = new Vector2(_horizontalInput * _speed, _rigidbody2D.velocity.y);
         }
         else if (IsHorizontallyBlocked() && !IsGrounded())
         {
@@ -200,9 +244,10 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Allows AI to set movement input.
     /// </summary>
+    /// <param name="moveDirection">The direction to move (-1, 0, 1).</param>
     public void SetAIInput(float moveDirection)
     {
-        if (isAIControlled && _disableMovementTimer <= 0)
+        if (_isAIControlled && _disableMovementTimer <= 0)
         {
             _horizontalInput = moveDirection;
         }
@@ -213,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private bool IsHorizontallyBlocked()
     {
-        if (_isInRecoil && _recoilTimer > recoilDuration * RecoilInfluenceThreshold)
+        if (_isInRecoil && _recoilTimer > _recoilDuration * RecoilInfluenceThreshold)
         {
             return false;
         }
@@ -229,7 +274,7 @@ public class PlayerMovement : MonoBehaviour
             0f,
             checkDirection,
             WallCheckBoxCastDistance,
-            obstacleLayer | wallLayer | groundLayer
+            _obstacleLayer | _wallLayer | _groundLayer
         );
         if (hit.collider != null)
         {
@@ -282,9 +327,9 @@ public class PlayerMovement : MonoBehaviour
         {
             _wallJumpCooldown += Time.deltaTime;
         }
-        if (_rigidbody2D.velocity.y < -maxFallSpeed)
+        if (_rigidbody2D.velocity.y < -MaxFallSpeed)
         {
-            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, -maxFallSpeed);
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, -MaxFallSpeed);
         }
     }
 
@@ -308,20 +353,20 @@ public class PlayerMovement : MonoBehaviour
         _wallJumpCooldown += Time.deltaTime;
         if (OnWall() && _horizontalInput != 0 && !IsGrounded())
         {
-            if (_timeSinceGrounded > groundedGraceTime)
+            if (_timeSinceGrounded > _groundedGraceTime)
             {
                 _rigidbody2D.gravityScale = WallJumpGravityScale;
                 _rigidbody2D.velocity = Vector2.zero;
             }
             else
             {
-                _rigidbody2D.gravityScale = normalGrav;
+                _rigidbody2D.gravityScale = NormalGrav;
                 _rigidbody2D.velocity = new Vector2(0, _rigidbody2D.velocity.y);
             }
         }
         else
         {
-            _rigidbody2D.gravityScale = normalGrav;
+            _rigidbody2D.gravityScale = NormalGrav;
             ManageCoyoteTime();
         }
     }
@@ -333,7 +378,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (IsGrounded())
         {
-            _coyoteCounter = coyoteTime;
+            _coyoteCounter = _coyoteTime;
         }
         else if (_coyoteCounter > 0)
         {
@@ -346,7 +391,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void HandleJumpInput()
     {
-        if (!isAIControlled)
+        if (!_isAIControlled)
         {
             if (Input.GetKeyDown(JumpKey))
             {
@@ -359,12 +404,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // ==================== Jump, Power-Up, and Recoil Logic ====================
     /// <summary>
     /// Starts an AI jump routine for a given duration.
     /// </summary>
+    /// <param name="jumpDuration">Duration to hold the jump (seconds).</param>
     public void SetAIJump(float jumpDuration)
     {
-        if (isAIControlled)
+        if (_isAIControlled)
         {
             if (_currentAIJumpRoutine != null || jumpDuration <= 0)
             {
@@ -377,6 +424,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Coroutine for simulating AI jump hold duration.
     /// </summary>
+    /// <param name="jumpDuration">Duration to hold the jump (seconds).</param>
     private IEnumerator AIJumpRoutine(float jumpDuration)
     {
         bool wasGroundJump = AttemptJump();
@@ -416,7 +464,7 @@ public class PlayerMovement : MonoBehaviour
         bool wasGroundJump = Jump();
         if (IsGrounded())
         {
-            SoundManager.instance.PlaySound(jumpSound, gameObject);
+            SoundManager.instance.PlaySound(_jumpSound, gameObject);
         }
         return wasGroundJump;
     }
@@ -467,7 +515,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void PerformWallOrAirJump()
     {
-        if (OnWall() && !IsGrounded() && _timeSinceGrounded > groundedGraceTime && _wallJumpCooldown > 0.05f)
+        if (OnWall() && !IsGrounded() && _timeSinceGrounded > _groundedGraceTime && _wallJumpCooldown > 0.05f)
         {
             PerformWallJump();
         }
@@ -504,14 +552,15 @@ public class PlayerMovement : MonoBehaviour
         _jumpCounter--;
     }
 
+    // ==================== State and Utility Methods ====================
     /// <summary>
     /// Checks if the player is grounded using an OverlapBox.
     /// </summary>
     public bool IsGrounded()
     {
-        Vector2 boxCenter = groundCheck.position;
-        Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckHeight);
-        return Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer | obstacleLayer);
+        Vector2 boxCenter = GroundCheck.position;
+        Vector2 boxSize = new Vector2(_groundCheckWidth, _groundCheckHeight);
+        return Physics2D.OverlapBox(boxCenter, boxSize, 0f, _groundLayer | _obstacleLayer);
     }
 
     /// <summary>
@@ -528,7 +577,7 @@ public class PlayerMovement : MonoBehaviour
             0,
             new Vector2(transform.localScale.x, 0),
             WallCheckBoxCastDistance,
-            wallLayer
+            _wallLayer
         );
         return raycastHit.collider != null;
     }
@@ -577,6 +626,8 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Activates a jump power-up, increasing jumps and jump power.
     /// </summary>
+    /// <param name="bonusJumps">Number of extra jumps to add.</param>
+    /// <param name="bonusJumpPower">Amount to add to jump power.</param>
     public void ActivatePowerUp(int bonusJumps, float bonusJumpPower)
     {
         if (!_hasPowerUp)
@@ -585,9 +636,9 @@ public class PlayerMovement : MonoBehaviour
             _jumpPower += bonusJumpPower;
             _hasPowerUp = true;
         }
-        if (earsSlot != null && earsPrefab != null)
+        if (_earsSlot != null && _earsPrefab != null)
         {
-            _equippedEars = Instantiate(earsPrefab, earsSlot.position, Quaternion.identity, earsSlot);
+            _equippedEars = Instantiate(_earsPrefab, _earsSlot.position, Quaternion.identity, _earsSlot);
         }
     }
 
@@ -598,8 +649,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_hasPowerUp)
         {
-            _extraJumps = baseExtraJumps;
-            _jumpPower = baseJumpPower;
+            _extraJumps = _baseExtraJumps;
+            _jumpPower = _baseJumpPower;
             _hasPowerUp = false;
         }
         if (_equippedEars != null)
@@ -611,6 +662,8 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Applies recoil to the player from a source position or direction.
     /// </summary>
+    /// <param name="sourcePosition">Position of the source of recoil.</param>
+    /// <param name="recoilDirection">Optional direction for recoil.</param>
     public void Recoil(Vector2 sourcePosition, Vector2 recoilDirection = default)
     {
         Vector2 knockbackDirection;
@@ -633,14 +686,15 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Starts the recoil effect with a given direction.
     /// </summary>
+    /// <param name="direction">Direction of the recoil.</param>
     private void StartRecoil(Vector2 direction)
     {
         _isInRecoil = true;
-        _recoilTimer = recoilDuration;
+        _recoilTimer = _recoilDuration;
         _recoilDirection = direction;
         Vector2 recoilVelocity = new Vector2(
-            direction.x * recoilForce,
-            Mathf.Max(direction.y * recoilForce, recoilVerticalForce)
+            direction.x * _recoilForce,
+            Mathf.Max(direction.y * _recoilForce, _recoilVerticalForce)
         );
         _rigidbody2D.velocity = recoilVelocity;
     }
@@ -653,7 +707,7 @@ public class PlayerMovement : MonoBehaviour
         if (_isInRecoil)
         {
             _recoilTimer -= Time.deltaTime;
-            float recoilStrength = _recoilTimer / recoilDuration;
+            float recoilStrength = _recoilTimer / _recoilDuration;
             if (_recoilTimer <= 0f)
             {
                 _isInRecoil = false;

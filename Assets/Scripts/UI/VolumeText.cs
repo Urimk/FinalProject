@@ -8,9 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class VolumeText : MonoBehaviour
 {
+    // === Inspector Fields ===
+    [Header("Volume Display Settings")]
+    [Tooltip("PlayerPrefs key for the volume value.")]
     [SerializeField] private string _volumeName;
+    [Tooltip("Introductory text to display before the volume value.")]
     [SerializeField] private string _textIntro;
 
+    // === Private State ===
     private Text _txt;
 
     /// <summary>

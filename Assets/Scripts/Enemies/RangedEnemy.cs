@@ -12,22 +12,31 @@ public class RangedEnemy : MonoBehaviour
 
     // ==================== Serialized Fields ====================
     [Header("Attack Parameters")]
+    [Tooltip("Cooldown time between attacks in seconds.")]
     [SerializeField] private float _attackCooldown;
+    [Tooltip("Damage dealt to the player per attack.")]
     [SerializeField] private int _damage;
+    [Tooltip("Attack range for detecting the player.")]
     [SerializeField] private float _range;
 
     [Header("Ranged Attack")]
+    [Tooltip("Transform from which fireballs are spawned.")]
     [SerializeField] private Transform _firepoint;
+    [Tooltip("Pool of fireball GameObjects for reuse.")]
     [SerializeField] private GameObject[] _fireballs;
 
     [Header("Collider Parameters")]
+    [Tooltip("Distance multiplier for the box cast used in player detection.")]
     [SerializeField] private float _colliderDistance;
+    [Tooltip("BoxCollider2D used for player detection.")]
     [SerializeField] private BoxCollider2D _boxCollider;
 
     [Header("Player Layer")]
+    [Tooltip("Layer mask for detecting the player.")]
     [SerializeField] private LayerMask _playerLayer;
 
     [Header("Fireball Sound")]
+    [Tooltip("Sound to play when firing a fireball.")]
     [SerializeField] private AudioClip _fireballSound;
 
     // ==================== Private Fields ====================
@@ -35,6 +44,7 @@ public class RangedEnemy : MonoBehaviour
     private Animator _animator;
     private EnemyPatrol _enemyPatrol;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Initializes animator and patrol references.
     /// </summary>
@@ -64,6 +74,7 @@ public class RangedEnemy : MonoBehaviour
         }
     }
 
+    // ==================== Attack Logic ====================
     /// <summary>
     /// Checks if the player is in sight using a box cast.
     /// </summary>

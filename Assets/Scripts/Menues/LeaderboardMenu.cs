@@ -12,6 +12,7 @@ using UnityEngine;
 /// </summary>
 public class LeaderboardMenu : MonoBehaviour
 {
+    // ==================== Constants ====================
     private const int LeaderboardCells = 9;
     private const int MaxResultsCount = 1;
     private const string CustomIdPrefix = "TestPlayer_";
@@ -22,13 +23,20 @@ public class LeaderboardMenu : MonoBehaviour
     private const string SpesificLBComponentNotFoundError = "SpesificLB component not found on MainMenuManager.";
     private const string MainMenuControllerNotFoundError = "MainMenuController not found.";
 
+    // ==================== Inspector Fields ====================
+    [Tooltip("Sound effect to play when a button is clicked.")]
     [SerializeField] private AudioClip _buttonClickSound;
+    [Tooltip("Reference to the MainMenu GameObject.")]
     [SerializeField] private GameObject _mainMenu;
+    [Tooltip("Reference to the LeaderboardMenu GameObject.")]
     [SerializeField] private GameObject _leaderboardMenu;
+    [Tooltip("Reference to the SpesificLB GameObject.")]
     [SerializeField] private GameObject _spesificLB;
-    [SerializeField] private TMP_Text[] _leaderboardTexts; // Array for all 9 leaderboard cells
-    private int _currentIndex;  // To store the index temporarily
+    [Tooltip("Text fields for all 9 leaderboard cells.")]
+    [SerializeField] private TMP_Text[] _leaderboardTexts;
 
+    // ==================== Private Fields ====================
+    private int _currentIndex;
     private readonly string[] _leaderboardNames =
     {
         "Level1_Easy", "Level1_Normal", "Level1_Hard",
@@ -36,6 +44,7 @@ public class LeaderboardMenu : MonoBehaviour
         "Level3_Easy", "Level3_Normal", "Level3_Hard"
     };
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Logs in anonymously to PlayFab and loads top players for all leaderboards.
     /// </summary>
@@ -44,29 +53,7 @@ public class LeaderboardMenu : MonoBehaviour
         LoginAnonymously();
     }
 
-    /// <summary>
-    /// Logs in anonymously using a custom ID.
-    /// </summary>
-    private void LoginAnonymously()
-    {
-        string customId = CustomIdPrefix + System.DateTime.UtcNow.Ticks;
-
-        PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest
-        {
-            CustomId = customId,
-            CreateAccount = true
-        },
-        result =>
-        {
-            Debug.Log("Logged in anonymously");
-            LoadTopPlayers();
-        },
-        error =>
-        {
-            Debug.LogError("Error logging in anonymously: " + error.GenerateErrorReport());
-        });
-    }
-
+    // ==================== Menu Navigation ====================
     /// <summary>
     /// Returns to the main menu from the leaderboard menu.
     /// </summary>
@@ -80,6 +67,7 @@ public class LeaderboardMenu : MonoBehaviour
     /// <summary>
     /// Opens a specific leaderboard by index.
     /// </summary>
+    /// <param name="index">Leaderboard index to open.</param>
     public void ChooseLB(int index)
     {
         if (index < 0 || index >= _leaderboardNames.Length)
@@ -112,6 +100,30 @@ public class LeaderboardMenu : MonoBehaviour
         }
 
         _spesificLB.SetActive(true);
+    }
+
+    // ==================== PlayFab Logic ====================
+    /// <summary>
+    /// Logs in anonymously using a custom ID.
+    /// </summary>
+    private void LoginAnonymously()
+    {
+        string customId = CustomIdPrefix + System.DateTime.UtcNow.Ticks;
+
+        PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest
+        {
+            CustomId = customId,
+            CreateAccount = true
+        },
+        result =>
+        {
+            Debug.Log("Logged in anonymously");
+            LoadTopPlayers();
+        },
+        error =>
+        {
+            Debug.LogError("Error logging in anonymously: " + error.GenerateErrorReport());
+        });
     }
 
     /// <summary>

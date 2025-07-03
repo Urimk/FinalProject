@@ -1,16 +1,38 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Controls an enemy that moves sideways (horizontally or vertically) and damages the player on contact.
 /// </summary>
 public class Enemy_Sideways : MonoBehaviour
 {
+    // === Inspector Fields ===
+    [Header("Movement Settings")]
+    [Tooltip("Distance the enemy moves from its starting position.")]
     [SerializeField] private float _movementDistance;
+
+    [Tooltip("Speed at which the enemy moves.")]
     [SerializeField] private float _speed;
+
+    [Tooltip("Amount of damage dealt to the player on contact.")]
     [SerializeField] private float _damage;
+
+    [Tooltip("If true, the enemy moves vertically; otherwise, horizontally.")]
     [SerializeField] private bool _moveVertically;
 
-    public bool MovingNegative = true;
+    // === State ===
+    [FormerlySerializedAs("MovingNegative")]
+    [Tooltip("Indicates if the enemy is currently moving in the negative direction.")]
+    [SerializeField] private bool _movingNegative = true;
+    /// <summary>
+    /// Gets or sets whether the enemy is currently moving in the negative direction.
+    /// </summary>
+    public bool MovingNegative
+    {
+        get => _movingNegative;
+        set => _movingNegative = value;
+    }
+
     private float _minEdge;
     private float _maxEdge;
 
@@ -29,7 +51,7 @@ public class Enemy_Sideways : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (MovingNegative)
+        if (_movingNegative)
         {
             if ((_moveVertically && transform.position.y > _minEdge) ||
                 (!_moveVertically && transform.position.x > _minEdge))
@@ -38,7 +60,7 @@ public class Enemy_Sideways : MonoBehaviour
             }
             else
             {
-                MovingNegative = false;
+                _movingNegative = false;
             }
         }
         else
@@ -50,7 +72,7 @@ public class Enemy_Sideways : MonoBehaviour
             }
             else
             {
-                MovingNegative = true;
+                _movingNegative = true;
             }
         }
     }

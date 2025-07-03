@@ -3,6 +3,7 @@
 using TMPro;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Represents a spike that can be sorted, moved, and reset for sorting puzzles.
@@ -13,9 +14,17 @@ public class SortedSpike : MonoBehaviour
     private const float InactiveYOffset = -2f;
     private const float PositionEpsilon = 0.01f;
 
-    // === Serialized Fields ===
-    public TextMeshPro IndexText; // The text showing the index
-    public GameObject Spike;
+    // === Inspector Fields ===
+    [Header("Spike Components")]
+    [FormerlySerializedAs("IndexText")]
+    [Tooltip("TextMeshPro component displaying the spike's index.")]
+    [SerializeField] private TMPro.TextMeshPro _indexText;
+    public TMPro.TextMeshPro IndexText { get => _indexText; set => _indexText = value; }
+
+    [FormerlySerializedAs("Spike")]
+    [Tooltip("GameObject representing the spike.")]
+    [SerializeField] private GameObject _spike;
+    public GameObject Spike { get => _spike; set => _spike = value; }
 
     // === Private Fields ===
     private int _index;
@@ -27,23 +36,25 @@ public class SortedSpike : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _isActive = Spike.activeSelf;
+        _isActive = _spike.activeSelf;
         // Store the base position when the spike is first created
-        _basePosition = Spike.transform.position;
+        _basePosition = _spike.transform.position;
     }
 
     /// <summary>
     /// Sets the index and updates the display text.
     /// </summary>
+    /// <param name="newIndex">The new index to set.</param>
     public void SetIndex(int newIndex)
     {
         _index = newIndex;
-        IndexText.text = _index.ToString(); // Update the text
+        _indexText.text = _index.ToString(); // Update the text
     }
 
     /// <summary>
     /// Gets the current index.
     /// </summary>
+    /// <returns>The current index value.</returns>
     public int GetIndex()
     {
         return _index;
@@ -52,6 +63,7 @@ public class SortedSpike : MonoBehaviour
     /// <summary>
     /// Sets the active state of the spike.
     /// </summary>
+    /// <param name="active">Whether the spike should be active.</param>
     public void SetActive(bool active)
     {
         _isActive = active;
@@ -60,6 +72,7 @@ public class SortedSpike : MonoBehaviour
     /// <summary>
     /// Returns whether the spike is active.
     /// </summary>
+    /// <returns>True if the spike is active; otherwise, false.</returns>
     public bool IsActive()
     {
         return _isActive;
@@ -68,20 +81,23 @@ public class SortedSpike : MonoBehaviour
     /// <summary>
     /// Moves the spike vertically by a given offset over a duration.
     /// </summary>
+    /// <param name="offset">The vertical offset to move.</param>
+    /// <param name="duration">The duration of the movement.</param>
+    /// <returns>Coroutine enumerator.</returns>
     public IEnumerator MoveSpikeY(float offset, float duration)
     {
-        Vector3 startPos = Spike.transform.position; // Use spike's position, not SortedSpike
+        Vector3 startPos = _spike.transform.position; // Use spike's position, not SortedSpike
         Vector3 targetPos = startPos + new Vector3(0, offset, 0);
         float elapsed = 0;
 
         while (elapsed < duration)
         {
-            Spike.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / duration);
+            _spike.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        Spike.transform.position = targetPos; // Final position update
+        _spike.transform.position = targetPos; // Final position update
     }
 
     /// <summary>
@@ -93,14 +109,14 @@ public class SortedSpike : MonoBehaviour
         if (_isActive)
         {
             // If spike should be active, make sure it's fully up (y position + 2 from base)
-            Vector3 targetPos = new Vector3(Spike.transform.position.x, _basePosition.y, Spike.transform.position.z);
-            Spike.transform.position = targetPos;
+            Vector3 targetPos = new Vector3(_spike.transform.position.x, _basePosition.y, _spike.transform.position.z);
+            _spike.transform.position = targetPos;
         }
         else
         {
             // If spike should be inactive, make sure it's at base level
-            Vector3 targetPos = new Vector3(Spike.transform.position.x, _basePosition.y + InactiveYOffset, Spike.transform.position.z);
-            Spike.transform.position = targetPos;
+            Vector3 targetPos = new Vector3(_spike.transform.position.x, _basePosition.y + InactiveYOffset, _spike.transform.position.z);
+            _spike.transform.position = targetPos;
         }
     }
 
@@ -109,6 +125,6 @@ public class SortedSpike : MonoBehaviour
     /// </summary>
     public void UpdateBasePosition()
     {
-        _basePosition = Spike.transform.position;
+        _basePosition = _spike.transform.position;
     }
 }

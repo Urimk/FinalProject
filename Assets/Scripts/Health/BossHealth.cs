@@ -11,27 +11,59 @@ using UnityEngine.UI;
 public class BossHealth : MonoBehaviour, IDamageable
 {
     // ==================== Constants ====================
+    /// <summary>Offset for the health bar above the boss.</summary>
     private static readonly Vector3 HealthBarOffset = new Vector3(0, 2.6f, 0);
+    /// <summary>Time to wait after death animation before destroying the boss.</summary>
     private const float DeathAnimationWait = 2f;
+    /// <summary>Divisor for normalizing health bar value.</summary>
     private const float HealthNormalizationDivisor = 1f;
 
-    // ==================== Serialized Fields ====================
-    [SerializeField] public float maxHealth = 10f;
-    public event Action<float> OnBossDamaged;
-    public float currentHealth { get; private set; }
+    // ==================== Inspector Fields ====================
+    [Header("Boss Health Settings")]
+    [Tooltip("Maximum health of the boss.")]
+    [FormerlySerializedAs("maxHealth")]
+    [SerializeField] private float _maxHealth = 10f;
+
+    [Tooltip("Current health of the boss.")]
+    [FormerlySerializedAs("currentHealth")]
+    [SerializeField] private float _currentHealth = 10f;
+
+    [Header("UI References")]
+    [Tooltip("Slider component for the boss health bar.")]
     [SerializeField] private Slider _healthSlider;
+
+    [Header("Boss References")]
+    [Tooltip("SPUM prefab GameObject for animation control.")]
     [SerializeField] private GameObject _spumPrefabObject;
+    [Tooltip("Transform of the boss for positioning the health bar.")]
     [SerializeField] private Transform _boss;
+    [Tooltip("Boss reward manager for reporting damage.")]
     [SerializeField] private BossRewardManager _rm;
+    [Tooltip("True if boss is in training mode.")]
     [SerializeField] private bool _isTraining;
+    [Tooltip("Trophy GameObject to activate on boss defeat.")]
     [SerializeField] private GameObject _trophy;
+    [Tooltip("List of MonoBehaviours implementing IBoss for boss logic.")]
     [SerializeField] private List<MonoBehaviour> _bossScriptObjects;
+
+    // ==================== Events ====================
+    /// <summary>Invoked when the boss takes damage. Passes the damage amount.</summary>
+    public event Action<float> OnBossDamaged;
+    /// <summary>Invoked when the boss dies.</summary>
+    public event Action OnBossDied;
+
+    // ==================== Properties ====================
+    /// <summary>Current health of the boss.</summary>
+    public float CurrentHealth { get => _currentHealth; private set => _currentHealth = value; }
+    /// <summary>Maximum health of the boss.</summary>
+    public float MaxHealth => _maxHealth;
 
     // ==================== Private Fields ====================
     private SPUM_Prefabs _spumPrefabs;
     private bool _isDying = false;
     private List<IBoss> _bossScripts = new List<IBoss>();
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Initializes SPUM prefab reference.
     /// </summary>
@@ -47,6 +79,9 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
     }
 
+    /// <summary>
+    /// Updates the health bar position and rotation to follow the boss.
+    /// </summary>
     private void LateUpdate()
     {
         if (_healthSlider != null && _boss != null)
@@ -61,7 +96,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     /// </summary>
     private void Start()
     {
-        currentHealth = maxHealth;
+        CurrentHealth = _maxHealth;
         UpdateHealthBar();
         foreach (var obj in _bossScriptObjects)
         {
@@ -72,16 +107,19 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
     }
 
+    // ==================== Boss Health Logic ====================
     /// <summary>
     /// Applies damage to the boss and updates health bar.
     /// </summary>
+    /// <param name="damage">Amount of damage to apply.</param>
     public void TakeDamage(float damage)
     {
         _rm.ReportTookDamage(damage);
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        CurrentHealth -= damage;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
         UpdateHealthBar();
 
+        // Only play damaged animation if all boss scripts are idle and not dying
         bool allIdle = _bossScripts.TrueForAll(b => !b.IsCurrentlyChargingOrDashing());
         if (_spumPrefabs != null && !_isDying && allIdle)
         {
@@ -89,7 +127,7 @@ public class BossHealth : MonoBehaviour, IDamageable
             OnBossDamaged?.Invoke(damage);
         }
 
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             Die();
         }
@@ -100,17 +138,23 @@ public class BossHealth : MonoBehaviour, IDamageable
     /// </summary>
     public float GetHealthPercentage()
     {
-        return currentHealth / maxHealth;
+        return CurrentHealth / MaxHealth;
     }
 
+    /// <summary>
+    /// Updates the health bar UI to reflect current health.
+    /// </summary>
     private void UpdateHealthBar()
     {
         if (_healthSlider != null)
         {
-            _healthSlider.value = currentHealth / maxHealth / HealthNormalizationDivisor;
+            _healthSlider.value = CurrentHealth / MaxHealth / HealthNormalizationDivisor;
         }
     }
-    public event System.Action OnBossDied;
+
+    /// <summary>
+    /// Handles boss death logic, animation, and cleanup.
+    /// </summary>
     private void Die()
     {
         Debug.Log("Boss Defeated!");
@@ -144,6 +188,9 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
     }
 
+    /// <summary>
+    /// Waits for the death animation, then destroys the boss GameObject.
+    /// </summary>
     private IEnumerator DestroyAfterAnimation()
     {
         yield return new WaitForSeconds(DeathAnimationWait);
@@ -151,12 +198,13 @@ public class BossHealth : MonoBehaviour, IDamageable
     }
 
     /// <summary>
-    /// Resets the boss's health and health bar.
+    /// Resets the boss's health and health bar for reuse.
     /// </summary>
     public void ResetHealth()
     {
-        currentHealth = maxHealth;
-        _healthSlider.gameObject.SetActive(true);
+        CurrentHealth = MaxHealth;
+        if (_healthSlider != null)
+            _healthSlider.gameObject.SetActive(true);
         _isDying = false;
     }
 }

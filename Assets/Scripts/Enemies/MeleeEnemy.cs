@@ -14,18 +14,25 @@ public class MeleeEnemy : MonoBehaviour
 
     // ==================== Serialized Fields ====================
     [Header("Attack Parameters")]
+    [Tooltip("Cooldown time between attacks in seconds.")]
     [SerializeField] private float _attackCooldown;
+    [Tooltip("Damage dealt to the player per attack.")]
     [SerializeField] private int _damage;
+    [Tooltip("Attack range for detecting the player.")]
     [SerializeField] private float _range;
 
     [Header("Collider Parameters")]
+    [Tooltip("Distance multiplier for the box cast used in player detection.")]
     [SerializeField] private float _colliderDistance;
+    [Tooltip("BoxCollider2D used for player detection.")]
     [SerializeField] private BoxCollider2D _boxCollider;
 
     [Header("Player Layer")]
+    [Tooltip("Layer mask for detecting the player.")]
     [SerializeField] private LayerMask _playerLayer;
 
     [Header("Attack Sound")]
+    [Tooltip("Sound to play when performing a melee attack.")]
     [SerializeField] private AudioClip _attackSound;
 
     // ==================== Private Fields ====================
@@ -34,6 +41,7 @@ public class MeleeEnemy : MonoBehaviour
     private EnemyPatrol _enemyPatrol;
     private Animator _animator;
 
+    // ==================== Unity Lifecycle ====================
     /// <summary>
     /// Initializes animator and patrol references.
     /// </summary>
@@ -64,6 +72,7 @@ public class MeleeEnemy : MonoBehaviour
         }
     }
 
+    // ==================== Attack Logic ====================
     /// <summary>
     /// Checks if the player is in sight using a box cast.
     /// </summary>
