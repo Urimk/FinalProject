@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Manages the Boss's behavior, attacks, and state.
@@ -27,69 +28,94 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
 
     // ==================== Serialized Fields ====================
     [Tooltip("Reference to the boss's Rigidbody2D component.")]
+    [FormerlySerializedAs("rb")]
     [SerializeField] private Rigidbody2D _rb;
     [Tooltip("Movement speed of the boss.")]
+    [FormerlySerializedAs("movementSpeed")]
     [SerializeField] private float _movementSpeed;
     [Tooltip("Should the boss reset health on state reset?")]
+    [FormerlySerializedAs("doRestHealth")]
     [SerializeField] private bool _doRestHealth;
     [Tooltip("Reference to the player's Health component.")]
+    [FormerlySerializedAs("playerHealth")]
     [SerializeField] private Health _playerHealth;
 
     [Header("Attack Parameters")]
     [Tooltip("Cooldown time between attacks.")]
+    [FormerlySerializedAs("attackCooldown")]
     [SerializeField] private float _attackCooldown = 6f;
     [Tooltip("Damage dealt by fireballs.")]
+    [FormerlySerializedAs("fireballDamage")]
     [SerializeField] private int _fireballDamage = 1;
     [Tooltip("Speed of projectile attacks.")]
+    [FormerlySerializedAs("projectileSpeed")]
     [SerializeField] private float _projectileSpeed = 5f;
     [Tooltip("Size of projectile attacks.")]
+    [FormerlySerializedAs("projectileSize")]
     [SerializeField] private float _projectileSize = 0.3f;
     [Tooltip("Attack range for detecting the player.")]
+    [FormerlySerializedAs("attackRange")]
     [SerializeField] private float _attackRange = 10f;
     [Tooltip("Sound played when firing a fireball.")]
+    [FormerlySerializedAs("fireballSound")]
     [SerializeField] private AudioClip _fireballSound;
 
     [Header("Phase Control")]
     [Tooltip("Reference to the BossHealth component.")]
+    [FormerlySerializedAs("bossHealth")]
     [SerializeField] private BossHealth _bossHealth;
     private bool _isPhase2 = false;
 
     [Header("Ranged Attack")]
     [Tooltip("Transform where fireballs are spawned from.")]
+    [FormerlySerializedAs("firepoint")]
     [SerializeField] private Transform _firepoint;
     [Tooltip("Projectile prefab for ranged attacks.")]
+    [FormerlySerializedAs("projectilePrefab")]
     [SerializeField] private GameObject _projectilePrefab;
     [Tooltip("Array of fireball GameObjects for pooling.")]
+    [FormerlySerializedAs("fireballs")]
     [SerializeField] private GameObject[] _fireballs;
     [Tooltip("Reference to the player Transform.")]
+    [FormerlySerializedAs("player")]
     [SerializeField] private Transform _player;
     [Tooltip("Reference to the fireball holder Transform.")]
+    [FormerlySerializedAs("fireballHolder")]
     [SerializeField] private Transform _fireballHolder;
 
     [Header("Flame Attack")]
     [Tooltip("Reference to the flame GameObject.")]
+    [FormerlySerializedAs("flame")]
     [SerializeField] private GameObject _flame;
     [Tooltip("Prefab for the area marker.")]
+    [FormerlySerializedAs("areaMarkerPrefab")]
     [SerializeField] private GameObject _areaMarkerPrefab;
     [Tooltip("Cooldown time between flame attacks.")]
+    [FormerlySerializedAs("fireAttackCooldown")]
     [SerializeField] private float _fireAttackCooldown = 6f;
 
     [Header("Charge Dash Attack")]
     [Tooltip("Time to charge before dashing.")]
+    [FormerlySerializedAs("dashChargeTime")]
     [SerializeField] private float _dashChargeTime = 2f;
     [Tooltip("Speed of the dash attack.")]
+    [FormerlySerializedAs("dashSpeed")]
     [SerializeField] private float _dashSpeed = 10f;
     [Tooltip("Cooldown time between dash attacks.")]
+    [FormerlySerializedAs("dashCooldown")]
     [SerializeField] private float _dashCooldown = 10f;
     [Tooltip("Sound played when charging dash.")]
+    [FormerlySerializedAs("chargeSound")]
     [SerializeField] private AudioClip _chargeSound;
     [Tooltip("Sound played when dashing.")]
+    [FormerlySerializedAs("dashSound")]
     [SerializeField] private AudioClip _dashSound;
     [Tooltip("Prefab for the target icon.")]
+    [FormerlySerializedAs("targetIconPrefab")]
     [SerializeField] private GameObject _targetIconPrefab;
-    private GameObject _targetIconInstance;
 
     // ==================== Private Fields ====================
+    private GameObject _targetIconInstance;
     private bool _isChargingDash = false;
     private bool _detectedPlayer;
     private bool _isDashing = false;

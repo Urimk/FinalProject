@@ -1,5 +1,7 @@
 ﻿using System.Collections; // Required for Coroutines
+
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Controls an arrow trap that periodically fires arrows and can optionally rotate its firepoint.
@@ -15,35 +17,43 @@ public class ArrowTrap : MonoBehaviour
     // === Inspector Fields ===
     [Header("Attack Settings")]
     [Tooltip("Cooldown time in seconds between arrow attacks.")]
+    [FormerlySerializedAs("attackCooldown")]
     [SerializeField] private float _attackCooldown;
 
     [Header("Firepoint Settings")]
     [Tooltip("Transform from which arrows are fired.")]
+    [FormerlySerializedAs("firepoint")]
     [SerializeField] private Transform _firepoint;
 
     [Tooltip("Array of arrow GameObjects used as a pool for firing.")]
+    [FormerlySerializedAs("arrows")]
     [SerializeField] private GameObject[] _arrows;
 
     [Tooltip("Speed at which arrows are fired.")]
+    [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed = DefaultSpeed;
 
     [Tooltip("If true, arrows are marked as 'coming out' for special behavior.")]
+    [FormerlySerializedAs("isComingOut")]
     [SerializeField] private bool _isComingOut = false;
 
     [Header("Sound Settings")]
     [Tooltip("Sound to play when an arrow is fired.")]
+    [FormerlySerializedAs("arrowSound")]
     [SerializeField] private AudioClip _arrowSound;
 
     [Header("Rotation Settings")]
     [Tooltip("If true, the firepoint will rotate back and forth.")]
+    [FormerlySerializedAs("rotateFirepoint")]
     [SerializeField] private bool _rotateFirepoint = false;
 
     [Tooltip("Maximum angle to rotate the firepoint.")]
+    [FormerlySerializedAs("rotationAngle")]
     [SerializeField] private float _rotationAngle = DefaultRotationAngle;
 
     [Tooltip("Duration in seconds for each rotation segment.")]
+    [FormerlySerializedAs("rotationDuration")]
     [SerializeField] private float _rotationDuration = DefaultRotationDuration;
-
     // === Private State ===
     private float _cooldownTimer;
     private bool _rotatingForward = true;

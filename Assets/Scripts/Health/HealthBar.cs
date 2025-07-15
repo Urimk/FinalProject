@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -11,10 +12,14 @@ public class HealthBar : MonoBehaviour
 
     // ==================== Inspector Fields ====================
     [Tooltip("Reference to the player's Health component.")]
+    [FormerlySerializedAs("playerHealth")]
     [SerializeField] private Health _playerHealth;
     [Tooltip("Image representing the total health bar.")]
+    [FormerlySerializedAs("totalHealthBar")]
+
     [SerializeField] private Image _totalHealthBar;
     [Tooltip("Image representing the current health bar.")]
+    [FormerlySerializedAs("currentHealthBar")]
     [SerializeField] private Image _currentHealthBar;
 
     // ==================== Unity Lifecycle ====================

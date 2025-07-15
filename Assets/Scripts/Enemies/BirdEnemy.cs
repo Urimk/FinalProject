@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Controls the egg-laying bird enemy, including egg laying and crash behavior.
@@ -17,14 +18,22 @@ public class EggLayingBird : MonoBehaviour
     // ==================== Serialized Fields ====================
     [Header("Egg Laying Parameters")]
     [Tooltip("Cooldown time between egg lays.")]
+    [FormerlySerializedAs("layCooldown")]
+
     [SerializeField] private float _layCooldown = 2f;
     [Tooltip("Transform where eggs are dropped from.")]
+    [FormerlySerializedAs("eggDropPoint")]
+
     [SerializeField] private Transform _eggDropPoint;
     [Tooltip("Array of egg prefabs for pooling.")]
+    [FormerlySerializedAs("eggPrefabs")]
+
     [SerializeField] private GameObject[] _eggPrefabs;
 
     [Header("Sound")]
     [Tooltip("Sound played when an egg is dropped.")]
+    [FormerlySerializedAs("eggDropSound")]
+
     [SerializeField] private AudioClip _eggDropSound;
 
     // ==================== Private Fields ====================

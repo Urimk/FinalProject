@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles enemy patrol movement between two points, including idle and animation logic.
@@ -12,12 +13,15 @@ public class EnemyPatrol : MonoBehaviour
     // ==================== Serialized Fields ====================
     [Header("Patrol Points")]
     [Tooltip("Transform marking the left patrol edge.")]
+    [FormerlySerializedAs("leftEdge")]
     [SerializeField] private Transform _leftEdge;
     [Tooltip("Transform marking the right patrol edge.")]
+    [FormerlySerializedAs("rightEdge")]
     [SerializeField] private Transform _rightEdge;
 
     [Header("Enemy")]
     [Tooltip("Transform of the enemy to move.")]
+    [FormerlySerializedAs("enemy")]
     [SerializeField] private Transform _enemy;
 
     [Header("Movement Parameters")]

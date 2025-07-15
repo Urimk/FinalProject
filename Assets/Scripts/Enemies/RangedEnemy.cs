@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles ranged enemy attack logic, including player detection, fireball attack, and cooldown.
@@ -13,30 +14,43 @@ public class RangedEnemy : MonoBehaviour
     // ==================== Serialized Fields ====================
     [Header("Attack Parameters")]
     [Tooltip("Cooldown time between attacks in seconds.")]
+    [FormerlySerializedAs("attackCooldown")]
     [SerializeField] private float _attackCooldown;
+
     [Tooltip("Damage dealt to the player per attack.")]
+    [FormerlySerializedAs("damage")]
     [SerializeField] private int _damage;
+
     [Tooltip("Attack range for detecting the player.")]
+    [FormerlySerializedAs("range")]
     [SerializeField] private float _range;
 
     [Header("Ranged Attack")]
     [Tooltip("Transform from which fireballs are spawned.")]
+    [FormerlySerializedAs("firepoint")]
     [SerializeField] private Transform _firepoint;
+
     [Tooltip("Pool of fireball GameObjects for reuse.")]
+    [FormerlySerializedAs("fireballs")]
     [SerializeField] private GameObject[] _fireballs;
 
     [Header("Collider Parameters")]
     [Tooltip("Distance multiplier for the box cast used in player detection.")]
+    [FormerlySerializedAs("colliderDistance")]
     [SerializeField] private float _colliderDistance;
+
     [Tooltip("BoxCollider2D used for player detection.")]
+    [FormerlySerializedAs("boxCollider")]
     [SerializeField] private BoxCollider2D _boxCollider;
 
     [Header("Player Layer")]
     [Tooltip("Layer mask for detecting the player.")]
+    [FormerlySerializedAs("playerLayer")]
     [SerializeField] private LayerMask _playerLayer;
 
     [Header("Fireball Sound")]
     [Tooltip("Sound to play when firing a fireball.")]
+    [FormerlySerializedAs("fireballSound")]
     [SerializeField] private AudioClip _fireballSound;
 
     // ==================== Private Fields ====================

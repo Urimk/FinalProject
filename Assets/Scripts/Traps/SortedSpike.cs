@@ -16,13 +16,14 @@ public class SortedSpike : MonoBehaviour
 
     // === Inspector Fields ===
     [Header("Spike Components")]
-    [FormerlySerializedAs("IndexText")]
     [Tooltip("TextMeshPro component displaying the spike's index.")]
-    [SerializeField] private TMPro.TextMeshPro _indexText;
-    public TMPro.TextMeshPro IndexText { get => _indexText; set => _indexText = value; }
+    [FormerlySerializedAs("indexText")]
+    [SerializeField] private TextMeshPro _indexText;
+    public TextMeshPro IndexText { get => _indexText; set => _indexText = value; }
 
-    [FormerlySerializedAs("Spike")]
+
     [Tooltip("GameObject representing the spike.")]
+    [FormerlySerializedAs("spike")]
     [SerializeField] private GameObject _spike;
     public GameObject Spike { get => _spike; set => _spike = value; }
 

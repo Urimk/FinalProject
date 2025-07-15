@@ -24,22 +24,30 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     // ==================== Serialized Fields ====================
     [Header("Boss Parameters")]
+    [FormerlySerializedAs("movementSpeed")]
     [Tooltip("Movement speed of the boss.")]
     [SerializeField] private float _movementSpeed = 3.0f;
+    [FormerlySerializedAs("doRestHealth")]
     [Tooltip("Should the boss reset health on state reset?")]
     [SerializeField] private bool _doRestHealth;
+    [FormerlySerializedAs("attackRange")]
     [Tooltip("Attack range for detecting the player.")]
     [SerializeField] private float _attackRange = 10f;
 
     [Header("References")]
+    [FormerlySerializedAs("player")]
     [Tooltip("Reference to the player Transform.")]
     [SerializeField] private Transform _player;
+    [FormerlySerializedAs("playerHealth")]
     [Tooltip("Reference to the player's Health component.")]
     [SerializeField] private Health _playerHealth;
+    [FormerlySerializedAs("energySlider")]
     [Tooltip("Reference to the boss's energy UI slider.")]
     [SerializeField] private Slider _energySlider;
+    [FormerlySerializedAs("anim")]
     [Tooltip("Reference to the boss's Animator component.")]
     [SerializeField] private Animator _anim;
+    [FormerlySerializedAs("rb")]
     [Tooltip("Reference to the boss's Rigidbody2D component.")]
     [SerializeField] private Rigidbody2D _rb;
     [Tooltip("Reference to the BossRewardManager (must be assigned in Inspector).")]
@@ -49,22 +57,31 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// Gets the BossRewardManager reference.
     /// </summary>
     public BossRewardManager RewardManager => _rewardManager;
+    [FormerlySerializedAs("bossHealth")]
     [Tooltip("Reference to the BossHealth component.")]
     [SerializeField] private BossHealth _bossHealth;
+    [FormerlySerializedAs("firepoint")]
     [Tooltip("Reference to the firepoint Transform.")]
     [SerializeField] private Transform _firepoint;
+    [FormerlySerializedAs("fireballHolder")]
     [Tooltip("Reference to the fireball holder Transform.")]
     [SerializeField] private Transform _fireballHolder;
+    [FormerlySerializedAs("fireballs")]
     [Tooltip("Array of fireball GameObjects.")]
     [SerializeField] private GameObject[] _fireballs;
+    [FormerlySerializedAs("flame")]
     [Tooltip("Reference to the flame GameObject.")]
     [SerializeField] private GameObject _flame;
+    [FormerlySerializedAs("areaMarkerPrefab")]
     [Tooltip("Prefab for the area marker.")]
     [SerializeField] private GameObject _areaMarkerPrefab;
+    [FormerlySerializedAs("leftWall")]
     [Tooltip("Reference to the left wall Transform.")]
     [SerializeField] private Transform _leftWall;
+    [FormerlySerializedAs("rightWall")]
     [Tooltip("Reference to the right wall Transform.")]
     [SerializeField] private Transform _rightWall;
+    [FormerlySerializedAs("targetIconPrefab")]
     [Tooltip("Prefab for the target icon.")]
     [SerializeField] private GameObject _targetIconPrefab;
 
@@ -76,20 +93,25 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// Gets the attack cooldown value.
     /// </summary>
     public float AttackCooldown => _attackCooldown;
+    [FormerlySerializedAs("fireballDamage")]
     [Tooltip("Damage dealt by fireballs.")]
     [SerializeField] private int _fireballDamage = 1;
+    [FormerlySerializedAs("projectileSpeed")]
     [Tooltip("Speed of projectile attacks.")]
     [SerializeField] private float _projectileSpeed = 5f;
+    [FormerlySerializedAs("projectileSize")]
     [Tooltip("Size of projectile attacks.")]
     [SerializeField] private float _projectileSize = 0.3f;
+    [FormerlySerializedAs("fireballSound")]
     [Tooltip("Sound played when firing a fireball.")]
     [SerializeField] private AudioClip _fireballSound;
+    [FormerlySerializedAs("predictionTime")]
     [Tooltip("How far ahead (in seconds) to predict player movement for aiming fireballs.")]
     [SerializeField] private float _predictionTime = 0.3f;
 
     [Header("Flame Attack Parameters")]
-    [Tooltip("Cooldown time between flame attacks.")]
     [FormerlySerializedAs("fireAttackCooldown")]
+    [Tooltip("Cooldown time between flame attacks.")]
     [SerializeField] private float _fireAttackCooldown = 4f;
     /// <summary>
     /// Gets the flame attack cooldown value.
@@ -97,43 +119,55 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     public float FireAttackCooldown => _fireAttackCooldown;
 
     [Header("Charge Dash Attack Parameters")]
+    [FormerlySerializedAs("dashChargeTime")]
     [Tooltip("Time to charge before dashing.")]
     [SerializeField] private float _dashChargeTime = 2f;
+    [FormerlySerializedAs("dashSpeed")]
     [Tooltip("Speed of the dash attack.")]
     [SerializeField] private float _dashSpeed = 10f;
     [Tooltip("Cooldown time between dash attacks.")]
     [FormerlySerializedAs("dashCooldown")]
-
     [SerializeField] private float _dashCooldown = 8f;
     /// <summary>
     /// Gets the dash cooldown value.
     /// </summary>
     public float DashCooldown => _dashCooldown;
+    [FormerlySerializedAs("chargeSound")]
     [Tooltip("Sound played when charging dash.")]
     [SerializeField] private AudioClip _chargeSound;
+    [FormerlySerializedAs("dashSound")]
     [Tooltip("Sound played when dashing.")]
     [SerializeField] private AudioClip _dashSound;
 
     [Header("Energy System (Optional - Enable Checks Below)")]
+    [FormerlySerializedAs("maxEnergy")]
     [Tooltip("Maximum energy for the boss.")]
     [SerializeField] private float _maxEnergy = 100f;
+    [FormerlySerializedAs("energyRegenRate")]
     [Tooltip("Energy regeneration rate per second.")]
     [SerializeField] private float _energyRegenRate = 5f;
+    [FormerlySerializedAs("fireballEnergyCost")]
     [Tooltip("Energy cost for firing a fireball.")]
     [SerializeField] private float _fireballEnergyCost = 10f;
+    [FormerlySerializedAs("flameTrapEnergyCost")]
     [Tooltip("Energy cost for using a flame trap.")]
     [SerializeField] private float _flameTrapEnergyCost = 25;
+    [FormerlySerializedAs("dashEnergyCost")]
     [Tooltip("Energy cost for dashing.")]
     [SerializeField] private float _dashEnergyCost = 35f;
     private float _currentEnergy;
 
     [Header("Movement & Targeting")]
+    [FormerlySerializedAs("arenaCenterPosition")]
     [Tooltip("Center position of the boss arena.")]
     [SerializeField] private Vector3 _arenaCenterPosition = Vector3.zero;
+    [FormerlySerializedAs("actionDistanceOffset")]
     [Tooltip("Offset distance for boss actions.")]
     [SerializeField] private float _actionDistanceOffset = 3.0f;
+    [FormerlySerializedAs("flameTrapGroundYLevel")]
     [Tooltip("Y level for placing flame traps.")]
     [SerializeField] private float _flameTrapGroundYLevel = -11.5f;
+    [FormerlySerializedAs("dashDistance")]
     [Tooltip("Distance for dash attacks.")]
     [SerializeField] private float _dashDistance = 6.0f;
 

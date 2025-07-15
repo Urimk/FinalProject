@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Manages UI screens for game over, pause, win, and handles related input and sound.
@@ -19,13 +20,20 @@ public class UIManager : MonoBehaviour
     // === Inspector Fields ===
     [Header("Game Over")]
     [Tooltip("GameObject for the game over screen.")]
+    [FormerlySerializedAs("gameOverScreen")]
     [SerializeField] private GameObject _gameOverScreen;
+
     [Tooltip("Sound to play when game over occurs.")]
+    [FormerlySerializedAs("gameOverSound")]
     [SerializeField] private AudioClip _gameOverSound;
+
     [Header("Pause")]
     [Tooltip("GameObject for the pause screen.")]
+    [FormerlySerializedAs("pauseScreen")]
     [SerializeField] private GameObject _pauseScreen;
+
     [Tooltip("GameObject for the win screen.")]
+    [FormerlySerializedAs("winScreen")]
     [SerializeField] private GameObject _winScreen;
 
     // === Private State ===

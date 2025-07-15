@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Syncs the fireball holder's scale with the enemy's scale for consistent visuals.
@@ -8,6 +9,7 @@ public class FireballHolder : MonoBehaviour
     // ==================== Inspector Fields ====================
     [Header("References")]
     [Tooltip("Reference to the enemy Transform whose scale should be matched.")]
+    [FormerlySerializedAs("enemy")]
     [SerializeField] private Transform _enemy;
 
     // ==================== Unity Lifecycle ====================

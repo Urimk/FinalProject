@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -30,18 +31,23 @@ public class GPTBoss : MonoBehaviour
 
     // ==================== Serialized Fields ====================
     [Header("Boss Challenge References")]
-    [Tooltip("Trophy GameObject to activate when the boss is defeated.")]
-    [SerializeField] private GameObject trophy;
+    [Tooltip("trophy GameObject to activate when the boss is defeated.")]
+    [FormerlySerializedAs("trophy")]
+    [SerializeField] private GameObject _trophy;
 
     [Header("UI References")]
     [Tooltip("Text component for displaying boss dialogue.")]
+    [FormerlySerializedAs("bossText")]
     [SerializeField] private Text _bossText;
     [Tooltip("Input field for player answers.")]
+    [FormerlySerializedAs("playerInput")]
     [SerializeField] private TMP_InputField _playerInput;
     [Tooltip("Reference to the player's Health component.")]
+    [FormerlySerializedAs("playerHealth")]
     [SerializeField] private Health _playerHealth;
     [Header("Typing Effect")]
     [Tooltip("Speed at which boss text is typed out.")]
+    [FormerlySerializedAs("typingSpeed")]
     [SerializeField] private float _typingSpeed = DefaultTypingSpeed;
 
     // ==================== Private Fields ====================
@@ -261,15 +267,15 @@ public class GPTBoss : MonoBehaviour
     }
 
     /// <summary>
-    /// Disables the boss and shows the trophy if available.
+    /// Disables the boss and shows the _trophy if available.
     /// </summary>
     private void DisableBoss()
     {
         gameObject.SetActive(false);
         _bossText.text = string.Empty;
-        if (trophy != null)
+        if (_trophy != null)
         {
-            trophy.SetActive(true);
+            _trophy.SetActive(true);
         }
     }
 

@@ -16,13 +16,17 @@ public class CameraController : MonoBehaviour
     // ==================== Dependencies ====================
     [Header("Dependencies")]
     [Tooltip("Reference to the player Transform.")]
+    [FormerlySerializedAs("player")]
     [SerializeField] private Transform _player;
     [Tooltip("Reference to the player's Health component.")]
+    [FormerlySerializedAs("playerHealth")]
+
     [SerializeField] private Health _playerHealth;
 
     // ==================== General Camera Movement ====================
     [Header("General Movement")]
     [Tooltip("Camera smoothing speed for Y movement.")]
+    [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
     private float _currentPosY;
     private Vector3 _velocity = Vector3.zero;
@@ -33,6 +37,7 @@ public class CameraController : MonoBehaviour
     [FormerlySerializedAs("_aheadDistance")]
     [SerializeField] private float _targetXOffset;
     [Tooltip("Camera smoothing speed for X movement.")]
+    [FormerlySerializedAs("cameraSpeed")]
     [SerializeField] private float _cameraSpeed;
     private float _currentXOffset;
 
@@ -44,8 +49,10 @@ public class CameraController : MonoBehaviour
     // ==================== Chase Mode ====================
     [Header("Chase Mode Settings")]
     [Tooltip("Enable chase mode for the camera.")]
+    [FormerlySerializedAs("isChase")]
     [SerializeField] private bool _isChase = false;
     [Tooltip("Speed at which the camera chases the player.")]
+    [FormerlySerializedAs("chaseSpeed")]
     [SerializeField] private float _chaseSpeed = 5f;
     private bool _playerInMiddle = false;
     private bool _playerIsMoving = false;
@@ -54,14 +61,17 @@ public class CameraController : MonoBehaviour
     // ==================== Y Follow ====================
     [Header("Y Follow Settings")]
     [Tooltip("Should the camera follow the player's Y position?")]
+    [FormerlySerializedAs("followPlayerY")]
     [SerializeField] private bool _followPlayerY = false;
     [Tooltip("Y offset for the camera relative to the player.")]
+    [FormerlySerializedAs("playerYOffset")]
     [SerializeField] private float _playerYOffset = DefaultYOffset;
     private bool _snapYNextFrame = true;
 
     // ==================== Y Offset Transition ====================
     [Header("Y Offset Transition")]
     [Tooltip("Duration for Y offset transitions.")]
+    [FormerlySerializedAs("offsetTransitionDuration")]
     [SerializeField] private float _offsetTransitionDuration = 0.5f;
     private bool _isTransitioningYOffset = false;
     private float _transitionStartYOffset;
