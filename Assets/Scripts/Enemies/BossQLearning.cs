@@ -101,7 +101,7 @@ public class BossQLearning : MonoBehaviour
     [SerializeField] private float penaltyGCDBlocked = -0.5f;
 
     // ==================== Private Fields ====================
-    private int currentCurriculumStage = 0;
+    private int currentCurriculumStage = 3;
     private Queue<float> recentRewards = new Queue<float>();
     private int recentRewardWindow = DefaultRecentRewardWindow;
     private Dictionary<string, float[]> _qTable = new Dictionary<string, float[]>();
@@ -355,7 +355,7 @@ public class BossQLearning : MonoBehaviour
         int playerHealthBin = 0;
         if (_playerHealth != null)
         {
-            float playerHealthNormalized = _playerHealth.currentHealth / _playerHealth.startingHealth;
+            float playerHealthNormalized = _playerHealth.CurrentHealth / _playerHealth.StartingHealth;
             playerHealthBin = Mathf.FloorToInt(Mathf.Clamp01(playerHealthNormalized) * PlayerHealthBins);
             if (playerHealthBin >= PlayerHealthBins) playerHealthBin = PlayerHealthBins - 1;
         }
@@ -363,7 +363,7 @@ public class BossQLearning : MonoBehaviour
 
         // Player invulnerability status
         int playerInvulnerableState = 0;
-        if (_playerHealth != null && _playerHealth.invulnerable)
+        if (_playerHealth != null && _playerHealth.Invulnerable)
         {
             playerInvulnerableState = 1;
         }

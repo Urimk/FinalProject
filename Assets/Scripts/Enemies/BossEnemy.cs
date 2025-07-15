@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+
 using UnityEngine;
 
 /// <summary>
@@ -144,7 +145,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     /// <param name="idc">Unused parameter (for event compatibility).</param>
     public void HandlePlayerDeath(float idc)
     {
-        if (_playerHealth != null && _playerHealth.currentHealth <= 0)
+        if (_playerHealth != null && _playerHealth.CurrentHealth <= 0)
         {
             ResetState();
         }
@@ -195,7 +196,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (!_detectedPlayer)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, _player.position);
-            if (distanceToPlayer <= _attackRange && _playerHealth.currentHealth > 0)
+            if (distanceToPlayer <= _attackRange && _playerHealth.CurrentHealth > 0)
                 _detectedPlayer = true;
         }
         transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -542,57 +543,5 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     public bool IsDashReady()
     {
         return _dashCooldownTimer >= _dashCooldown && _isPhase2;
-    }
-
-    // ==================== State Reset & Update ====================
-    /// <summary>
-    /// Handles logic when the player dies. Resets the boss state if the player's health reaches zero.
-    /// </summary>
-    /// <param name="idc">Unused parameter (for event compatibility).</param>
-    public void HandlePlayerDeath(float idc)
-    {
-        if (_playerHealth != null && _playerHealth.currentHealth <= 0)
-        {
-            ResetState();
-        }
-    }
-
-    /// <summary>
-    /// Resets the boss's state, health, cooldowns, and position for a new encounter.
-    /// </summary>
-    public void ResetState()
-    {
-        Debug.Log("[BossEnemy] Resetting BossEnemy state.");
-        _detectedPlayer = false;
-        StopAllCoroutines();
-        _isDead = false;
-        if (_doRestHealth)
-        {
-            _isPhase2 = false;
-        }
-        _isChargingDash = false;
-        _isDashing = false;
-        _attackCooldown = DefaultAttackCooldown;
-        _fireAttackCooldown = DefaultFireAttackCooldown;
-        _dashCooldown = DefaultDashCooldown;
-        _cooldownTimer = _attackCooldown;
-        _fireAttackTimer = _fireAttackCooldown;
-        _dashCooldownTimer = _dashCooldown;
-        if (_rb != null)
-        {
-            _rb.velocity = Vector2.zero;
-            _rb.angularVelocity = 0f;
-            _rb.isKinematic = false;
-        }
-        gameObject.transform.position = _initialBossPosition;
-        if (_bossHealth != null && _doRestHealth) _bossHealth.ResetHealth();
-        DeactivateFlameAndWarning();
-        if (_anim != null)
-        {
-            _anim.Rebind();
-            _anim.Update(0f);
-        }
-        gameObject.SetActive(true);
-        this.enabled = true;
     }
 }

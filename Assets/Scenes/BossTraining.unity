@@ -988,17 +988,17 @@ MonoBehaviour:
   _cameraController: {fileID: 63720341}
   _playerMovement: {fileID: 1393604985}
   _playerRespawn: {fileID: 1393604995}
-  freezeCamX: 0
-  freezeCamY: 1
-  xFreezeValue: 0
-  yFreezeValue: 0
-  yOffsetValue: 2
-  gravScaleValue: 2
-  maxFallSpeedValue: 100
-  isChase: 0
-  chaseSpeed: 5
-  chaseStartOffSet: 0
-  followPlayerY: 0
+  _freezeCamX: 0
+  _freezeCamY: 1
+  _xFreezeValue: 0
+  _yFreezeValue: 0
+  _yOffsetValue: 2
+  _gravScaleValue: 2
+  _maxFallSpeedValue: 100
+  _isChase: 0
+  _chaseSpeed: 5
+  _chaseStartOffSet: 0
+  _followPlayerY: 0
 --- !u!1 &213333083
 GameObject:
   m_ObjectHideFlags: 0
@@ -10099,7 +10099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
-  _movementSpeed: 8
+  _movementSpeed: 4
   _doRestHealth: 0
   _attackRange: 20
   _player: {fileID: 1393604989}
@@ -10160,7 +10160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9607d4ce4408f5a498b091319961fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 9
+  _maxHealth: 9
+  _currentHealth: 10
   _healthSlider: {fileID: 2051250166}
   _spumPrefabObject: {fileID: 1250826683}
   _boss: {fileID: 1957706220}

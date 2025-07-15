@@ -59,7 +59,7 @@ public class MeleeEnemy : MonoBehaviour
         _cooldownTimer += Time.deltaTime;
         if (PlayerInSight())
         {
-            if (_cooldownTimer >= _attackCooldown && _playerHealth.currentHealth > 0)
+            if (_cooldownTimer >= _attackCooldown && _playerHealth.CurrentHealth > 0)
             {
                 _cooldownTimer = 0;
                 _animator.SetTrigger("meleeAttack");

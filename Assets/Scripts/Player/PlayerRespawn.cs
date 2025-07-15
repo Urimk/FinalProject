@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles player respawn logic, checkpoint management, and room resets.

@@ -61,7 +61,7 @@ public class LevelEndTrigger : MonoBehaviour
     private void DisplayResults()
     {
         int score = ScoreManager.Instance.GetScore();
-        int healthBonus = (int)_playerHealth.currentHealth * _playerHealth.GetFirstHealth() * HealthBonusValue;
+        int healthBonus = (int)_playerHealth.CurrentHealth * _playerHealth.GetFirstHealth() * HealthBonusValue;
         int timeBonus = Mathf.FloorToInt(TimerManager.Instance.GetRemainingTime()) * TimeBonusValue;
         _totalScore = score + healthBonus + timeBonus;
         if (_winScoreText != null)

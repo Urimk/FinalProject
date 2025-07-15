@@ -215,7 +215,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // ==================== State Reset & Update ====================
     public void HandlePlayerDeath(float idc)
     {
-        if (_playerHealth != null && _playerHealth.currentHealth <= 0)
+        if (_playerHealth != null && _playerHealth.CurrentHealth <= 0)
         {
             ResetState();
         }
@@ -261,7 +261,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         if (!_detectedPlayer)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, _player.position);
-            if (distanceToPlayer <= _attackRange && _playerHealth.currentHealth > 0)
+            if (distanceToPlayer <= _attackRange && _playerHealth.CurrentHealth > 0)
                 _detectedPlayer = true;
         }
         transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -812,6 +812,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         _cooldownTimer = _attackCooldown;
         _fireAttackTimer = _fireAttackCooldown;
         _dashCooldownTimer = _dashCooldown;
+        _currentEnergy = _maxEnergy;
     }
 
     /// <summary>

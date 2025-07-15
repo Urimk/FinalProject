@@ -240,7 +240,7 @@ public class GPTBoss : MonoBehaviour
     /// </summary>
     private void CheckPlayerDeath()
     {
-        if (_playerHealth.dead)
+        if (_playerHealth.Dead)
             PlayerDefeated();
         else
             Invoke(nameof(AskQuestion), QuestionDelay);

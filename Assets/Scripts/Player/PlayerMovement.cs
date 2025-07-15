@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles player movement, jumping, wall interaction, recoil, and power-ups for both player and AI control.
@@ -98,14 +100,35 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Vertical force applied during recoil.")]
     [FormerlySerializedAs("recoilVerticalForce")]
     [SerializeField] private float _recoilVerticalForce = DefaultRecoilVerticalForce;
+    [Tooltip("Transform for ground check.")]
+    [FormerlySerializedAs("groundCheck")]
+    [SerializeField] private Transform _groundCheck;
+    [Tooltip("Normal gravity value for the player.")]
+    [FormerlySerializedAs("normalGrav")]
+    [SerializeField] private float _normalGrav = DefaultNormalGravity;
+    [Tooltip("Maximum fall speed for the player.")]
+    [FormerlySerializedAs("maxFallSpeed")]
+    [SerializeField] private float _maxFallSpeed = DefaultMaxFallSpeed;
 
     // ==================== Public Properties ====================
-    /// <summary>Transform for ground check (was public field).</summary>
-    public Transform GroundCheck { get; set; }
-    /// <summary>Normal gravity value (was public field).</summary>
-    public float NormalGrav { get; set; } = DefaultNormalGravity;
-    /// <summary>Maximum fall speed (was public field).</summary>
-    public float MaxFallSpeed { get; set; } = DefaultMaxFallSpeed;
+    /// <summary>
+    /// Transform for ground check (read-only).
+    /// </summary>
+    public Transform GroundCheck => _groundCheck;
+    public float NormalGrav
+    {
+        get => _normalGrav;
+        set => _normalGrav = value;
+    }
+
+    /// <summary>
+    /// Maximum fall speed (read/write).
+    /// </summary>
+    public float MaxFallSpeed
+    {
+        get => _maxFallSpeed;
+        set => _maxFallSpeed = value;
+    }
     /// <summary>Singleton instance of PlayerMovement.</summary>
     public static PlayerMovement Instance { get; private set; }
 

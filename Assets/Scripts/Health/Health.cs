@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles health, damage, invulnerability, and death logic for a character.
@@ -67,6 +68,7 @@ public class Health : MonoBehaviour, IDamageable
     public int ScoreValue => _scoreValue;
 
     private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
     private bool _dead;
     private bool _invulnerable;
     private int _isFirstHealth = 1;

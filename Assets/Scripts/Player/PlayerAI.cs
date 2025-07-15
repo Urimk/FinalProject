@@ -6,6 +6,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// ML-Agents agent for player character, handling observations, actions, rewards, and episode lifecycle.
@@ -186,9 +187,9 @@ public class PlayerAI : Agent
         // Agent's own state
         sensor.AddObservation((Vector2)transform.localPosition);
         sensor.AddObservation(_rigidbody2D.velocity);
-        sensor.AddObservation(_playerHealth != null ? _playerHealth.currentHealth / _playerHealth.startingHealth : 0f);
+        sensor.AddObservation(_playerHealth != null ? _playerHealth.CurrentHealth / _playerHealth.StartingHealth : 0f);
         sensor.AddObservation(_playerMovement != null && _playerMovement.IsGrounded());
-        sensor.AddObservation(_playerHealth != null && _playerHealth.invulnerable);
+        sensor.AddObservation(_playerHealth != null && _playerHealth.Invulnerable);
         sensor.AddObservation(_playerMovement != null && _playerMovement.OnWall());
         sensor.AddObservation(_playerMovement != null ? _playerMovement.GetFacingDirection() : 1f);
         sensor.AddObservation(_playerAttack != null ? _playerAttack.IsAttackReady() : 1f);
@@ -202,7 +203,7 @@ public class PlayerAI : Agent
             relativeBossPos = _boss.localPosition - transform.localPosition;
             Rigidbody2D bossRb = _boss.GetComponent<Rigidbody2D>();
             bossVelocity = bossRb != null ? bossRb.velocity : Vector2.zero;
-            bossHealthNormalized = _bossHealth != null ? _bossHealth.currentHealth / _bossHealth.maxHealth : 0f;
+            bossHealthNormalized = _bossHealth != null ? _bossHealth.CurrentHealth / _bossHealth.MaxHealth : 0f;
         }
         sensor.AddObservation(relativeBossPos);
         sensor.AddObservation(bossVelocity);
@@ -373,7 +374,7 @@ public class PlayerAI : Agent
     {
         if (_isPlayerDead || _isBossDefeated) return;
         AddReward(_penaltyTakeDamage);
-        if (_playerHealth != null && _playerHealth.currentHealth <= 0)
+        if (_playerHealth != null && _playerHealth.CurrentHealth <= 0)
         {
             _isPlayerDead = true;
             Debug.Log(DebugPlayerDied);

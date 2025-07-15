@@ -3,6 +3,7 @@
 using UnityEditor;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 /// <summary>
 /// Manages room state, including camera, player, enemies, traps, and collectables.
 /// </summary>
@@ -105,20 +106,20 @@ public class Room : MonoBehaviour
     public void EnterRoom()
     {
         _cameraController.MoveToNewRoom(transform);
-        _cameraController.SetCameraXFreeze(freezeCamX, xFreezeValue);
-        _cameraController.SetChaseMode(isChase);
-        _cameraController.SetChaseSpeed(chaseSpeed);
-        _cameraController.SetChaseStart(chaseStartOffSet);
-        if (freezeCamY)
+        _cameraController.SetCameraXFreeze(_freezeCamX, _xFreezeValue);
+        _cameraController.SetChaseMode(_isChase);
+        _cameraController.SetChaseSpeed(_chaseSpeed);
+        _cameraController.SetChaseStart(_chaseStartOffSet);
+        if (_freezeCamY)
         {
-            _cameraController.SetCameraYFreeze(yFreezeValue);
+            _cameraController.SetCameraYFreeze(_yFreezeValue);
         }
         else
         {
-            _cameraController.SetFollowPlayerY(yOffsetValue);
+            _cameraController.SetFollowPlayerY(_yOffsetValue);
         }
-        _playerMovement.normalGrav = gravScaleValue;
-        _playerMovement.maxFallSpeed = maxFallSpeedValue;
+        _playerMovement.NormalGrav = _gravScaleValue;
+        _playerMovement.MaxFallSpeed = _maxFallSpeedValue;
         _playerRespawn.SetCurrentRoom(transform);
     }
 

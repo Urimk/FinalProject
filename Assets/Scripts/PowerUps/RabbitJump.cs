@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Power-up that grants the player extra jumps and jump power, with a hovering animation.

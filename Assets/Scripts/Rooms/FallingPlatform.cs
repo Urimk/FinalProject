@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Platform that falls when the player stands on it, then resets after a delay.
