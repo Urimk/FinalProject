@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -76,9 +77,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     [Tooltip("Array of fireball GameObjects for pooling.")]
     [FormerlySerializedAs("fireballs")]
     [SerializeField] private GameObject[] _fireballs;
-    [Tooltip("Reference to the player Transform.")]
-    [FormerlySerializedAs("player")]
-    [SerializeField] private Transform _player;
+    [Tooltip("References to the player Transforms.")]
+    [SerializeField] private List<Transform> _players;
     [Tooltip("Reference to the fireball holder Transform.")]
     [FormerlySerializedAs("fireballHolder")]
     [SerializeField] private Transform _fireballHolder;
@@ -216,14 +216,38 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         this.enabled = true;
     }
 
+    private Transform GetClosestPlayer()
+    {
+        Transform closest = null;
+        float shortestDistance = float.MaxValue;
+
+        foreach (Transform player in _players)
+        {
+            if (player == null) continue; // Avoid null references
+
+            float distance = Vector2.Distance(transform.position, player.position);
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closest = player;
+            }
+        }
+
+        return closest;
+    }
+
     private void Update()
     {
         if (_isDead) return;
         if (!_detectedPlayer)
         {
-            float distanceToPlayer = Vector2.Distance(transform.position, _player.position);
-            if (distanceToPlayer <= _attackRange && _playerHealth.CurrentHealth > 0)
-                _detectedPlayer = true;
+            Transform closestPlayer = GetClosestPlayer();
+            if (closestPlayer != null)
+            {
+                float distanceToPlayer = Vector2.Distance(transform.position, closestPlayer.position);
+                if (distanceToPlayer <= _attackRange && _playerHealth.CurrentHealth > 0)
+                    _detectedPlayer = true;
+            }
         }
         transform.rotation = Quaternion.Euler(0, 0, 0);
         if (!_isPhase2 && _bossHealth != null)
@@ -243,7 +267,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
         if (!_isChargingDash && _detectedPlayer)
         {
-            Vector3 fixPlayerPosition = _player.position;
+            Vector3 fixPlayerPosition = GetClosestPlayer().position;
             fixPlayerPosition.y -= 0.75f;
             Vector2 directionToPlayer = (fixPlayerPosition - transform.position).normalized;
             _rb.velocity = directionToPlayer * _movementSpeed;
@@ -257,7 +281,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             _dashCooldownTimer = 0;
             ChargeDashAttack();
         }
-        if (_player.position.x < transform.position.x)
+        if (GetClosestPlayer().position.x < transform.position.x)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
@@ -303,9 +327,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (bossProjectile == null) { Debug.LogError("[BossEnemy] Fireball prefab missing BossProjectile script!"); return; }
         bossProjectile.SetDamage(_fireballDamage);
         bossProjectile.SetSize(_projectileSize);
-        if (_player != null)
+        if (GetClosestPlayer() != null)
         {
-            bossProjectile.Launch(_firepoint.position, _player.transform.position, _projectileSpeed);
+            bossProjectile.Launch(_firepoint.position, GetClosestPlayer().transform.position, _projectileSpeed);
         }
         else
         {
@@ -348,8 +372,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     /// </summary>
     private void SpawnFireAtPlayer()
     {
-        if (_flame == null || _isDead || _player == null) return;
-        Vector3 targetPosition = new Vector3(_player.position.x, -11.5f, _player.position.z);
+        if (_flame == null || _isDead || GetClosestPlayer() == null) return;
+        Vector3 targetPosition = new Vector3(GetClosestPlayer().position.x, GetClosestPlayer().position.y - 2f, GetClosestPlayer().position.z);
         StartCoroutine(MarkAreaAndSpawnFire(targetPosition));
         _fireAttackTimer = 0f;
     }
@@ -418,9 +442,9 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (_isDead || _isChargingDash || _isDashing) return;
         _isChargingDash = true;
         _isDashing = false;
-        if (_player != null)
+        if (GetClosestPlayer() != null)
         {
-            _dashTarget = new Vector3(_player.position.x, _player.position.y + DashTargetYAdjust, _player.position.z);
+            _dashTarget = new Vector3(GetClosestPlayer().position.x, GetClosestPlayer().position.y + DashTargetYAdjust, GetClosestPlayer().position.z);
         }
         else
         {

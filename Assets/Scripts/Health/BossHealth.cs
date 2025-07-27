@@ -115,7 +115,10 @@ public class BossHealth : MonoBehaviour, IDamageable
     /// <param name="damage">Amount of damage to apply.</param>
     public void TakeDamage(float damage)
     {
-        _rm.ReportTookDamage(damage);
+        if (_rm != null)
+        {
+            _rm.ReportTookDamage(damage);
+        }
         CurrentHealth -= damage;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
         UpdateHealthBar();

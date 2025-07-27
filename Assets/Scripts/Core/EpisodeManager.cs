@@ -13,9 +13,9 @@ using UnityEngine.Serialization;
 public class EpisodeManager : MonoBehaviour
 {
     // ==================== Constants ====================
-    private const float DefaultInitialPlayerX = -10f;
+    private const float DefaultInitialPlayerX = -5f;
     private const float DefaultInitialPlayerY = -10f;
-    private const float DefaultInitialBossX = 10f;
+    private const float DefaultInitialBossX = 5f;
     private const float DefaultInitialBossY = -9f;
     private const float DefaultMaxEpisodeDuration = 30f;
     private const int DefaultLogFrequency = 10;
