@@ -16,6 +16,7 @@ public class Diamond : MonoBehaviour
     // ==================== Inspector Fields ====================
     [Header("Collectable Info")]
     [Tooltip("Score value awarded to the player when this diamond is collected.")]
+    [FormerlySerializedAs("scoreValue")]
     [SerializeField] private int _scoreValue = DefaultScoreValue;
 
     [Tooltip("Unique identifier for this collectable (used for save/load or analytics).")]
@@ -24,6 +25,8 @@ public class Diamond : MonoBehaviour
 
     [Header("Sound")]
     [Tooltip("Sound effect played when the diamond is collected.")]
+    [FormerlySerializedAs("collectSound")]
+
     [SerializeField] private AudioClip _collectSound;
 
     // ==================== Properties ====================

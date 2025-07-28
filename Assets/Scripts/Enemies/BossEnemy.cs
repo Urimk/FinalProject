@@ -373,7 +373,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private void SpawnFireAtPlayer()
     {
         if (_flame == null || _isDead || GetClosestPlayer() == null) return;
-        Vector3 targetPosition = new Vector3(GetClosestPlayer().position.x, GetClosestPlayer().position.y - 2f, GetClosestPlayer().position.z);
+        Vector3 targetPosition = new Vector3(GetClosestPlayer().position.x, -7.45f, GetClosestPlayer().position.z);
         StartCoroutine(MarkAreaAndSpawnFire(targetPosition));
         _fireAttackTimer = 0f;
     }

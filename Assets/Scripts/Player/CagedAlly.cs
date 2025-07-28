@@ -25,7 +25,18 @@ public class CagedAlly : MonoBehaviour
     {
         if (ally != null)
         {
-            ally.SetActive(true);
+            // Enable all MonoBehaviour scripts on the GameObject and its children (optional)
+            foreach (var mono in ally.GetComponents<MonoBehaviour>())
+            {
+                mono.enabled = true;
+            }
+
+            // Set sorting order to 2 if it has a SpriteRenderer
+            SpriteRenderer sr = ally.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sortingOrder = 2;
+            }
         }
         else
         {

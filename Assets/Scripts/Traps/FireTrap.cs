@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Trap that activates and damages the player, with optional auto-cycling.
@@ -15,27 +16,41 @@ public class FireTrap : MonoBehaviour
 
     // === Inspector Fields ===
     [Tooltip("Amount of damage dealt to the player when the trap is active.")]
+    [FormerlySerializedAs("damage")]
+
     [SerializeField] private int _damage;
 
     [Header("FireTrap Timers")]
     [Tooltip("Delay in seconds before the trap activates after being triggered.")]
+    [FormerlySerializedAs("activationDelay")]
+
     [SerializeField] private float _activationDelay;
 
     [Tooltip("Duration in seconds the trap remains active.")]
+    [FormerlySerializedAs("activeTime")]
+
     [SerializeField] private float _activeTime;
 
     [Header("Auto Cycle Settings")]
     [Tooltip("If true, the trap will automatically cycle between active and inactive states.")]
+    [FormerlySerializedAs("alwaysActive")]
+
     [SerializeField] private bool _alwaysActive = false;
 
     [Tooltip("Time to wait between cycles when in always active mode.")]
+    [FormerlySerializedAs("cycleWaitTime")]
+
     [SerializeField] private float _cycleWaitTime = 2f;
 
     [Tooltip("Delay before the auto-cycle starts.")]
+    [FormerlySerializedAs("cycleStartDelay")]
+
     [SerializeField] private float _cycleStartDelay = 0f;
 
     [Header("Sound Settings")]
     [Tooltip("Sound to play when the trap activates.")]
+    [FormerlySerializedAs("fireSound")]
+
     [SerializeField] private AudioClip _fireSound;
 
     // === Private State ===

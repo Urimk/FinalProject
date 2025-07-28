@@ -26,14 +26,20 @@ public class EnemyPatrol : MonoBehaviour
 
     [Header("Movement Parameters")]
     [Tooltip("Patrol movement speed.")]
+    [FormerlySerializedAs("speed")]
+
     [SerializeField] private float _speed;
 
     [Header("Idle Behaviour")]
     [Tooltip("Duration to idle at each patrol edge.")]
+    [FormerlySerializedAs("idleDuration")]
+
     [SerializeField] private float _idleDuration;
 
     [Header("Enemy Animator")]
     [Tooltip("Animator for controlling enemy movement animation.")]
+    [FormerlySerializedAs("anim")]
+
     [SerializeField] private Animator _anim;
 
     // ==================== Private Fields ====================

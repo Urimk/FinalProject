@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -22,6 +23,7 @@ public class ScoreManager : MonoBehaviour
     // ==================== Serialized Fields ====================
     [Header("UI Reference")]
     [Tooltip("Text component used to display the player's score.")]
+    [FormerlySerializedAs("scoreText")]
     [SerializeField] private Text _scoreText;
 
     // ==================== Unity Lifecycle ====================

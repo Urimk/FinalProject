@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles the boss's flame attack, including warning, activation, and player damage/reward logic.
@@ -16,12 +17,20 @@ public class BossFlameAttack : MonoBehaviour
 
     // ==================== Serialized Fields ====================
     [Tooltip("Damage dealt to the player by the flame.")]
+    [FormerlySerializedAs("damage")]
+
     [SerializeField] private int _damage = 1;
     [Tooltip("Duration of the warning phase before the flame ignites.")]
+    [FormerlySerializedAs("warningTime")]
+
     [SerializeField] private float _warningTime = 1.5f;
     [Tooltip("Duration the flame remains active.")]
+    [FormerlySerializedAs("fireActiveTime")]
+
     [SerializeField] private float _fireActiveTime = 3f;
     [Tooltip("Sound played when the flame ignites.")]
+    [FormerlySerializedAs("fireSound")]
+
     [SerializeField] private AudioClip _fireSound;
 
     // ==================== Private Fields ====================

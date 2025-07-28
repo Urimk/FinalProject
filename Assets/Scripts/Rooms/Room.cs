@@ -21,19 +21,19 @@ public class Room : MonoBehaviour
     [FormerlySerializedAs("enemies")]
     [SerializeField] private GameObject[] _enemies;
     [Tooltip("Array of trap GameObjects in this room.")]
-    [FormerlySerializedAs("traps")]
+    [FormerlySerializedAs("Traps")]
     [SerializeField] private GameObject[] _traps;
     [Tooltip("Array of collectable GameObjects in this room.")]
-    [FormerlySerializedAs("collectables")]
+    [FormerlySerializedAs("Collectables")]
     [SerializeField] private GameObject[] _collectables;
     [Tooltip("Reference to the CameraController.")]
-    [FormerlySerializedAs("cameraController")]
+    [FormerlySerializedAs("cam")]
     [SerializeField] private CameraController _cameraController;
     [Tooltip("Reference to the PlayerMovement component.")]
-    [FormerlySerializedAs("playerMovement")]
+    [FormerlySerializedAs("pm")]
     [SerializeField] private PlayerMovement _playerMovement;
     [Tooltip("Reference to the PlayerRespawn component.")]
-    [FormerlySerializedAs("playerRespawn")]
+    [FormerlySerializedAs("pr")]
     [SerializeField] private PlayerRespawn _playerRespawn;
     [Header("Room Settings")]
     [Tooltip("Freeze camera X axis in this room.")]

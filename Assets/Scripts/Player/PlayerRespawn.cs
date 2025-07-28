@@ -80,7 +80,13 @@ public class PlayerRespawn : MonoBehaviour
         _playerHealth.SetFirstHealth(0);
         if (_lives <= 0)
         {
-            _uiManager.GameOver();
+            if (_checkpointSound != null)
+            {
+                _uiManager.GameOver();
+                return;
+            }
+            // Disable the GameObject that has the PlayerHealth component
+            Destroy(_playerHealth.gameObject);
             return;
         }
         Transform respawnRoom = _currentCheckpoint.parent;
@@ -102,6 +108,7 @@ public class PlayerRespawn : MonoBehaviour
         {
             respawnRoom.GetComponent<Room>().EnterRoom();
         }
+        _lives--;
         _playerHealth.Respawn();
         ScoreManager.Instance.SetScore(_scoreAtCheckpoint);
         TimerManager.Instance.SetRemainingTime(_timeAtCheckpoint);

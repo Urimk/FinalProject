@@ -12,7 +12,6 @@ public class Health : MonoBehaviour, IDamageable
     private const int IgnoreLayerA = 8;
     private const int IgnoreLayerB = 9;
     private static readonly Color HurtColor = new Color(1, 0, 0, 0.5f);
-    private static readonly Color NormalColor = Color.white;
     private const int DefaultScoreValue = 100;
 
     // ==================== Serialized Fields ====================
@@ -23,6 +22,7 @@ public class Health : MonoBehaviour, IDamageable
 
     [Header("Player Attack")]
     [Tooltip("Reference to the PlayerAttack component.")]
+    [FormerlySerializedAs("playerAttack")]
     [SerializeField] private PlayerAttack _playerAttack;
 
     [Header("Health Settings")]
@@ -36,18 +36,25 @@ public class Health : MonoBehaviour, IDamageable
 
     [Header("iFrames (Invulnerability)")]
     [Tooltip("Duration of invulnerability frames after taking damage.")]
+    [FormerlySerializedAs("iFramesDuration")]
     [SerializeField] private float _iFramesDuration;
     [Tooltip("Number of flashes during invulnerability.")]
+    [FormerlySerializedAs("numberOfFlashes")]
+
     [SerializeField] private int _numberOfFlashes;
 
     [Header("Components")]
     [Tooltip("Array of components to disable on death.")]
+    [FormerlySerializedAs("components")]
     [SerializeField] private Behaviour[] _components;
 
     [Header("Sounds")]
     [Tooltip("Sound to play on death.")]
+    [FormerlySerializedAs("deathSound")]
     [SerializeField] private AudioClip _deathSound;
     [Tooltip("Sound to play when hurt.")]
+    [FormerlySerializedAs("hurtSound")]
+
     [SerializeField] private AudioClip _hurtSound;
 
     [Header("Score")]
@@ -58,6 +65,7 @@ public class Health : MonoBehaviour, IDamageable
     // ==================== Private Fields ====================
     private float _maxDamageThisFrame;
     private bool _isDamageQueued;
+    private Color _normalColor;
 
     // ==================== Properties ====================
     /// <summary>Current health of the character.</summary>
@@ -103,6 +111,7 @@ public class Health : MonoBehaviour, IDamageable
         _player = GetComponent<PlayerMovement>();
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _normalColor = _spriteRenderer.color;
     }
 
     private void LateUpdate()
@@ -201,7 +210,7 @@ public class Health : MonoBehaviour, IDamageable
         {
             _spriteRenderer.color = HurtColor;
             yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
-            _spriteRenderer.color = NormalColor;
+            _spriteRenderer.color = _normalColor;
             yield return new WaitForSeconds(_iFramesDuration / (_numberOfFlashes * 2));
         }
         Physics2D.IgnoreLayerCollision(IgnoreLayerA, IgnoreLayerB, false);

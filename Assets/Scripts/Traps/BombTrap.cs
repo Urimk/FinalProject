@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles bomb trap logic, triggering an explosion when the player enters the trigger.
@@ -14,9 +15,13 @@ public class BombTrap : MonoBehaviour
     // === Inspector Fields ===
     [Header("Explosion Settings")]
     [Tooltip("Prefab to instantiate when the bomb explodes.")]
+    [FormerlySerializedAs("explosionPrefab")]
+
     [SerializeField] private GameObject _explosionPrefab;
 
     [Tooltip("Delay in seconds before the bomb explodes after being triggered.")]
+    [FormerlySerializedAs("delayBeforeExplosion")]
+
     [SerializeField] private float _delayBeforeExplosion = DefaultDelayBeforeExplosion;
 
     // === Private State ===

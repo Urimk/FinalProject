@@ -12,7 +12,7 @@ public class Door : MonoBehaviour
 
     // ==================== Inspector Fields ====================
     [Tooltip("Reference to the previous room Transform.")]
-    [FormerlySerializedAs("previousRoom")]
+    [FormerlySerializedAs("prevRoom")]
     [SerializeField] private Transform _previousRoom;
     [Tooltip("Reference to the next room Transform.")]
     [FormerlySerializedAs("nextRoom")]

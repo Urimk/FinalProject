@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles explosion behavior, including damaging the player and self-destruction after a set lifetime.
@@ -12,9 +13,13 @@ public class Explosion : MonoBehaviour
     // === Inspector Fields ===
     [Header("Explosion Settings")]
     [Tooltip("Amount of damage dealt to the player.")]
+    [FormerlySerializedAs("damage")]
+
     [SerializeField] private float _damage = DefaultDamage;
 
     [Tooltip("Lifetime of the explosion in seconds before it is destroyed.")]
+    [FormerlySerializedAs("lifetime")]
+
     [SerializeField] private float _lifetime = DefaultLifetime;
 
     /// <summary>

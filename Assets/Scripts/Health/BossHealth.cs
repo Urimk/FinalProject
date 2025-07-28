@@ -31,20 +31,26 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     [Header("UI References")]
     [Tooltip("Slider component for the boss health bar.")]
+    [FormerlySerializedAs("healthSlider")]
     [SerializeField] private Slider _healthSlider;
 
     [Header("Boss References")]
     [Tooltip("SPUM prefab GameObject for animation control.")]
+    [FormerlySerializedAs("spumPrefabObject")]
     [SerializeField] private GameObject _spumPrefabObject;
     [Tooltip("Transform of the boss for positioning the health bar.")]
     [SerializeField] private Transform _boss;
     [Tooltip("Boss reward manager for reporting damage.")]
+    [FormerlySerializedAs("rm")]
     [SerializeField] private BossRewardManager _rm;
     [Tooltip("True if boss is in training mode.")]
+    [FormerlySerializedAs("isTraining")]
     [SerializeField] private bool _isTraining;
     [Tooltip("Trophy GameObject to activate on boss defeat.")]
+    [FormerlySerializedAs("trophy")]
     [SerializeField] private GameObject _trophy;
     [Tooltip("List of MonoBehaviours implementing IBoss for boss logic.")]
+    [FormerlySerializedAs("bossScriptObjects")]
     [SerializeField] private List<MonoBehaviour> _bossScriptObjects;
 
     // ==================== Events ====================

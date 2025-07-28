@@ -490,7 +490,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
         projectile.transform.parent = null;
         BossProjectile bossProjectile = projectile.GetComponent<BossProjectile>();
         if (bossProjectile == null) { Debug.LogError("[AIBoss] Fireball prefab missing BossProjectile script!"); return false; }
-        bossProjectile.rewardManager = this._rewardManager;
+        bossProjectile.RewardManager = this._rewardManager;
         bossProjectile.SetDamage(_fireballDamage);
         bossProjectile.SetSize(_projectileSize);
         bossProjectile.Launch(_firepoint.position, targetPosition, _projectileSpeed);

@@ -45,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("True if this player is AI controlled.")]
     [FormerlySerializedAs("isAIControlled")]
     [SerializeField] private bool _isAIControlled;
+    [SerializeField] private float flipDelay = 0.2f;
+
     [Tooltip("Movement speed of the player.")]
     [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
@@ -152,6 +154,8 @@ public class PlayerMovement : MonoBehaviour
     private float _recoilTimer = 0f;
     private Vector2 _recoilDirection;
     private Coroutine _currentAIJumpRoutine = null;
+    private float _flipTimer = 0f;
+    private int _desiredFacingDirection = 1;
 
     // ==================== Properties ====================
     /// <summary>Movement speed of the player.</summary>
@@ -318,13 +322,47 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_horizontalInput > SpriteFlipThreshold)
         {
-            transform.localScale = Vector3.one;
-            _facingDirection = 1;
+            _desiredFacingDirection = 1;
         }
         else if (_horizontalInput < -SpriteFlipThreshold)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
-            _facingDirection = -1;
+            _desiredFacingDirection = -1;
+        }
+        else
+        {
+            if (_isAIControlled)
+                _flipTimer = 0f; // Reset only for AI
+            return;
+        }
+
+        float scale = _isAIControlled ? 0.8f : 1f;
+
+        if (_isAIControlled)
+        {
+            // Delay flip for AI
+            if (_desiredFacingDirection != _facingDirection)
+            {
+                _flipTimer += Time.deltaTime;
+                if (_flipTimer >= flipDelay)
+                {
+                    transform.localScale = new Vector3(scale * _desiredFacingDirection, scale, 1f);
+                    _facingDirection = _desiredFacingDirection;
+                    _flipTimer = 0f;
+                }
+            }
+            else
+            {
+                _flipTimer = 0f; // Reset if already facing the desired direction
+            }
+        }
+        else
+        {
+            // Flip immediately for player-controlled
+            if (_desiredFacingDirection != _facingDirection)
+            {
+                transform.localScale = new Vector3(scale * _desiredFacingDirection, scale, 1f);
+                _facingDirection = _desiredFacingDirection;
+            }
         }
     }
 

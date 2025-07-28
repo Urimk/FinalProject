@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles the logic for a health collectable that restores player health on pickup.
@@ -11,10 +12,14 @@ public class HealthCollectable : MonoBehaviour
     // ==================== Inspector Fields ====================
     [Header("Collectable Info")]
     [Tooltip("Amount of health restored by this collectable.")]
+    [FormerlySerializedAs("healthValue")]
+
     [SerializeField] private float _healthValue;
 
     [Header("Sound")]
     [Tooltip("Sound to play when the collectable is picked up.")]
+    [FormerlySerializedAs("collectSound")]
+
     [SerializeField] private AudioClip _collectSound;
 
     // ==================== Private Fields ====================

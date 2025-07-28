@@ -9,19 +9,25 @@ public class Enemy_Sideways : MonoBehaviour
     // === Inspector Fields ===
     [Header("Movement Settings")]
     [Tooltip("Distance the enemy moves from its starting position.")]
+    [FormerlySerializedAs("movementDistance")]
     [SerializeField] private float _movementDistance;
 
     [Tooltip("Speed at which the enemy moves.")]
+    [FormerlySerializedAs("speed")]
+
     [SerializeField] private float _speed;
 
     [Tooltip("Amount of damage dealt to the player on contact.")]
+    [FormerlySerializedAs("damage")]
+
     [SerializeField] private float _damage;
 
     [Tooltip("If true, the enemy moves vertically; otherwise, horizontally.")]
+    [FormerlySerializedAs("moveVertically")]
     [SerializeField] private bool _moveVertically;
 
     // === State ===
-    [FormerlySerializedAs("MovingNegative")]
+    [FormerlySerializedAs("movingNegative")]
     [Tooltip("Indicates if the enemy is currently moving in the negative direction.")]
     [SerializeField] private bool _movingNegative = true;
     /// <summary>

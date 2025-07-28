@@ -67,6 +67,7 @@ public class PlayerAI : Agent
     [Tooltip("Array of player fireball GameObjects.")]
     [FormerlySerializedAs("playerFireballs")]
     [SerializeField] private GameObject[] _playerFireballs;
+    [SerializeField] private bool isTraining = false;
 
     [Header("Manual Raycast Perception")]
     [Tooltip("Distance for manual raycasts.")]
@@ -148,6 +149,10 @@ public class PlayerAI : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
+        if (!isTraining)
+        {
+            return;
+        }
         _isBossDefeated = false;
         _isPlayerDead = false;
         transform.position = EpisodeManager.Instance != null ? EpisodeManager.Instance.InitialPlayerPosition : Vector3.zero;
@@ -377,6 +382,7 @@ public class PlayerAI : Agent
         if (_playerHealth != null && _playerHealth.CurrentHealth <= 0)
         {
             _isPlayerDead = true;
+            Debug.Log(damage);
             Debug.Log(DebugPlayerDied);
             AddReward(_penaltyLose);
             EpisodeManager.Instance?.RecordEndOfEpisode(bossWon: true);

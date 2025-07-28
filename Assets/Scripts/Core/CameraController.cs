@@ -115,46 +115,40 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void HandleYMovement()
     {
-        float yTargetForSmoothDamp;
-        if (_followPlayerY)
+        // 1) Always advance any ongoing Y‑offset transition
+        if (_isTransitioningYOffset)
         {
-            if (_isTransitioningYOffset)
-            {
-                _transitionTimer += Time.deltaTime;
-                float t = Mathf.Clamp01(_transitionTimer / _offsetTransitionDuration);
-                _playerYOffset = Mathf.Lerp(_transitionStartYOffset, _transitionTargetYOffset, t);
-                if (t >= 1f)
-                {
-                    _isTransitioningYOffset = false;
-                }
-            }
-            yTargetForSmoothDamp = _player.position.y + _playerYOffset;
-            if (_snapYNextFrame)
-            {
-                transform.position = new Vector3(transform.position.x, yTargetForSmoothDamp, transform.position.z);
-                _velocity = Vector3.zero;
-            }
-            else
-            {
-                transform.position = Vector3.SmoothDamp(
-                    transform.position,
-                    new Vector3(transform.position.x, yTargetForSmoothDamp, transform.position.z),
-                    ref _velocity,
-                    _speed
-                );
-            }
+            _transitionTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(_transitionTimer / _offsetTransitionDuration);
+            _playerYOffset = Mathf.Lerp(_transitionStartYOffset, _transitionTargetYOffset, t);
+            if (t >= 1f)
+                _isTransitioningYOffset = false;
+        }
+
+        // 2) Decide your target Y
+        float yTarget = _followPlayerY
+            ? _player.position.y + _playerYOffset
+            : _currentPosY;
+
+        // 3) Snap if requested
+        if (_snapYNextFrame)
+        {
+            transform.position = new Vector3(transform.position.x, yTarget, transform.position.z);
+            _velocity = Vector3.zero;
+            _snapYNextFrame = false;
         }
         else
         {
-            yTargetForSmoothDamp = _currentPosY;
+            // 4) SmoothDamp toward that target
             transform.position = Vector3.SmoothDamp(
                 transform.position,
-                new Vector3(transform.position.x, yTargetForSmoothDamp, transform.position.z),
+                new Vector3(transform.position.x, yTarget, transform.position.z),
                 ref _velocity,
                 _speed
             );
         }
     }
+
 
     // ==================== X Movement ====================
     /// <summary>
@@ -286,6 +280,7 @@ public class CameraController : MonoBehaviour
         if (instantSnap)
         {
             _playerYOffset = newOffset;
+            _currentPosY = newOffset;
             _snapYNextFrame = true;
             _isTransitioningYOffset = false;
         }
@@ -294,6 +289,7 @@ public class CameraController : MonoBehaviour
             _isTransitioningYOffset = true;
             _transitionStartYOffset = _playerYOffset;
             _transitionTargetYOffset = newOffset;
+            _currentPosY = newOffset;
             _transitionTimer = 0f;
         }
     }

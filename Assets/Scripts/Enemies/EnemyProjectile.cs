@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles enemy projectile movement, collision, and animation logic.
@@ -15,10 +16,16 @@ public class EnemyProjectile : EnemyDamage
     // ==================== Serialized Fields ====================
     [Header("Projectile Parameters")]
     [Tooltip("Movement speed of the projectile.")]
+    [FormerlySerializedAs("speed")]
+
     [SerializeField] private float _speed;
     [Tooltip("Visual and collision size of the projectile.")]
+    [FormerlySerializedAs("size")]
+
     [SerializeField] private float _size;
     [Tooltip("Time in seconds before the projectile is automatically reset.")]
+    [FormerlySerializedAs("resetTime")]
+
     [SerializeField] private float _resetTime;
 
     // ==================== Private Fields ====================

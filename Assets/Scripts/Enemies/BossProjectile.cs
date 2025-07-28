@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles boss projectile movement, collision, and reward reporting for hits/misses.
@@ -14,18 +15,26 @@ public class BossProjectile : EnemyDamage
 
     // ==================== Serialized Fields ====================
     [Tooltip("Speed of the projectile.")]
+    [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
     [Tooltip("Size (scale) of the projectile.")]
+    [FormerlySerializedAs("size")]
     [SerializeField] private float _size;
     [Tooltip("Time before the projectile resets if it doesn't hit anything.")]
+    [FormerlySerializedAs("resetTime")]
     [SerializeField] private float _resetTime;
+    [FormerlySerializedAs("rm")]
+    [SerializeField] private BossRewardManager _rewardManager;
+    /// <summary>
+    /// Gets or sets rewardManager.
+    /// </summary>
+    public BossRewardManager RewardManager { get => _rewardManager; set => _rewardManager = value; }
 
     // ==================== Private Fields ====================
     private float _lifeTime;
     private Animator _anim;
     private bool _hit;
     private BoxCollider2D _collid;
-    public BossRewardManager rewardManager;
     private Vector2 _direction;
 
     /// <summary>
@@ -80,9 +89,9 @@ public class BossProjectile : EnemyDamage
         // Check if projectile should reset (missed)
         if (_lifeTime > _resetTime)
         {
-            if (rewardManager != null)
+            if (_rewardManager != null)
             {
-                rewardManager.ReportAttackMissed();
+                _rewardManager.ReportAttackMissed();
             }
             Deactivate();
         }
@@ -100,15 +109,15 @@ public class BossProjectile : EnemyDamage
         }
         bool hitPlayer = collision.tag == PlayerTag;
         // Report hit or miss to reward manager
-        if (rewardManager != null)
+        if (_rewardManager != null)
         {
             if (hitPlayer)
             {
-                rewardManager.ReportHitPlayer();
+                _rewardManager.ReportHitPlayer();
             }
             else
             {
-                rewardManager.ReportAttackMissed();
+                _rewardManager.ReportAttackMissed();
             }
         }
         _hit = true;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Trap enemy that charges at the player in four directions and can self-deactivate.
@@ -23,26 +24,41 @@ public class SpikeHead : EnemyDamage
     // === Serialized Fields ===
     [Header("Spikehead Attributes")]
     [Tooltip("Base movement speed of the spike head.")]
+    [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
     [Tooltip("Detection range for the player.")]
+    [FormerlySerializedAs("range")]
     [SerializeField] private float _range;
     [Tooltip("Delay between player detection checks.")]
+    [FormerlySerializedAs("checkDelay")]
+
     [SerializeField] private float _checkDelay;
     [Tooltip("Duration of the charge back before attacking.")]
+    [FormerlySerializedAs("chargeDuration")]
     [SerializeField] private float _chargeDuration = DefaultChargeDuration;
     [Tooltip("Distance to move back before charging forward.")]
     [SerializeField] private float _chargeBackDistance = DefaultChargeBackDistance;
+    [FormerlySerializedAs("attackSpeedMultiplier")]
+
     [Tooltip("Multiplier applied to speed during attack.")]
     [SerializeField] private float _attackSpeedMultiplier = DefaultAttackSpeedMultiplier;
     [Tooltip("Layer mask used to detect the player.")]
+    [FormerlySerializedAs("playerLayer")]
+
     [SerializeField] private LayerMask _playerLayer;
     [Header("Sound")]
     [Tooltip("Sound to play when the spike head crashes.")]
+    [FormerlySerializedAs("crashSound")]
+
     [SerializeField] private AudioClip _crashSound;
     [Header("Self-Deactivation")]
     [Tooltip("If true, the spike head will deactivate after charging.")]
+    [FormerlySerializedAs("deactivateAfterCharge")]
+
     [SerializeField] private bool _deactivateAfterCharge = false;
     [Tooltip("Delay before self-deactivation after charging.")]
+    [FormerlySerializedAs("deactivateDelay")]
+
     [SerializeField] private float _deactivateDelay = DefaultDeactivateDelay;
 
     // === Private Fields ===

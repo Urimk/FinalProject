@@ -8,6 +8,7 @@ using TMPro;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles the username input menu, validation, and PlayFab leaderboard submission.
@@ -25,10 +26,14 @@ public class UsernameInputMenu : MonoBehaviour
     // === Inspector Fields ===
     [Header("Username Input UI")]
     [Tooltip("Reference to the username input screen GameObject.")]
+    [FormerlySerializedAs("usernameInputScreen")]
     [SerializeField] private GameObject _usernameInputScreen;
     [Tooltip("TMP_InputField for entering the username.")]
+    [FormerlySerializedAs("usernameInputField")]
+
     [SerializeField] private TMP_InputField _usernameInputField;
     [Tooltip("TextMeshProUGUI for displaying error messages.")]
+    [FormerlySerializedAs("errorText")]
     [SerializeField] private TextMeshProUGUI _errorText;
 
     // === Private State ===

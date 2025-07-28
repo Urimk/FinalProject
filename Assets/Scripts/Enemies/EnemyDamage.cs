@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Base class for enemy damage logic. Handles damaging the player and optional recoil.
@@ -10,8 +11,10 @@ public class EnemyDamage : MonoBehaviour
     // ==================== Serialized Fields ====================
     [Header("Damage Parameters")]
     [Tooltip("Amount of damage dealt to the player.")]
+    [FormerlySerializedAs("damage")]
     [SerializeField] protected float _damage;
     [Tooltip("If true, applies recoil to the player on hit.")]
+    [FormerlySerializedAs("isRecoil")]
     [SerializeField] protected bool _isRecoil = false;
 
     // ==================== Damage Logic ====================
@@ -24,7 +27,10 @@ public class EnemyDamage : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             // Apply damage
-            collision.GetComponent<Health>().TakeDamage(_damage);
+            if (_damage > 0)
+            {
+                collision.GetComponent<Health>().TakeDamage(_damage);
+            }
 
             if (_isRecoil)
             {
