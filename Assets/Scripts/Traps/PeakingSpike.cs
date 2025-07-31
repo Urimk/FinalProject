@@ -16,32 +16,32 @@ public class PeakingSpike : MonoBehaviour
 
     // === Inspector Fields ===
     [Header("Movement Settings")]
-    [FormerlySerializedAs("BasePosition")]
+    [FormerlySerializedAs("basePosition")]
     [Tooltip("Y position where the spike rests at its base.")]
     [SerializeField] private float _basePosition;
     public float BasePosition { get => _basePosition; set => _basePosition = value; }
 
-    [FormerlySerializedAs("LowPosition")]
+    [FormerlySerializedAs("lowPosition")]
     [Tooltip("Y position where the spike moves to when lowered.")]
     [SerializeField] private float _lowPosition;
     public float LowPosition { get => _lowPosition; set => _lowPosition = value; }
 
-    [FormerlySerializedAs("BaseHoldTime")]
+    [FormerlySerializedAs("baseHoldTime")]
     [Tooltip("Time in seconds the spike stays at the base position.")]
     [SerializeField] private float _baseHoldTime = DefaultBaseHoldTime;
     public float BaseHoldTime { get => _baseHoldTime; set => _baseHoldTime = value; }
 
-    [FormerlySerializedAs("LowHoldTime")]
+    [FormerlySerializedAs("lowHoldTime")]
     [Tooltip("Time in seconds the spike stays at the low position.")]
     [SerializeField] private float _lowHoldTime = DefaultLowHoldTime;
     public float LowHoldTime { get => _lowHoldTime; set => _lowHoldTime = value; }
 
-    [FormerlySerializedAs("MoveSpeed")]
+    [FormerlySerializedAs("moveSpeed")]
     [Tooltip("Speed at which the spike moves between positions.")]
     [SerializeField] private float _moveSpeed = DefaultMoveSpeed;
     public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
 
-    [FormerlySerializedAs("InitialDelay")]
+    [FormerlySerializedAs("initialDelay")]
     [Tooltip("Delay before the spike starts moving for the first time.")]
     [SerializeField] private float _initialDelay = DefaultInitialDelay;
     public float InitialDelay { get => _initialDelay; set => _initialDelay = value; }

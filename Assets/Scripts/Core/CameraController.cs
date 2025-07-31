@@ -115,22 +115,30 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void HandleYMovement()
     {
-        // 1) Always advance any ongoing Y‑offset transition
+        // 1) Advance any ongoing Y‑offset transition...
         if (_isTransitioningYOffset)
         {
             _transitionTimer += Time.deltaTime;
             float t = Mathf.Clamp01(_transitionTimer / _offsetTransitionDuration);
             _playerYOffset = Mathf.Lerp(_transitionStartYOffset, _transitionTargetYOffset, t);
-            if (t >= 1f)
-                _isTransitioningYOffset = false;
+            if (t >= 1f) _isTransitioningYOffset = false;
         }
 
-        // 2) Decide your target Y
+        // 2) Compute your target Y
         float yTarget = _followPlayerY
             ? _player.position.y + _playerYOffset
             : _currentPosY;
 
-        // 3) Snap if requested
+        // 3) If following the player, *always* snap:
+        if (_followPlayerY)
+        {
+            transform.position = new Vector3(transform.position.x, yTarget, transform.position.z);
+            _velocity = Vector3.zero;
+            _snapYNextFrame = false;  // just in case
+            return;
+        }
+
+        // 4) Otherwise (not following) handle the one‑frame snap or damping:
         if (_snapYNextFrame)
         {
             transform.position = new Vector3(transform.position.x, yTarget, transform.position.z);
@@ -139,7 +147,6 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            // 4) SmoothDamp toward that target
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 new Vector3(transform.position.x, yTarget, transform.position.z),
@@ -148,6 +155,7 @@ public class CameraController : MonoBehaviour
             );
         }
     }
+
 
 
     // ==================== X Movement ====================

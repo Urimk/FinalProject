@@ -8,6 +8,9 @@ using UnityEngine.Serialization;
 /// </summary>
 public class EnemyDamage : MonoBehaviour
 {
+
+    private const float InstantDeath = -666;
+
     // ==================== Serialized Fields ====================
     [Header("Damage Parameters")]
     [Tooltip("Amount of damage dealt to the player.")]
@@ -30,6 +33,13 @@ public class EnemyDamage : MonoBehaviour
             if (_damage > 0)
             {
                 collision.GetComponent<Health>().TakeDamage(_damage);
+            }
+            else
+            {
+                if (_damage == InstantDeath)
+                {
+                    collision.GetComponent<Health>().TakeDamage(float.MaxValue);
+                }
             }
 
             if (_isRecoil)

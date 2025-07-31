@@ -1,6 +1,7 @@
 ﻿using System;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -11,8 +12,11 @@ public class VolumeText : MonoBehaviour
     // === Inspector Fields ===
     [Header("Volume Display Settings")]
     [Tooltip("PlayerPrefs key for the volume value.")]
+    [FormerlySerializedAs("volumeName")]
+
     [SerializeField] private string _volumeName;
     [Tooltip("Introductory text to display before the volume value.")]
+    [FormerlySerializedAs("textIntro")]
     [SerializeField] private string _textIntro;
 
     // === Private State ===

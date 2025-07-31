@@ -25,34 +25,39 @@ public class GroundManager : MonoBehaviour
     // === Inspector Fields ===
     [Header("Platform Settings")]
     [Tooltip("Reference to the falling platform for reset behavior.")]
+    [FormerlySerializedAs("fallingPlatform")]
+
     [SerializeField] private FallingPlatform _fallingPlatform;
 
     [Header("Sorting Settings")]
     [Tooltip("Number of times to sort the spikes before finishing.")]
+    [FormerlySerializedAs("timesToSort")]
+
     [SerializeField] private int _timesToSort = DefaultTimesToSort;
 
     [Tooltip("Trophy GameObject to activate when sorting is complete.")]
+    [FormerlySerializedAs("trophy")]
     [SerializeField] private GameObject _trophy;
 
     [Header("Spike Animation Settings")]
-    [FormerlySerializedAs("SpikeMoveTime")]
+    [FormerlySerializedAs("spikeMoveTime")]
     [Tooltip("Time in seconds for a spike to move up or down.")]
     [SerializeField] private float _spikeMoveTime = DefaultSpikeMoveTime;
     public float SpikeMoveTime { get => _spikeMoveTime; set => _spikeMoveTime = value; }
 
-    [FormerlySerializedAs("SwapTime")]
+    [FormerlySerializedAs("swapTime")]
     [Tooltip("Time in seconds for a spike swap animation.")]
     [SerializeField] private float _swapTime = DefaultSwapTime;
     public float SwapTime { get => _swapTime; set => _swapTime = value; }
 
     [Header("Spike References")]
-    [FormerlySerializedAs("Spikes")]
+    [FormerlySerializedAs("spikes")]
     [Tooltip("List of all SortedSpike objects managed by this GroundManager.")]
     [SerializeField] private List<SortedSpike> _spikes = new List<SortedSpike>();
     public List<SortedSpike> Spikes { get => _spikes; set => _spikes = value; }
 
     [Header("UI References")]
-    [FormerlySerializedAs("SortingText")]
+    [FormerlySerializedAs("sortingText")]
     [Tooltip("UI Text element for displaying the current sorting algorithm.")]
     [SerializeField] private Text _sortingText;
     public Text SortingText { get => _sortingText; set => _sortingText = value; }

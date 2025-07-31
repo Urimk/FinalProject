@@ -15,6 +15,7 @@ public class Health : MonoBehaviour, IDamageable
     private const int DefaultScoreValue = 100;
 
     // ==================== Serialized Fields ====================
+    [SerializeField] private Health mainPlayer;
     [Header("Managers")]
     [Tooltip("Reference to the ground manager for player death handling.")]
     [FormerlySerializedAs("groundManager")]
@@ -122,6 +123,13 @@ public class Health : MonoBehaviour, IDamageable
             _maxDamageThisFrame = 0;
             _isDamageQueued = false;
         }
+        if (mainPlayer != null)
+        {
+            if (mainPlayer.CurrentHealth <= 0)
+            {
+                ApplyDamage(int.MaxValue);
+            }
+        }
     }
 
     /// <summary>
@@ -129,6 +137,11 @@ public class Health : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeDamage(float damage)
     {
+        if (damage == float.MaxValue)
+        {
+            ApplyDamage(damage);
+            return;
+        }
         if (Invulnerable)
         {
             return;

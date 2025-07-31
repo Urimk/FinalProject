@@ -36,6 +36,7 @@ public class PlayerAI : Agent
     private const string DebugProjectilesNull = "[PlayerAI] Projectiles array is null in ObserveClosestProjectiles.";
 
     // ==================== Inspector Fields ====================
+
     [Header("References")]
     [Tooltip("Reference to the PlayerMovement component.")]
     [FormerlySerializedAs("playerMovement")]
@@ -117,6 +118,8 @@ public class PlayerAI : Agent
     [Tooltip("Layer mask for hazard detection.")]
     [FormerlySerializedAs("hazardDetectionLayerMask")]
     [SerializeField] private LayerMask _hazardDetectionLayerMask = DefaultHazardDetectionLayerMask;
+    [SerializeField] private float directionChangeCooldown = 0f; // seconds
+
 
     // ==================== Private Fields ====================
     private int _numRaycasts;
@@ -125,6 +128,9 @@ public class PlayerAI : Agent
     private Rigidbody2D _rigidbody2D;
     private bool _isBossDefeated = false;
     private bool _isPlayerDead = false;
+    private float _lastDirectionChangeTime = 0f;
+
+    private float _lastMoveDirection = 0f; // -1, 0, or 1
 
     /// <summary>
     /// Initializes the agent, sets up event connections, and calculates raycast parameters.
@@ -190,7 +196,7 @@ public class PlayerAI : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Agent's own state
-        sensor.AddObservation((Vector2)transform.localPosition);
+        sensor.AddObservation((Vector2)transform.position);
         sensor.AddObservation(_rigidbody2D.velocity);
         sensor.AddObservation(_playerHealth != null ? _playerHealth.CurrentHealth / _playerHealth.StartingHealth : 0f);
         sensor.AddObservation(_playerMovement != null && _playerMovement.IsGrounded());
@@ -205,12 +211,13 @@ public class PlayerAI : Agent
         float bossHealthNormalized = 0f;
         if (bossActive)
         {
-            relativeBossPos = _boss.localPosition - transform.localPosition;
+            relativeBossPos = _boss.position - transform.position;
             Rigidbody2D bossRb = _boss.GetComponent<Rigidbody2D>();
             bossVelocity = bossRb != null ? bossRb.velocity : Vector2.zero;
             bossHealthNormalized = _bossHealth != null ? _bossHealth.CurrentHealth / _bossHealth.MaxHealth : 0f;
         }
         sensor.AddObservation(relativeBossPos);
+        //Debug.Log(relativeBossPos);
         sensor.AddObservation(bossVelocity);
         sensor.AddObservation(bossHealthNormalized);
         // Manual raycast observations
@@ -355,7 +362,21 @@ public class PlayerAI : Agent
         float rawJumpAction = actions.ContinuousActions[0];
         int fallThroughAction = actions.DiscreteActions[1];
         int attackAction = actions.DiscreteActions[2];
-        float moveDirection = (moveAction == 1) ? -1f : (moveAction == 2) ? 1f : 0f;
+        float requestedDirection = (moveAction == 1) ? -1f : (moveAction == 2) ? 1f : 0f;
+        float moveDirection = _lastMoveDirection; // default to last valid direction
+        // Check if direction actually changed
+        bool directionChanged = requestedDirection != 0f && requestedDirection != _lastMoveDirection;
+
+        if (!directionChanged || Time.time - _lastDirectionChangeTime > directionChangeCooldown)
+        {
+            moveDirection = requestedDirection;
+
+            if (directionChanged)
+            {
+                _lastDirectionChangeTime = Time.time;
+                _lastMoveDirection = moveDirection;
+            }
+        }
         float jumpDuration = 0f;
         if (rawJumpAction > 0f)
         {
@@ -368,6 +389,7 @@ public class PlayerAI : Agent
         _playerMovement?.SetAIJump(jumpDuration);
         _oneWayPlatform?.SetAIFallThrough(fallThroughPressed);
         _playerAttack?.SetAIAttack(attackPressed);
+        Debug.Log(attackPressed);
     }
 
     // ==================== Reward and Episode Logic ====================

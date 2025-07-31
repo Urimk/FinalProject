@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -9,13 +10,19 @@ public class SelectionArrow : MonoBehaviour
     // === Inspector Fields ===
     [Header("Menu Options")]
     [Tooltip("Array of RectTransforms representing selectable menu options.")]
+    [FormerlySerializedAs("options")]
+
     [SerializeField] private RectTransform[] _options;
 
     [Header("Sounds")]
     [Tooltip("Sound to play when changing selection.")]
+    [FormerlySerializedAs("changeSound")]
+
     [SerializeField] private AudioClip _changeSound;
 
     [Tooltip("Sound to play when interacting with a menu option.")]
+    [FormerlySerializedAs("interactSound")]
+
     [SerializeField] private AudioClip _interactSound;
 
     // === Private State ===

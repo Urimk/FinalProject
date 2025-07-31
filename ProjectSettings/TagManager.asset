@@ -12,6 +12,7 @@ TagManager:
   - FallingPlatform
   - Checkpoint
   - PlayerFireball
+  - CagedAlly
   layers:
   - Default
   - TransparentFX

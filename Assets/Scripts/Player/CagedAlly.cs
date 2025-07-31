@@ -21,7 +21,7 @@ public class CagedAlly : MonoBehaviour
         }
     }
 
-    private void ActivateAlly()
+    public void ActivateAlly()
     {
         if (ally != null)
         {

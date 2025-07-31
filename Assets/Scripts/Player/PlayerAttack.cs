@@ -177,6 +177,16 @@ public class PlayerAttack : MonoBehaviour
             GameObject obj = hit.gameObject;
             if (damagedObjects.Contains(obj))
                 continue;
+            // If the object has a specific tag, call a special function
+            if (obj.CompareTag("CagedAlly")) // Replace "SpecialEnemy" with your actual tag
+            {
+                // Call your custom function (make sure it exists on the right component)
+                if (obj.TryGetComponent<CagedAlly>(out var cage))
+                {
+                    cage.ActivateAlly();
+                    Destroy(cage.gameObject);
+                }
+            }
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(_swordDamage);

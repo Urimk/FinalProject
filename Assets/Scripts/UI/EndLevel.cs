@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -14,25 +15,39 @@ public class LevelEndTrigger : MonoBehaviour
     // === Inspector Fields ===
     [Header("UI Screens")]
     [Tooltip("Reference to the username input screen GameObject.")]
+    [FormerlySerializedAs("usernameInputScreen")]
+
     [SerializeField] private GameObject _usernameInputScreen;
 
     [Tooltip("Reference to the win screen GameObject.")]
+    [FormerlySerializedAs("winScreen")]
+
     [SerializeField] private GameObject _winScreen;
 
     [Header("UI Texts")]
     [Tooltip("Text displaying the win score.")]
+    [FormerlySerializedAs("winScoreText")]
+
     [SerializeField] private Text _winScoreText;
 
     [Tooltip("Text displaying the health bonus.")]
+    [FormerlySerializedAs("healthBonusText")]
+
     [SerializeField] private Text _healthBonusText;
 
     [Tooltip("Text displaying the time bonus.")]
+    [FormerlySerializedAs("timeBonusText")]
+
     [SerializeField] private Text _timeBonusText;
 
     [Tooltip("Reference to the player's Health component.")]
+    [FormerlySerializedAs("playerHealth")]
+
     [SerializeField] private Health _playerHealth;
 
     [Tooltip("Text displaying the total score.")]
+    [FormerlySerializedAs("totalScoreText")]
+
     [SerializeField] private Text _totalScoreText;
 
     // === Private State ===

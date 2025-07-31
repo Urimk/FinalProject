@@ -92,10 +92,11 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Shows the game over screen and plays sound.
     /// </summary>
-    public void GameOver()
+    public void GameOver(bool status)
     {
         _gameOverScreen.SetActive(true);
         SoundManager.instance.PlaySound(_gameOverSound, gameObject);
+        Time.timeScale = 0;
     }
 
     /// <summary>

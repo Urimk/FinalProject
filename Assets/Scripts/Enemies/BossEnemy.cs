@@ -66,6 +66,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     [FormerlySerializedAs("bossHealth")]
     [SerializeField] private BossHealth _bossHealth;
     private bool _isPhase2 = false;
+    [SerializeField] private Transform enraged;
+
 
     [Header("Ranged Attack")]
     [Tooltip("Transform where fireballs are spawned from.")]
@@ -127,6 +129,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private Vector3 _initialBossPosition;
     private bool _isDead = false;
     private Coroutine _dashCoroutine;
+    private bool isEranged = false;
 
     // ==================== Unity Lifecycle ====================
     /// <summary>
@@ -336,7 +339,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             Debug.LogWarning("[BossEnemy] Player transform is null, cannot launch fireball.");
             return;
         }
-        if (_anim != null) _anim.SetTrigger("2_Attack");
+        if (_anim != null)
+        {
+            _anim.SetTrigger("2_Attack");
+        }
         if (_fireballSound != null) SoundManager.instance.PlaySound(_fireballSound, gameObject);
         _cooldownTimer = 0f;
     }
@@ -465,7 +471,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
             _targetIconInstance.SetActive(true);
             _targetIconInstance.tag = DashTargetIndicatorTag;
         }
-        if (_anim != null) _anim.SetTrigger("ChargeDash");
+        if (_anim != null)
+        {
+            _anim.SetTrigger("ChargeDash");
+        }
         if (_chargeSound != null) SoundManager.instance.PlaySound(_chargeSound, gameObject);
         _dashCoroutine = StartCoroutine(PerformDashAttack());
     }
@@ -488,7 +497,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         }
         _isChargingDash = false;
         _isDashing = true;
-        if (_anim != null) _anim.SetTrigger("Dash");
+        if (_anim != null)
+        {
+            _anim.SetTrigger("Dash");
+        }
         if (_dashSound != null) SoundManager.instance.PlaySound(_dashSound, gameObject);
         Vector2 startPosition = transform.position;
         Vector2 direction = (_dashTarget - startPosition).normalized;
@@ -516,7 +528,15 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     /// </summary>
     private void EnterPhase2()
     {
-        Debug.Log("[BossEnemy] Entering Phase 2!");
+        if (_damage == 0)
+        {
+            _damage = 1;
+        }
+        _isPhase2 = true;
+        if (enraged != null)
+        {
+            enraged.gameObject.SetActive(true);
+        }
         _attackCooldown -= Phase2AttackCooldownReduction;
         _fireAttackCooldown -= Phase2FireAttackCooldownReduction;
         _attackCooldown = Mathf.Max(MinCooldown, _attackCooldown);
@@ -538,7 +558,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         Collider2D bossCol = GetComponent<Collider2D>();
         if (bossCol != null) bossCol.enabled = false;
         if (_rb != null) _rb.isKinematic = true;
-        if (_anim != null) _anim.SetTrigger("4_Death");
+        if (_anim != null)
+        {
+            _anim.SetTrigger("4_Death");
+        }
         this.enabled = false;
         Destroy(gameObject, DeathDestroyDelay);
     }

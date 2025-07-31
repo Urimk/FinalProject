@@ -8,7 +8,7 @@ public class Explosion : MonoBehaviour
 {
     // === Constants ===
     private const float DefaultDamage = 1f;
-    private const float DefaultLifetime = 0.5f;
+    private const float DefaultLifetime = 0.3f;
 
     // === Inspector Fields ===
     [Header("Explosion Settings")]

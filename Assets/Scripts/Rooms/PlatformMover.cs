@@ -34,9 +34,7 @@ public class PlatformMover : MonoBehaviour
     [FormerlySerializedAs("isNegative")]
     [SerializeField] private bool _isNegative = false;
     [Header("Attachment Settings")]
-    [Tooltip("Tag used to find the player GameObject.")]
-    [FormerlySerializedAs("playerTag")]
-    [SerializeField] private string _playerTag = PlayerTag;
+    [SerializeField] private Transform _playerTransform;
     [Tooltip("Distance threshold for attaching when player is on ground and close enough.")]
     [FormerlySerializedAs("attachDistance")]
     [SerializeField] private float _attachDistance = DefaultAttachDistance;
@@ -46,7 +44,6 @@ public class PlatformMover : MonoBehaviour
     private Vector3 _targetPos;
     private bool _movingPositive;
     private GameObject _player;
-    private Transform _playerTransform;
     private Transform _currentPlatformParent;
     private Rigidbody2D _rigidbody2D;
 
@@ -64,15 +61,7 @@ public class PlatformMover : MonoBehaviour
         _movingPositive = !_startFromPositive;
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
-        _player = GameObject.FindGameObjectWithTag(_playerTag);
-        if (_player != null)
-        {
-            _playerTransform = _player.transform;
-        }
-        else
-        {
-            Debug.LogWarning($"Player with tag '{_playerTag}' not found in scene.");
-        }
+        _player = _playerTransform.gameObject;
     }
 
     /// <summary>
@@ -103,6 +92,7 @@ public class PlatformMover : MonoBehaviour
             return;
         float distanceToPlayer = Vector3.Distance(_playerTransform.position, transform.position);
         var pm = _player.GetComponent<PlayerMovement>();
+
         if (distanceToPlayer <= _attachDistance && _playerTransform.position.y > (transform.position.y + PlayerYOffsetThreshold) && pm != null && pm.IsGrounded())
         {
             Transform intermediateParent = transform.Find(AttachPointName);
