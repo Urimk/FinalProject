@@ -4,8 +4,9 @@ using UnityEngine.Serialization;
 /// <summary>
 /// Handles the behavior of a diamond collectable in the game.
 /// When the player collides with this object, it plays a sound, adds score, and deactivates itself.
+/// Inherits from CollectableBase to follow the collectable pattern.
 /// </summary>
-public class Diamond : MonoBehaviour
+public class Diamond : CollectableBase
 {
     // ==================== Constants ====================
     /// <summary>
@@ -14,19 +15,13 @@ public class Diamond : MonoBehaviour
     private const int DefaultScoreValue = 50;
 
     // ==================== Inspector Fields ====================
-    [Header("Collectable Info")]
+    [Header("Diamond Settings")]
     [Tooltip("Score value awarded to the player when this diamond is collected.")]
     [FormerlySerializedAs("scoreValue")]
     [SerializeField] private int _scoreValue = DefaultScoreValue;
 
-    [Tooltip("Unique identifier for this collectable (used for save/load or analytics).")]
-    [FormerlySerializedAs("collectableID")]
-    [SerializeField] private string _collectableID;
-
-    [Header("Sound")]
     [Tooltip("Sound effect played when the diamond is collected.")]
     [FormerlySerializedAs("collectSound")]
-
     [SerializeField] private AudioClip _collectSound;
 
     // ==================== Properties ====================
@@ -35,28 +30,51 @@ public class Diamond : MonoBehaviour
     /// </summary>
     public int ScoreValue => _scoreValue;
 
+    // ==================== Protected Methods ====================
     /// <summary>
-    /// Gets the unique collectable ID.
+    /// Called when the diamond is collected. Handles sound, score, and respawning logic.
     /// </summary>
-    public string CollectableID => _collectableID;
-
-    // ==================== Unity Events ====================
-    /// <summary>
-    /// Triggered when another collider enters this object's trigger collider.
-    /// Handles collection logic if the player collides.
-    /// </summary>
-    /// <param name="collision">The collider that entered the trigger.</param>
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected override void OnCollect()
     {
-        // Check if the colliding object is the player
-        if (collision.CompareTag("Player"))
+        DebugManager.Log(DebugCategory.Collectable, $"Diamond {_collectableID} collected! Score: {_scoreValue}", this);
+
+        // Play the collection sound if available
+        if (_collectSound != null)
         {
-            // Play the collection sound at this object's location
-            SoundManager.instance.PlaySound(_collectSound, gameObject);
-            // Add score via the ScoreManager
-            ScoreManager.Instance.AddScore(_scoreValue);
-            // Deactivate the collectible after collecting
-            gameObject.SetActive(false);
+            if (SoundManager.instance != null)
+            {
+                SoundManager.instance.PlaySound(_collectSound, gameObject);
+            }
+            else
+            {
+                DebugManager.LogWarning(DebugCategory.Sound, "SoundManager instance not found. Cannot play collection sound.", this);
+            }
         }
+
+        // Add score via the ScoreManager
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.AddScore(_scoreValue);
+        }
+        else
+        {
+            DebugManager.LogWarning(DebugCategory.Collectable, "ScoreManager instance not found. Cannot add score.", this);
+        }
+        // Deactivate the collectible after collecting
+        gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Called when the diamond is reset. Ensures proper visibility restoration.
+    /// </summary>
+    protected override void OnReset()
+    {
+        DebugManager.Log(DebugCategory.Collectable, $"Diamond {_collectableID} reset!", this);
+
+        // Ensure the diamond is visible and collectable
+        SetVisibility(true);
+
+        // Stop any ongoing respawn coroutines
+        StopAllCoroutines();
     }
 }

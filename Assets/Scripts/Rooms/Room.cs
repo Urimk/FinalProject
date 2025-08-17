@@ -208,7 +208,17 @@ public class Room : MonoBehaviour
         {
             if (_collectables[i] != null)
             {
-                _collectables[i].SetActive(true);
+                // Reset the collectable using the new CollectableBase system
+                var collectable = _collectables[i].GetComponent<ICollectable>();
+                if (collectable != null)
+                {
+                    collectable.Reset();
+                }
+                else
+                {
+                    // Fallback for legacy collectables that don't use the new system
+                    _collectables[i].SetActive(true);
+                }
                 _collectables[i].transform.position = _initialCollectablePositions[i];
             }
         }
@@ -216,20 +226,72 @@ public class Room : MonoBehaviour
 
     /// <summary>
     /// Removes collected diamonds from the room's collectables list.
+    /// Updated to work with the new CollectableBase system.
     /// </summary>
     public void RemoveCollectedDiamonds()
     {
         List<GameObject> activeCollectables = new List<GameObject>();
         List<Vector3> activePositions = new List<Vector3>();
+
         for (int i = 0; i < _collectables.Length; i++)
         {
-            if (_collectables[i] != null && _collectables[i].activeInHierarchy)
+            if (_collectables[i] != null)
             {
-                activeCollectables.Add(_collectables[i]);
-                activePositions.Add(_initialCollectablePositions[i]);
+                // Check if the collectable is active using the new system
+                var collectable = _collectables[i].GetComponent<ICollectable>();
+                bool isActive = collectable != null ? !collectable.IsCollected : _collectables[i].activeInHierarchy;
+
+                if (isActive)
+                {
+                    activeCollectables.Add(_collectables[i]);
+                    activePositions.Add(_initialCollectablePositions[i]);
+                }
             }
         }
+
         _collectables = activeCollectables.ToArray();
         _initialCollectablePositions = activePositions.ToArray();
+    }
+
+    /// <summary>
+    /// Gets all collectables in this room that implement the ICollectable interface.
+    /// </summary>
+    /// <returns>Array of ICollectable components found in this room.</returns>
+    public ICollectable[] GetCollectables()
+    {
+        List<ICollectable> collectables = new List<ICollectable>();
+
+        for (int i = 0; i < _collectables.Length; i++)
+        {
+            if (_collectables[i] != null)
+            {
+                var collectable = _collectables[i].GetComponent<ICollectable>();
+                if (collectable != null)
+                {
+                    collectables.Add(collectable);
+                }
+            }
+        }
+
+        return collectables.ToArray();
+    }
+
+    /// <summary>
+    /// Resets all collectables in this room to their initial state.
+    /// </summary>
+    public void ResetAllCollectables()
+    {
+        for (int i = 0; i < _collectables.Length; i++)
+        {
+            if (_collectables[i] != null)
+            {
+                var collectable = _collectables[i].GetComponent<ICollectable>();
+                if (collectable != null)
+                {
+                    collectable.Reset();
+                }
+                _collectables[i].transform.position = _initialCollectablePositions[i];
+            }
+        }
     }
 }

@@ -13933,7 +13933,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!1 &1020430272
 GameObject:
@@ -27084,6 +27084,10 @@ PrefabInstance:
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5670927776056822917, guid: 33d0fb9cda43599449ac911555ec3530, type: 3}
+      propertyPath: _playerHealth
+      value: 
+      objectReference: {fileID: 1851863283}
     - target: {fileID: 7058636950422852983, guid: 33d0fb9cda43599449ac911555ec3530, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -28792,6 +28796,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 1851863284}
     - target: {fileID: 8061211680053965661, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_Name
       value: Main Camera
