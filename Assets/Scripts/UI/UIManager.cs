@@ -39,6 +39,13 @@ public class UIManager : MonoBehaviour
     // === Private State ===
     private bool _isGamePaused = false;
 
+    public bool IsGamePaused
+    {
+        get { return _isGamePaused; }
+        set { _isGamePaused = value; }
+    }
+
+
     // Properties for testing
     public GameObject GameOverScreen
     {
@@ -92,7 +99,7 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Shows the game over screen and plays sound.
     /// </summary>
-    public void GameOver(bool status)
+    public void GameOver()
     {
         _gameOverScreen.SetActive(true);
         SoundManager.instance.PlaySound(_gameOverSound, gameObject);
@@ -105,6 +112,8 @@ public class UIManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1;
+
     }
 
     /// <summary>
@@ -113,6 +122,8 @@ public class UIManager : MonoBehaviour
     public void MainMenu()
     {
         SoundManager.instance.ChangeMusic(SoundManager.instance.MenuMusic);
+        _isGamePaused = false;
+        Time.timeScale = 1;
         SceneManager.LoadScene(MainMenuSceneIndex);
     }
 
@@ -137,14 +148,6 @@ public class UIManager : MonoBehaviour
         _pauseScreen.SetActive(status);
         _isGamePaused = status;
         Time.timeScale = status ? 0 : 1;
-    }
-
-    /// <summary>
-    /// Returns whether the game is currently paused.
-    /// </summary>
-    public bool IsGamePaused()
-    {
-        return _isGamePaused;
     }
 
     /// <summary>

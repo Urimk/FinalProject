@@ -99,6 +99,7 @@ public class BossQLearning : MonoBehaviour
     [SerializeField] private float penaltyInvalidAction = -1.0f;
     [Tooltip("Penalty for actions blocked by global cooldown.")]
     [SerializeField] private float penaltyGCDBlocked = -0.5f;
+    [SerializeField] private bool isCurriculmn = false;
 
     // ==================== Private Fields ====================
     private int currentCurriculumStage = 3;
@@ -205,8 +206,10 @@ public class BossQLearning : MonoBehaviour
             SaveQTable();
             args.Cancel = false; // Let the process continue to shut down
         };
-
-        ApplyCurriculumStage(currentCurriculumStage);
+        if (isCurriculmn)
+        {
+            ApplyCurriculumStage(currentCurriculumStage);
+        }
     }
 
     /// <summary>
@@ -486,7 +489,11 @@ public class BossQLearning : MonoBehaviour
             Debug.LogWarning("[Q-Learning] AIBoss reference missing when getting valid actions.");
         }
         // Only allow actions up to the current curriculum stage
-        return validActions.Where(action => action < _maxActionIndexForCurrentStage).ToList();
+        if (isCurriculmn)
+        {
+            return validActions.Where(action => action < _maxActionIndexForCurrentStage).ToList();
+        }
+        return validActions;
     }
 
     /// <summary>
@@ -963,9 +970,9 @@ public class BossQLearning : MonoBehaviour
         if (recentRewards.Count > recentRewardWindow)
             recentRewards.Dequeue();
 
-        if (currentCurriculumStage < curriculumStages.Count - 1)
+        if (currentCurriculumStage < curriculumStages.Count - 1 || !isCurriculmn)
         {
-            if (recentRewards.Count == recentRewardWindow &&
+            if (isCurriculmn && recentRewards.Count == recentRewardWindow &&
                 recentRewards.Average() > curriculumStages[currentCurriculumStage].minAverageReward &&
                 EpisodeManager.Instance.EpisodeCount > curriculumStages[currentCurriculumStage].minEpisodes)
             {

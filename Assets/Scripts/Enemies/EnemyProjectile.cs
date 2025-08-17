@@ -12,6 +12,9 @@ public class EnemyProjectile : EnemyDamage
     private const float LerpComplete = 1f;
     private const string NoCollisionTag = "NoCollision";
     private const string EnemyTag = "Enemy";
+    private const string DashTargetIndicatorTag = "DashTargetIndicator";
+    private const string FlameWarningMarkerTag = "FlameWarningMarker";
+    private const string FireballTag = "PlayerFireball";
 
     // ==================== Serialized Fields ====================
     [Header("Projectile Parameters")]
@@ -27,6 +30,7 @@ public class EnemyProjectile : EnemyDamage
     [FormerlySerializedAs("resetTime")]
 
     [SerializeField] private float _resetTime;
+    [SerializeField] private bool breakWithFireball = true;
 
     // ==================== Private Fields ====================
     private float _lifeTime;
@@ -40,6 +44,12 @@ public class EnemyProjectile : EnemyDamage
     private BoxCollider2D _boxCollider;
     private Vector2 _direction = Vector2.right;
     private bool _useCustomDirection = false;
+    private Vector3 _storedWorldPosition;
+    private bool _useStoredPosition = false;
+    private Vector3 _initialParentLossyScale;
+    private bool _isFlipped = false;
+
+
 
     // ==================== Unity Lifecycle ====================
     /// <summary>
@@ -53,6 +63,15 @@ public class EnemyProjectile : EnemyDamage
         _fullColliderSize = _boxCollider.size;
     }
 
+    public void StoreInitialWorldPosition()
+    {
+        _storedWorldPosition = transform.position;
+        _initialParentLossyScale = transform.parent.lossyScale; // Store parent's initial scale
+        _useStoredPosition = true;
+        _isFlipped = false;
+
+    }
+
     // ==================== Projectile Activation & Direction ====================
     /// <summary>
     /// Activates the projectile and resets its state.
@@ -61,6 +80,11 @@ public class EnemyProjectile : EnemyDamage
     {
         _hit = false;
         _lifeTime = 0;
+        if (_useStoredPosition)
+        {
+            float globalXDirection = Mathf.Sign(transform.parent.lossyScale.x); // +1 for right, -1 for left
+            _direction = new Vector2(globalXDirection, 0);
+        }
         gameObject.SetActive(true);
         _collid.enabled = true;
         if (_isComingOut)
@@ -135,13 +159,34 @@ public class EnemyProjectile : EnemyDamage
             }
         }
         transform.localScale = new Vector3(_size, _size, 1);
-        if (_useCustomDirection)
+        if (_useStoredPosition)
         {
-            transform.Translate(_direction * _speed * Time.deltaTime, Space.World);
+            // Check if parent scale changed and compensate
+            Vector3 currentParentScale = transform.parent.lossyScale;
+            if (currentParentScale.x != _initialParentLossyScale.x && !_isFlipped)
+            {
+                // Parent flipped, rotate the fireball 180 degrees
+                transform.Rotate(0, 0, 180);
+                _isFlipped = true;
+                _initialParentLossyScale = currentParentScale;
+
+                // Update stored parent scale
+                _initialParentLossyScale = currentParentScale;
+            }
+            // Move from stored world position, ignoring parent transforms
+            _storedWorldPosition += (Vector3)(_direction * _speed * Time.deltaTime);
+            transform.position = _storedWorldPosition;
         }
         else
         {
-            transform.Translate(Vector2.right * _speed * Time.deltaTime);
+            if (_useCustomDirection || _useStoredPosition)
+            {
+                transform.Translate(_direction * _speed * Time.deltaTime, Space.World);
+            }
+            else
+            {
+                transform.Translate(_direction * _speed * Time.deltaTime);
+            }
         }
         _lifeTime += Time.deltaTime;
         if (_lifeTime > _resetTime)
@@ -157,7 +202,11 @@ public class EnemyProjectile : EnemyDamage
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag)
+        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag || collision.gameObject.tag == FlameWarningMarkerTag || collision.gameObject.tag == DashTargetIndicatorTag)
+        {
+            return;
+        }
+        if (!breakWithFireball && collision.gameObject.tag == FireballTag)
         {
             return;
         }

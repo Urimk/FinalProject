@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 using UnityEngine.Serialization;
 
 /// <summary>
@@ -21,14 +23,24 @@ public class Explosion : MonoBehaviour
     [FormerlySerializedAs("lifetime")]
 
     [SerializeField] private float _lifetime = DefaultLifetime;
+    [SerializeField] private AudioClip _explosionSound;
 
     /// <summary>
     /// Called by Unity when the object is instantiated.
     /// Schedules the destruction of the explosion object after its lifetime expires.
     /// </summary>
+
+
     private void Start()
     {
+        StartCoroutine(PlaySoundNextFrame());
         Destroy(gameObject, _lifetime);
+    }
+
+    private IEnumerator PlaySoundNextFrame()
+    {
+        yield return null; // wait for one frame
+        SoundManager.instance.PlaySound(_explosionSound, gameObject);
     }
 
     /// <summary>

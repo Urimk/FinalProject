@@ -11,6 +11,8 @@ public class BossProjectile : EnemyDamage
     private const string EnemyTag = "Enemy";
     private const string PlayerTag = "Player";
     private const float ScaleZ = 1f;
+    private const string DashTargetIndicatorTag = "DashTargetIndicator";
+    private const string FlameWarningMarkerTag = "FlameWarningMarker";
     private const float RotationZ = 0f;
 
     // ==================== Serialized Fields ====================
@@ -102,8 +104,7 @@ public class BossProjectile : EnemyDamage
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Ignore collisions with certain tags
-        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag)
+        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag || collision.gameObject.tag == FlameWarningMarkerTag || collision.gameObject.tag == DashTargetIndicatorTag)
         {
             return;
         }

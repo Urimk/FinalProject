@@ -28,7 +28,7 @@ public class PlayerAI : Agent
     private const float DefaultHazardDetectionRadius = 15f;
     private const int DefaultHazardDetectionLayerMask = -1;
     private const float MaxJumpHoldDuration = 0.6f;
-    private const string AreaMarkerTag = "AreaMarker";
+    private const string DashTargetIndicatorTag = "DashTargetIndicator";
     private const string FlameWarningMarkerTag = "FlameWarningMarker";
     private const string DebugPlayerDied = "[PlayerAI] Player Died! Ending Episode.";
     private const string DebugBossDefeated = "[PlayerAI] Boss Defeated! Ending Episode.";
@@ -263,7 +263,7 @@ public class PlayerAI : Agent
             Collider2D hit = _overlapResults[i];
             if (hit == null) continue;
             float dist = Vector2.Distance(transform.position, hit.transform.position);
-            if (hit.CompareTag(AreaMarkerTag))
+            if (hit.CompareTag(DashTargetIndicatorTag))
             {
                 if (dist < closestDashIndicatorDist)
                 {

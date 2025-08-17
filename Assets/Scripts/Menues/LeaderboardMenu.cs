@@ -6,6 +6,7 @@ using PlayFab.ClientModels;
 using TMPro; // Make sure to import TextMeshPro
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Handles the leaderboard menu, including login, navigation, and displaying top players for each leaderboard.
@@ -33,6 +34,8 @@ public class LeaderboardMenu : MonoBehaviour
     [Tooltip("Reference to the SpesificLB GameObject.")]
     [SerializeField] private GameObject _spesificLB;
     [Tooltip("Text fields for all 9 leaderboard cells.")]
+    [FormerlySerializedAs("leaderboardTexts")]
+
     [SerializeField] private TMP_Text[] _leaderboardTexts;
 
     // ==================== Private Fields ====================

@@ -170,7 +170,7 @@ public class GPTBoss : MonoBehaviour
             case 0:
                 return "Generate only a general knowledge question without any introduction or explanation. Start directly with the question. The question should be a yes or no question.";
             case 1:
-                return "Generate only a general knowledge question without any introduction or explanation. Start directly with the question. Give 4 options for answers, only 1 is correct.";
+                return "Generate only a general knowledge question without any introduction or explanation. Start directly with the question. Give 4 options for answers, only 1 is correct. (don't tell which one)";
             case 2:
             default:
                 return "Generate only an EASY general knowledge question without any introduction or explanation. Start directly with the question.";
@@ -201,8 +201,7 @@ public class GPTBoss : MonoBehaviour
         string playerAnswer = _playerInput.text.Trim();
         if (string.IsNullOrEmpty(playerAnswer)) return;
         _playerInput.interactable = false;
-        string validationPrompt = $"Question: {_currentQuestion}\nPlayer's answer: {playerAnswer}\n" +
-                 "Is the player's answer correct? Respond with only 'yes' or 'no'.";
+        string validationPrompt = $"Q: {_currentQuestion}\nA: {playerAnswer}\nIs the answer correct? Ignore spelling, be lenient if it's understandable, but don’t accept unsure, vague or multiple answers. Reply only 'yes' or 'no'.";
         StartCoroutine(_gptManager.SendRequest(validationPrompt, ProcessAnswer));
         _playerInput.text = string.Empty;
     }
@@ -288,6 +287,7 @@ public class GPTBoss : MonoBehaviour
         _playerInput.gameObject.SetActive(false);
         EnablePlayerControls();
         Invoke(nameof(ClearBossText), QuestionDelay);
+        _challengeActive = false;
     }
 
     /// <summary>

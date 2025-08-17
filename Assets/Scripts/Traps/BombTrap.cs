@@ -23,6 +23,8 @@ public class BombTrap : MonoBehaviour
     [FormerlySerializedAs("delayBeforeExplosion")]
 
     [SerializeField] private float _delayBeforeExplosion = DefaultDelayBeforeExplosion;
+    [SerializeField] private AudioClip _triggerSound;
+
 
     // === Private State ===
     private bool _triggered = false;
@@ -37,6 +39,7 @@ public class BombTrap : MonoBehaviour
         if (!_triggered && other.CompareTag(PlayerTag))
         {
             _triggered = true;
+            SoundManager.instance.PlaySound(_triggerSound, gameObject);
             GetComponent<Animator>().SetTrigger(TriggerBombAnim);
         }
     }
@@ -47,7 +50,8 @@ public class BombTrap : MonoBehaviour
     /// </summary>
     private void Explode()
     {
-        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        GameObject explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        explosion.transform.SetParent(transform.parent); // <-- Set to same parent (e.g., "room1")
         GetComponent<Animator>().SetTrigger(HideAnim);
         gameObject.SetActive(false);
         _triggered = false;

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -24,7 +25,6 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private const float DashDuration = 0.8f;
     private const float DeathDestroyDelay = 2f;
     private const string FlameWarningTag = "FlameWarningMarker";
-    private const string AreaMarkerTag = "AreaMarker";
     private const string DashTargetIndicatorTag = "DashTargetIndicator";
 
     // ==================== Serialized Fields ====================
@@ -575,7 +575,11 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         {
             _flame.SetActive(false);
         }
-        GameObject[] markers = GameObject.FindGameObjectsWithTag(AreaMarkerTag);
+        GameObject[] flameWarnings = GameObject.FindGameObjectsWithTag(FlameWarningTag);
+        GameObject[] dashIndicators = GameObject.FindGameObjectsWithTag(DashTargetIndicatorTag);
+
+        // Merge them into one array
+        GameObject[] markers = flameWarnings.Concat(dashIndicators).ToArray();
         foreach (GameObject marker in markers)
         {
             marker.SetActive(false);

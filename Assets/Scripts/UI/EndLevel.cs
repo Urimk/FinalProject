@@ -64,6 +64,7 @@ public class LevelEndTrigger : MonoBehaviour
             Debug.Log("Player reached the end!");
             TimerManager.Instance.StopTimer();
             Time.timeScale = 0;
+            UIManager.Instance.IsGamePaused = true;
             _winScreen.SetActive(true);
             _isWinScreenActive = true;
             DisplayResults();

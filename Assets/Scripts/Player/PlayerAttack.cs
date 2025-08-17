@@ -42,6 +42,7 @@ public class PlayerAttack : MonoBehaviour
     [Tooltip("Sound to play when firing a fireball.")]
     [FormerlySerializedAs("fireballSound")]
     [SerializeField] private AudioClip _fireballSound;
+    [SerializeField] private AudioClip _swordSound;
     [Tooltip("Prefab for the sword weapon.")]
     [FormerlySerializedAs("swordPrefab")]
     [SerializeField] private GameObject _swordPrefab;
@@ -113,7 +114,7 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (UIManager.Instance.IsGamePaused())
+        if (UIManager.Instance.IsGamePaused)
         {
             return;
         }
@@ -170,6 +171,7 @@ public class PlayerAttack : MonoBehaviour
     private void SwingSword()
     {
         StartCoroutine(AnimateSwordSwing());
+        SoundManager.instance.PlaySound(_swordSound, gameObject);
         Collider2D[] hits = Physics2D.OverlapCircleAll(_swordHitPoint.position, _swordRange, _enemyLayer);
         HashSet<GameObject> damagedObjects = new HashSet<GameObject>();
         foreach (Collider2D hit in hits)

@@ -15,6 +15,10 @@ public class Projectile : MonoBehaviour
     private const string NoCollisionTag = "NoCollision";
     private const string PlayerTag = "Player";
     private const string AnimatorExplosion = "explosion";
+    private const string CheckPointTag = "Checkpoint";
+    private const string DashTargetIndicatorTag = "DashTargetIndicator";
+    private const string FlameWarningMarkerTag = "FlameWarningMarker";
+
 
     // ==================== Inspector Fields ====================
     [Header("Projectile Settings")]
@@ -59,7 +63,7 @@ public class Projectile : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.name == DoorObjectName || other.gameObject.tag == NoCollisionTag || other.gameObject.tag == PlayerTag) return;
+        if (other.gameObject.name == DoorObjectName || other.gameObject.tag == NoCollisionTag || other.gameObject.tag == PlayerTag || other.gameObject.tag == CheckPointTag || other.gameObject.tag == FlameWarningMarkerTag || other.gameObject.tag == DashTargetIndicatorTag) return;
         _hit = true;
         _boxCollider.enabled = false;
         _animator.SetTrigger(AnimatorExplosion);

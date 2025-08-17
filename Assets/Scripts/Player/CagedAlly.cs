@@ -23,6 +23,7 @@ public class CagedAlly : MonoBehaviour
 
     public void ActivateAlly()
     {
+        ally.transform.position = transform.position;
         if (ally != null)
         {
             // Enable all MonoBehaviour scripts on the GameObject and its children (optional)

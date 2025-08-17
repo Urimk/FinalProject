@@ -154,11 +154,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378438f02b9b23641bdc1475288f41ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCooldown: 1.5
-  damage: 1
-  range: 10
-  firepoint: {fileID: 6326370001062344305}
-  fireballs:
+  _attackCooldown: 1.5
+  _damage: 1
+  _range: 10
+  _firepoint: {fileID: 6326370001062344305}
+  _fireballs:
   - {fileID: 134548168131698157}
   - {fileID: 1932545759563624815}
   - {fileID: 8791565657110451469}
@@ -169,12 +169,12 @@ MonoBehaviour:
   - {fileID: 4666836755416078567}
   - {fileID: 7873346992390859464}
   - {fileID: 3529724321809528446}
-  colliderDistance: 0.4
-  boxCollider: {fileID: 6626375282529040678}
-  playerLayer:
+  _colliderDistance: 0.4
+  _boxCollider: {fileID: 6626375282529040678}
+  _playerLayer:
     serializedVersion: 2
     m_Bits: 512
-  fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
+  _fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
 --- !u!61 &6626375282529040678
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -232,16 +232,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7da1d38aac209448ca015a663031f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 2
-  dead: 0
-  iFramesDuration: 0
-  numberOfFlashes: 0
-  components:
+  mainPlayer: {fileID: 0}
+  _groundManager: {fileID: 0}
+  _playerAttack: {fileID: 0}
+  _startingHealth: 2
+  _currentHealth: 0
+  _iFramesDuration: 0
+  _numberOfFlashes: 0
+  _components:
   - {fileID: 7302955205020591006}
   - {fileID: 1164808363896501448}
-  deathSound: {fileID: 8300000, guid: 8e8f8455480536a4581ba2a84daac295, type: 3}
-  hurtSound: {fileID: 8300000, guid: 5984d02dadc8d674ba41d844215dd0d5, type: 3}
-  invulnerable: 0
+  _deathSound: {fileID: 8300000, guid: 8e8f8455480536a4581ba2a84daac295, type: 3}
+  _hurtSound: {fileID: 8300000, guid: 5984d02dadc8d674ba41d844215dd0d5, type: 3}
+  _scoreValue: 100
 --- !u!114 &1164808363896501448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab47eb8f99e54884ab6d61818abf7f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  _damage: 1
+  _isRecoil: 0
 --- !u!1 &2525786698338227842
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0191cee689d0c545bea006f32e4f24a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 681051126250865972}
+  _enemy: {fileID: 681051126250865972}
 --- !u!1001 &510532066252394446
 PrefabInstance:
   m_ObjectHideFlags: 0

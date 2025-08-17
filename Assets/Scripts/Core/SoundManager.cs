@@ -28,6 +28,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip menuMusic;
     [Tooltip("Audio clip for the Level 1 background music.")]
     [SerializeField] private AudioClip level1Music;
+    [SerializeField] private bool isSoundLocal = true;
 
     /// <summary>
     /// Gets the menu music audio clip.
@@ -65,10 +66,18 @@ public class SoundManager : MonoBehaviour
     /// <param name="caller">The GameObject requesting the sound.</param>
     public void PlaySound(AudioClip sound, GameObject caller)
     {
-        if (IsObjectVisible(caller))
+        if (!isSoundLocal)
         {
             _soundSource.PlayOneShot(sound);
         }
+        else
+        {
+            if (IsObjectVisible(caller))
+            {
+                _soundSource.PlayOneShot(sound);
+            }
+        }
+
     }
 
     /// <summary>
@@ -127,6 +136,7 @@ public class SoundManager : MonoBehaviour
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return false;
         SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        // Maybe first frame explison isn't visable!
         if (spriteRenderer != null && spriteRenderer.isVisible)
         {
             return true;

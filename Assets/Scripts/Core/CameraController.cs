@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour
     // ==================== Player X Follow ====================
     [Header("X Follow Settings")]
     [Tooltip("Target X offset for the camera relative to the player.")]
-    [FormerlySerializedAs("_aheadDistance")]
+    [FormerlySerializedAs("aheadDistance")]
     [SerializeField] private float _targetXOffset;
     [Tooltip("Camera smoothing speed for X movement.")]
     [FormerlySerializedAs("cameraSpeed")]
@@ -83,17 +83,8 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        if (_followPlayerY)
-        {
-            float initialTargetY = _player.position.y + _playerYOffset;
-            transform.position = new Vector3(transform.position.x, initialTargetY, transform.position.z);
-            _currentPosY = initialTargetY;
-        }
-        else
-        {
-            _currentPosY = _player.position.y + DefaultYOffset;
-        }
-        _playerLastXPosition = _player.position.x;
+        Room firstRoom = _player.parent.GetComponent<Room>();
+        firstRoom.EnterRoom();
     }
 
     /// <summary>

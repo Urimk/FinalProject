@@ -21,7 +21,7 @@ public class SpesificLB : MonoBehaviour
     private const string LevelDisplayPrefix = "Level ";
     private const string UnknownPlayerName = "Unknown";
     private const string NoScoreText = "No score";
-    private const string LeaderboardNotFoundText = "Leaderboard not found or empty";
+    private const string LeaderboardNotFoundText = "Leaderboard not found";
     private const string ErrorLoadingLeaderboardText = "Error loading leaderboard";
 
     // ==================== Inspector Fields ====================
@@ -74,6 +74,11 @@ public class SpesificLB : MonoBehaviour
     /// </summary>
     private void LoadTop10Players()
     {
+        // Show a temporary "Loading..." state
+        for (int i = 0; i < _top10Texts.Length; i++)
+        {
+            _top10Texts[i].text = $"{i + 1}. Loading...";
+        }
         var request = new GetLeaderboardRequest
         {
             StatisticName = _leaderboardName,
@@ -83,12 +88,22 @@ public class SpesificLB : MonoBehaviour
 
         PlayFabClientAPI.GetLeaderboard(request, result =>
         {
-            if (result.Leaderboard == null || result.Leaderboard.Count == 0)
+            if (result.Leaderboard == null)
             {
-                Debug.LogError($"Leaderboard '{_leaderboardName}' not found or has no entries.");
+                Debug.LogError($"Leaderboard '{_leaderboardName}' not found.");
                 foreach (var text in _top10Texts)
                 {
                     text.text = LeaderboardNotFoundText;
+                }
+                return;
+            }
+
+            if (result.Leaderboard.Count == 0)
+            {
+                Debug.Log($"Leaderboard '{_leaderboardName}' found but has no entries.");
+                for (int i = 0; i < _top10Texts.Length; i++)
+                {
+                    _top10Texts[i].text = $"{i + 1}. {NoScoreText}";
                 }
                 return;
             }

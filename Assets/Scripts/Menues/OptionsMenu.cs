@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Handles the options menu, including difficulty selection and navigation.
@@ -18,6 +19,30 @@ public class OptionsMenu : MonoBehaviour
     [SerializeField] private GameObject _mainMenu;
     [Tooltip("Reference to the OptionsMenu GameObject.")]
     [SerializeField] private GameObject _optionsMenu;
+    [SerializeField] private GameObject[] _outlines;
+
+    private void Start()
+    {
+        string savedDifficulty = PlayerPrefs.GetString(DifficultyKey, NormalDifficulty); // Default to Normal
+
+        switch (savedDifficulty)
+        {
+            case EasyDifficulty:
+                UpdateDifficultyOutline(0);
+                break;
+            case NormalDifficulty:
+                UpdateDifficultyOutline(1);
+                break;
+            case HardDifficulty:
+                UpdateDifficultyOutline(2);
+                break;
+            default:
+                Debug.LogWarning("Unknown saved difficulty: " + savedDifficulty);
+                UpdateDifficultyOutline(1); // Fallback to Normal
+                break;
+        }
+    }
+
 
     // ==================== Menu Navigation ====================
     /// <summary>
@@ -36,6 +61,8 @@ public class OptionsMenu : MonoBehaviour
     public void SetEasyDifficulty()
     {
         SetDifficulty(EasyDifficulty);
+        UpdateDifficultyOutline(0);
+
     }
 
     /// <summary>
@@ -44,6 +71,8 @@ public class OptionsMenu : MonoBehaviour
     public void SetNormalDifficulty()
     {
         SetDifficulty(NormalDifficulty);
+        UpdateDifficultyOutline(1);
+
     }
 
     /// <summary>
@@ -52,6 +81,24 @@ public class OptionsMenu : MonoBehaviour
     public void SetHardDifficulty()
     {
         SetDifficulty(HardDifficulty);
+        UpdateDifficultyOutline(2);
+
+    }
+
+    /// <summary>
+    /// Enables only the outline at the given index and disables the others.
+    /// </summary>
+    /// <param name="selectedIndex">The index of the selected difficulty (0 = Easy, 1 = Normal, 2 = Hard)</param>
+    private void UpdateDifficultyOutline(int selectedIndex)
+    {
+        for (int i = 0; i < _outlines.Length; i++)
+        {
+            Outline outline = _outlines[i].GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = (i == selectedIndex);
+            }
+        }
     }
 
     // ==================== Utility ====================

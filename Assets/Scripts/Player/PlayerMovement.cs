@@ -17,10 +17,10 @@ public class PlayerMovement : MonoBehaviour
     private const float DefaultRecoilDuration = 0.3f;
     private const float DefaultRecoilVerticalForce = 5f;
     private const float DefaultGroundedGraceTime = 0.5f;
-    private const float WallJumpCooldownDuration = 0.24f;
+    private const float WallJumpCooldownDuration = 0.33f;
     private const float WallJumpGravityScale = 6f;
     private const float WallJumpHorizontalForce = 10f;
-    private const float WallJumpVerticalForce = 12f;
+    private const float WallJumpVerticalForce = 6f;
     private const float WallCheckBoxCastDistance = 0.015f;
     private const float WallCheckBoxCastHeightIncrease = 0.025f;
     private const float WallCheckBoxCastCenterShift = 0.025f / 2f;
@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
     private const string AnimatorJump = "jump";
     private const KeyCode JumpKey = KeyCode.Space;
 
+
     // ==================== Inspector Fields ====================
     [Tooltip("True if this player is AI controlled.")]
     [FormerlySerializedAs("isAIControlled")]
@@ -50,6 +51,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Movement speed of the player.")]
     [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
+    [SerializeField] private float inputSmoothingSpeed = 10f; // adjust this value
+
     [Tooltip("Base jump power for the player.")]
     [FormerlySerializedAs("baseJumpPower")]
     [SerializeField] private float _baseJumpPower;
@@ -156,6 +159,12 @@ public class PlayerMovement : MonoBehaviour
     private Coroutine _currentAIJumpRoutine = null;
     private float _flipTimer = 0f;
     private int _desiredFacingDirection = 1;
+    private float _wallJumpStartTime;
+    private float _initialWallJumpVelocity;
+    private bool _afterWallJump;
+    private bool _afterRecoil;
+
+
 
     // ==================== Properties ====================
     /// <summary>Movement speed of the player.</summary>
@@ -249,13 +258,50 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void HandleMovementInput()
     {
-        if (!_isAIControlled && _disableMovementTimer <= 0)
+        if (!_isAIControlled)
         {
-            _horizontalInput = Input.GetAxis("Horizontal");
+            if (_disableMovementTimer <= 0f)
+            {
+                float rawInput = Input.GetAxisRaw("Horizontal");
+                if (_afterWallJump && rawInput == 0)
+                {
+                    if (IsGrounded())
+                    {
+                        _rigidbody2D.velocity = new Vector2(0, _rigidbody2D.velocity.y);
+                    }
+                    return;
+                }
+                _afterWallJump = false;
+                _afterRecoil = false;
+                _horizontalInput = Mathf.Lerp(_horizontalInput, rawInput, inputSmoothingSpeed * Time.deltaTime);
+                _horizontalInput = Mathf.Lerp(_horizontalInput, rawInput, inputSmoothingSpeed * Time.deltaTime);
+
+                // Snap to zero if within threshold
+                if (Mathf.Abs(_horizontalInput) < 0.05f)
+                {
+                    _horizontalInput = 0f;
+                }
+            }
+            else
+            {
+                if (_isInRecoil)
+                {
+                    return;
+                }
+                float elapsed = Time.time - _wallJumpStartTime;
+                float progress = elapsed / WallJumpCooldownDuration; // 0 to 1
+
+                // Decay from full force to half force
+                float targetVelocity = Mathf.Lerp(_initialWallJumpVelocity, _initialWallJumpVelocity * 0.6f, progress);
+
+                // Only modify horizontal component, keep vertical as physics
+                _rigidbody2D.velocity = new Vector2(targetVelocity, _rigidbody2D.velocity.y);
+            }
         }
+
         if (_disableMovementTimer <= 0 && !IsHorizontallyBlocked())
         {
-            if (Mathf.Abs(_horizontalInput) > SpriteFlipThreshold)
+            if (Mathf.Abs(_horizontalInput) > SpriteFlipThreshold && !UIManager.Instance.IsGamePaused)
             {
                 transform.position += new Vector3(0f, SmallBumpLift, 0f);
             }
@@ -358,7 +404,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             // Flip immediately for player-controlled
-            if (_desiredFacingDirection != _facingDirection)
+            if (_desiredFacingDirection != _facingDirection && _disableMovementTimer <= 0)
             {
                 transform.localScale = new Vector3(scale * _desiredFacingDirection, scale, 1f);
                 _facingDirection = _desiredFacingDirection;
@@ -518,7 +564,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private bool AttemptJump()
     {
-        if (UIManager.Instance.IsGamePaused())
+        if (UIManager.Instance.IsGamePaused)
         {
             return false;
         }
@@ -576,6 +622,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void PerformWallOrAirJump()
     {
+        _afterWallJump = false;
         if (OnWall() && !IsGrounded() && _timeSinceGrounded > _groundedGraceTime && _wallJumpCooldown > 0.05f)
         {
             PerformWallJump();
@@ -602,15 +649,21 @@ public class PlayerMovement : MonoBehaviour
     private void PerformWallJump()
     {
         _wallJumpCooldown = 0;
-        _disableMovementTimer = WallJumpCooldownDuration;
-        _rigidbody2D.gravityScale = WallJumpGravityScale;
         _horizontalInput = 0;
+        _afterWallJump = true;
+        _disableMovementTimer = WallJumpCooldownDuration;
+        _rigidbody2D.gravityScale = NormalGrav;
         _rigidbody2D.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * WallJumpHorizontalForce, WallJumpVerticalForce);
+        // Apply initial velocity
+        float horizontalVel = -Mathf.Sign(transform.localScale.x) * WallJumpHorizontalForce;
+        _rigidbody2D.velocity = new Vector2(horizontalVel, WallJumpVerticalForce);
+        // Track for decay
+        _wallJumpStartTime = Time.time;
+        _initialWallJumpVelocity = horizontalVel;
         Vector3 s = transform.localScale;
         s.x = -s.x;
         transform.localScale = s;
         _facingDirection = -_facingDirection;
-        _jumpCounter--;
     }
 
     // ==================== State and Utility Methods ====================
@@ -728,6 +781,7 @@ public class PlayerMovement : MonoBehaviour
     public void Recoil(Vector2 sourcePosition, Vector2 recoilDirection = default)
     {
         Vector2 knockbackDirection;
+        _afterRecoil = true;
         if (recoilDirection != Vector2.zero)
         {
             knockbackDirection = recoilDirection.normalized;
@@ -753,11 +807,13 @@ public class PlayerMovement : MonoBehaviour
         _isInRecoil = true;
         _recoilTimer = _recoilDuration;
         _recoilDirection = direction;
+        _disableMovementTimer = _recoilDuration; // Disable input until recoil finishes
         Vector2 recoilVelocity = new Vector2(
             direction.x * _recoilForce,
             Mathf.Max(direction.y * _recoilForce, _recoilVerticalForce)
         );
         _rigidbody2D.velocity = recoilVelocity;
+
     }
 
     /// <summary>
@@ -772,11 +828,6 @@ public class PlayerMovement : MonoBehaviour
             if (_recoilTimer <= 0f)
             {
                 _isInRecoil = false;
-            }
-            else
-            {
-                _disableMovementTimer = DisableMovementDuringRecoil;
-                return;
             }
         }
     }

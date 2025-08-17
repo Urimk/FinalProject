@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Controls the main menu navigation and actions.
@@ -17,6 +18,11 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject _optionsMenu;
     [Tooltip("Reference to the LeaderboardMenu GameObject.")]
     [SerializeField] private GameObject _leaderboardMenu;
+
+    private void Start()
+    {
+        ApplyAlphaThreshold();
+    }
 
     // ==================== Menu Navigation ====================
     /// <summary>
@@ -56,5 +62,15 @@ public class MainMenuController : MonoBehaviour
     {
         SoundManager.instance.PlaySound(_buttonClickSound, gameObject);
         Application.Quit();
+    }
+
+    void ApplyAlphaThreshold()
+    {
+        Image[] images = FindObjectsOfType<Image>(true); // true = include inactive
+        foreach (var img in images)
+        {
+            Debug.Log(img);
+            img.alphaHitTestMinimumThreshold = 0.1f;
+        }
     }
 }

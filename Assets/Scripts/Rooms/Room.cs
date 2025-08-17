@@ -159,11 +159,14 @@ public class Room : MonoBehaviour
         {
             if (_enemies[i] != null && _enemies[i].GetComponent<Health>().GetHealth() != 0f)
             {
-                _enemies[i].SetActive(status);
-                if (status)
+                if (!_enemies[i].activeSelf)
                 {
-                    _enemies[i].transform.position = _initialEnemyPositions[i];
-                    _enemies[i].transform.rotation = _initialEnemyRotations[i];
+                    _enemies[i].SetActive(status);
+                    if (status)
+                    {
+                        _enemies[i].transform.position = _initialEnemyPositions[i];
+                        _enemies[i].transform.rotation = _initialEnemyRotations[i];
+                    }
                 }
                 else
                 {

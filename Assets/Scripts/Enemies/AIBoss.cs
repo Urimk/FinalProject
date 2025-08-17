@@ -12,7 +12,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     // ==================== Constants ====================
     private const float TargetReachedThresholdSqr = 0.25f; // 0.5f squared
     private const float DashMarkerScale = 0.5f;
-    private const float WallBuffer = 2f;
+    private const float WallBuffer = 3.5f;
     private const float DashTargetProximity = 1.0f;
     private const float DashMaxDuration = 1.5f;
     private const float FlameMarkerWait = 1.5f;
@@ -170,6 +170,8 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     [FormerlySerializedAs("dashDistance")]
     [Tooltip("Distance for dash attacks.")]
     [SerializeField] private float _dashDistance = 6.0f;
+    [SerializeField] private bool isTrainingMode = false;
+
 
     // ==================== Private Fields ====================
     private bool _isPhase2 = false;
@@ -257,6 +259,10 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
 
     public void ResetState()
     {
+        if (!isTrainingMode)
+        {
+            return;
+        }
         Debug.Log("[BossEnemy] Resetting BossEnemy state.");
         _detectedPlayer = false;
         StopAllCoroutines();
