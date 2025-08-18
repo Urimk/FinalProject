@@ -3869,17 +3869,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 1851863286}
   _playerRespawn: {fileID: 1851863288}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &302535704
 GameObject:
   m_ObjectHideFlags: 0
@@ -16605,17 +16602,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 1851863286}
   _playerRespawn: {fileID: 1851863288}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1001 &1259575160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23251,17 +23245,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 1851863286}
   _playerRespawn: {fileID: 1851863288}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &1689785059
 GameObject:
   m_ObjectHideFlags: 0

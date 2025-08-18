@@ -3641,6 +3641,11 @@ Transform:
   - {fileID: 1383103726}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &213077013 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 2131477211}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &227424866 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
@@ -11110,6 +11115,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 777480630}
   m_CullTransparentMesh: 1
+--- !u!1 &778415730 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 844371276}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &779653898 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5435754814055871077, guid: 33d0fb9cda43599449ac911555ec3530, type: 3}
@@ -13446,17 +13456,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 668749361}
   _playerRespawn: {fileID: 668749365}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &952639151
 GameObject:
   m_ObjectHideFlags: 0
@@ -15360,21 +15367,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemies: []
   _traps: []
-  _collectables: []
+  _collectables:
+  - {fileID: 2110853534}
+  - {fileID: 2135274921}
+  - {fileID: 1120513381}
+  - {fileID: 1104977170}
+  - {fileID: 1274621410}
+  - {fileID: 1572606372}
+  - {fileID: 778415730}
+  - {fileID: 1952435721}
+  - {fileID: 213077013}
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 668749361}
   _playerRespawn: {fileID: 668749365}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1001 &1072237956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15943,6 +15956,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
   m_PrefabInstance: {fileID: 1104590317}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1104977170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 1049240176}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1118219243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16004,6 +16022,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2275507951975143719, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
   m_PrefabInstance: {fileID: 1118219243}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1120513381 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 753319576}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1121155088
 PrefabInstance:
@@ -17727,6 +17750,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1274621410 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 508894648}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1275517294
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21658,6 +21686,11 @@ SpriteRenderer:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
   m_PrefabInstance: {fileID: 1295783026}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1572606372 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 1072237956}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1579185662
 PrefabInstance:
@@ -26386,6 +26419,11 @@ Transform:
   - {fileID: 690945730}
   m_Father: {fileID: 1987095650}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1952435721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 170216257}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1963876517
 GameObject:
   m_ObjectHideFlags: 0
@@ -26798,17 +26836,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2137519222}
   _playerMovement: {fileID: 668749361}
   _playerRespawn: {fileID: 668749365}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1001 &1994512023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28224,6 +28259,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
   m_PrefabInstance: {fileID: 255637132}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2110853534 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 1121155088}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2111554616
 GameObject:
   m_ObjectHideFlags: 0
@@ -28656,6 +28696,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2135274921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2299599468927931880, guid: 89e39d1104d09a94ca3df3ade4e48408, type: 3}
+  m_PrefabInstance: {fileID: 1536431021}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2137360008
 GameObject:
   m_ObjectHideFlags: 0
@@ -28840,6 +28885,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 198991149}
     m_Modifications:
     - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _xMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _yMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 668749363}
@@ -28847,17 +28900,29 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 668749363}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _directionalOffset
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _transitionDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _directionalSmoothing
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8061211680053965661, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_Name
       value: Main Camera
       objectReference: {fileID: 0}
     - target: {fileID: 9204545019999077309, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -25
+      value: 3.09
       objectReference: {fileID: 0}
     - target: {fileID: 9204545019999077309, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -9
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 9204545019999077309, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_LocalPosition.z

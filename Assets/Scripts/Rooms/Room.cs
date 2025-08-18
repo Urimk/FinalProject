@@ -4,11 +4,23 @@ using UnityEditor;
 
 using UnityEngine;
 using UnityEngine.Serialization;
+
 /// <summary>
 /// Manages room state, including camera, player, enemies, traps, and collectables.
 /// </summary>
 public class Room : MonoBehaviour
 {
+    // ==================== Enums ====================
+    /// <summary>
+    /// Defines the camera mode for each axis in this room.
+    /// </summary>
+    public enum RoomCameraMode
+    {
+        Static,     // Camera stays at a fixed position
+        Follow,     // Camera follows the player
+        Moving      // Camera moves independently (chase, scrolling, etc.)
+    }
+
     // ==================== Constants ====================
     private const float DefaultYOffset = 2f;
     private const float DefaultGravScale = 2f;
@@ -35,40 +47,35 @@ public class Room : MonoBehaviour
     [Tooltip("Reference to the PlayerRespawn component.")]
     [FormerlySerializedAs("pr")]
     [SerializeField] private PlayerRespawn _playerRespawn;
-    [Header("Room Settings")]
-    [Tooltip("Freeze camera X axis in this room.")]
+    [Header("Camera Settings")]
+    [Tooltip("Camera mode for X axis in this room.")]
     [FormerlySerializedAs("freezeCamX")]
-    [SerializeField] private bool _freezeCamX = false;
-    [Tooltip("Freeze camera Y axis in this room.")]
+    [SerializeField] private RoomCameraMode _xCameraMode = RoomCameraMode.Follow;
+    [Tooltip("Camera mode for Y axis in this room.")]
     [FormerlySerializedAs("freezeCamY")]
-    [SerializeField] private bool _freezeCamY = true;
-    [Tooltip("Value to freeze camera X at.")]
+    [SerializeField] private RoomCameraMode _yCameraMode = RoomCameraMode.Static;
+    [Header("Static Mode Settings")]
+    [Tooltip("X position when camera is in Static or Moving mode.")]
     [FormerlySerializedAs("xFreezeValue")]
-    [SerializeField] private float _xFreezeValue;
-    [Tooltip("Value to freeze camera Y at.")]
+    [SerializeField] private float _xPosition = 0f;
+    [Tooltip("Y position when camera is in Static or Moving mode.")]
     [FormerlySerializedAs("yFreezeValue")]
-    [SerializeField] private float _yFreezeValue;
-    [Tooltip("YOffset for following player.")]
+    [SerializeField] private float _yPosition = 0f;
+    [Header("Follow Mode Settings")]
+    [Tooltip("Y offset when following the player.")]
     [FormerlySerializedAs("yOffsetValue")]
-    [SerializeField] private float _yOffsetValue = DefaultYOffset;
+    [SerializeField] private float _yOffset = DefaultYOffset;
+    [Header("Chase Settings")]
+    [Tooltip("Speed for Moving camera mode (chase, scrolling, etc.).")]
+    [FormerlySerializedAs("chaseSpeed")]
+    [SerializeField] private float _movingSpeed = DefaultChaseSpeed;
+    [Header("Falling Settings")]
     [Tooltip("Gravity scale for the player in this room.")]
     [FormerlySerializedAs("gravScaleValue")]
-    [SerializeField] private float _gravScaleValue = DefaultGravScale;
+    [SerializeField] private float _gravScale = DefaultGravScale;
     [Tooltip("Maximum fall speed for the player in this room.")]
     [FormerlySerializedAs("maxFallSpeedValue")]
-    [SerializeField] private float _maxFallSpeedValue = DefaultMaxFallSpeed;
-    [Tooltip("True if this room is a chase room.")]
-    [FormerlySerializedAs("isChase")]
-    [SerializeField] private bool _isChase = false;
-    [Tooltip("Chase speed for the room.")]
-    [FormerlySerializedAs("chaseSpeed")]
-    [SerializeField] private float _chaseSpeed = DefaultChaseSpeed;
-    [Tooltip("Chase start offset for the room.")]
-    [FormerlySerializedAs("chaseStartOffSet")]
-    [SerializeField] private float _chaseStartOffSet = 0;
-    [Tooltip("True if camera should follow player Y.")]
-    [FormerlySerializedAs("followPlayerY")]
-    [SerializeField] private bool _followPlayerY = false;
+    [SerializeField] private float _maxFallSpeed = DefaultMaxFallSpeed;
 
     // ==================== Private Fields ====================
     private Vector3[] _initialEnemyPositions;
@@ -77,49 +84,76 @@ public class Room : MonoBehaviour
     private Vector3[] _initialCollectablePositions;
 
     // ==================== Properties ====================
-    /// <summary>Freeze camera X axis in this room.</summary>
-    public bool FreezeCamX { get => _freezeCamX; set => _freezeCamX = value; }
-    /// <summary>Freeze camera Y axis in this room.</summary>
-    public bool FreezeCamY { get => _freezeCamY; set => _freezeCamY = value; }
-    /// <summary>Value to freeze camera X at.</summary>
-    public float XFreezeValue { get => _xFreezeValue; set => _xFreezeValue = value; }
-    /// <summary>Value to freeze camera Y at.</summary>
-    public float YFreezeValue { get => _yFreezeValue; set => _yFreezeValue = value; }
-    /// <summary>YOffset for following player.</summary>
-    public float YOffsetValue { get => _yOffsetValue; set => _yOffsetValue = value; }
+    /// <summary>Camera mode for X axis in this room.</summary>
+    public RoomCameraMode XCameraMode { get => _xCameraMode; set => _xCameraMode = value; }
+    /// <summary>Camera mode for Y axis in this room.</summary>
+    public RoomCameraMode YCameraMode { get => _yCameraMode; set => _yCameraMode = value; }
+    /// <summary>X position when camera is in Static or Moving mode.</summary>
+    public float XPosition { get => _xPosition; set => _xPosition = value; }
+    /// <summary>Y position when camera is in Static or Moving mode.</summary>
+    public float YPosition { get => _yPosition; set => _yPosition = value; }
+    /// <summary>Y offset when following the player.</summary>
+    public float YOffset { get => _yOffset; set => _yOffset = value; }
     /// <summary>Gravity scale for the player in this room.</summary>
-    public float GravScaleValue { get => _gravScaleValue; set => _gravScaleValue = value; }
+    public float GravScale { get => _gravScale; set => _gravScale = value; }
     /// <summary>Maximum fall speed for the player in this room.</summary>
-    public float MaxFallSpeedValue { get => _maxFallSpeedValue; set => _maxFallSpeedValue = value; }
-    /// <summary>True if this room is a chase room.</summary>
-    public bool IsChase { get => _isChase; set => _isChase = value; }
-    /// <summary>Chase speed for the room.</summary>
-    public float ChaseSpeed { get => _chaseSpeed; set => _chaseSpeed = value; }
-    /// <summary>Chase start offset for the room.</summary>
-    public float ChaseStartOffSet { get => _chaseStartOffSet; set => _chaseStartOffSet = value; }
-    /// <summary>True if camera should follow player Y.</summary>
-    public bool FollowPlayerY { get => _followPlayerY; set => _followPlayerY = value; }
+    public float MaxFallSpeed { get => _maxFallSpeed; set => _maxFallSpeed = value; }
+    /// <summary>Speed for Moving camera mode.</summary>
+    public float MovingSpeed { get => _movingSpeed; set => _movingSpeed = value; }
 
     /// <summary>
     /// Called when the player enters the room. Sets camera, gravity, and activates room.
     /// </summary>
     public void EnterRoom()
     {
-        _cameraController.MoveToNewRoom(transform);
-        _cameraController.SetCameraXFreeze(_freezeCamX, _xFreezeValue);
-        _cameraController.SetChaseMode(_isChase);
-        _cameraController.SetChaseSpeed(_chaseSpeed);
-        _cameraController.SetChaseStart(_chaseStartOffSet);
-        if (_freezeCamY)
+        EnterRoom(false); // Default to no transitions for instant setup
+    }
+
+    /// <summary>
+    /// Called when the player enters the room. Sets camera, gravity, and activates room.
+    /// </summary>
+    /// <param name="useTransitions">Whether to use smooth transitions when setting camera modes.</param>
+    public void EnterRoom(bool useTransitions)
+    {
+        // Set X-axis camera mode
+        switch (_xCameraMode)
         {
-            _cameraController.SetCameraYFreeze(_yFreezeValue);
+            case RoomCameraMode.Static:
+                _cameraController.SetStaticXPosition(_xPosition);
+                _cameraController.SetXMode(CameraController.CameraMode.Static, useTransitions);
+                break;
+            case RoomCameraMode.Follow:
+                _cameraController.SetXMode(CameraController.CameraMode.Follow, useTransitions);
+                break;
+            case RoomCameraMode.Moving:
+                // Set up chase mode
+                _cameraController.SetMovingSpeed(_movingSpeed);
+                _cameraController.SetMovingTarget(new Vector3(_cameraController.transform.position.x, _yPosition, _cameraController.transform.position.z));
+                _cameraController.SetXMode(CameraController.CameraMode.Moving, useTransitions);
+                break;
         }
-        else
+        
+        // Set Y-axis camera mode (after room movement)
+        switch (_yCameraMode)
         {
-            _cameraController.SetFollowPlayerY(_yOffsetValue);
+            case RoomCameraMode.Static:
+                _cameraController.SetStaticYPosition(_yPosition);
+                _cameraController.SetYMode(CameraController.CameraMode.Static, useTransitions);
+                break;
+            case RoomCameraMode.Follow:
+                _cameraController.SetFollowOffset('Y', _yOffset, useTransitions);
+                _cameraController.SetYMode(CameraController.CameraMode.Follow, useTransitions);
+                break;
+            case RoomCameraMode.Moving:
+                Debug.Log("Moving Y mode");
+                _cameraController.SetMovingTarget(new Vector3(_cameraController.transform.position.x, _yPosition, _cameraController.transform.position.z));
+                _cameraController.SetYMode(CameraController.CameraMode.Moving, useTransitions);
+                break;
         }
-        _playerMovement.NormalGrav = _gravScaleValue;
-        _playerMovement.MaxFallSpeed = _maxFallSpeedValue;
+        
+        // Set player physics
+        _playerMovement.NormalGrav = _gravScale;
+        _playerMovement.MaxFallSpeed = _maxFallSpeed;
         _playerRespawn.SetCurrentRoom(transform);
     }
 
@@ -217,7 +251,7 @@ public class Room : MonoBehaviour
                 else
                 {
                     // Fallback for legacy collectables that don't use the new system
-                    _collectables[i].SetActive(true);
+                _collectables[i].SetActive(true);
                 }
                 _collectables[i].transform.position = _initialCollectablePositions[i];
             }
@@ -242,11 +276,11 @@ public class Room : MonoBehaviour
                 bool isActive = collectable != null ? !collectable.IsCollected : _collectables[i].activeInHierarchy;
 
                 if (isActive)
-                {
-                    activeCollectables.Add(_collectables[i]);
-                    activePositions.Add(_initialCollectablePositions[i]);
-                }
+            {
+                activeCollectables.Add(_collectables[i]);
+                activePositions.Add(_initialCollectablePositions[i]);
             }
+        }
         }
 
         _collectables = activeCollectables.ToArray();
@@ -294,4 +328,98 @@ public class Room : MonoBehaviour
             }
         }
     }
+
+    // ==================== Camera Configuration Helpers ====================
+    
+    /// <summary>
+    /// Sets the camera to follow the player on both X and Y axes.
+    /// </summary>
+    /// <param name="yOffset">Y offset when following player.</param>
+    public void SetCameraFollowPlayer(float yOffset = -1f)
+    {
+        if (yOffset != -1f)
+        {
+            _yOffset = yOffset;
+        }
+        _xCameraMode = RoomCameraMode.Follow;
+        _yCameraMode = RoomCameraMode.Follow;
+    }
+
+    /// <summary>
+    /// Sets the camera to follow player on X axis and static on Y axis.
+    /// </summary>
+    /// <param name="yPosition">Y position to stay at.</param>
+    public void SetCameraFollowXStaticY(float yPosition)
+    {
+        _xCameraMode = RoomCameraMode.Follow;
+        _yCameraMode = RoomCameraMode.Static;
+        _yPosition = yPosition;
+    }
+
+    /// <summary>
+    /// Sets the camera to static on X axis and follow player on Y axis.
+    /// </summary>
+    /// <param name="xPosition">X position to stay at.</param>
+    /// <param name="yOffset">Y offset when following player.</param>
+    public void SetCameraStaticXFollowY(float xPosition, float yOffset = -1f)
+    {
+        _xCameraMode = RoomCameraMode.Static;
+        _xPosition = xPosition;
+        _yCameraMode = RoomCameraMode.Follow;
+        if (yOffset != -1f)
+        {
+            _yOffset = yOffset;
+        }
+    }
+
+    /// <summary>
+    /// Sets the camera to static on both X and Y axes.
+    /// </summary>
+    /// <param name="xPosition">X position to stay at.</param>
+    /// <param name="yPosition">Y position to stay at.</param>
+    public void SetCameraStaticBoth(float xPosition, float yPosition)
+    {
+        _xCameraMode = RoomCameraMode.Static;
+        _xPosition = xPosition;
+        _yCameraMode = RoomCameraMode.Static;
+        _yPosition = yPosition;
+    }
+
+
+    /// <summary>
+    /// Sets both X and Y camera modes directly.
+    /// </summary>
+    /// <param name="xMode">X-axis camera mode.</param>
+    /// <param name="yMode">Y-axis camera mode.</param>
+    public void SetCameraModes(RoomCameraMode xMode, RoomCameraMode yMode)
+    {
+        _xCameraMode = xMode;
+        _yCameraMode = yMode;
+    }
+
+    /// <summary>
+    /// Gets the current camera configuration as a readable string.
+    /// </summary>
+    /// <returns>String describing the current camera setup.</returns>
+    public string GetCameraConfiguration()
+    {
+        string xMode = _xCameraMode switch
+        {
+            RoomCameraMode.Static => $"Static at {_xPosition}",
+            RoomCameraMode.Follow => "Follow Player",
+            RoomCameraMode.Moving => $"Moving (Speed: {_movingSpeed})",
+            _ => "Unknown"
+        };
+        
+        string yMode = _yCameraMode switch
+        {
+            RoomCameraMode.Static => $"Static at {_yPosition}",
+            RoomCameraMode.Follow => $"Follow Player (Offset: {_yOffset})",
+            RoomCameraMode.Moving => $"Moving (Speed: {_movingSpeed})",
+            _ => "Unknown"
+        };
+        
+        return $"X: {xMode}, Y: {yMode}";
+    }
 }
+

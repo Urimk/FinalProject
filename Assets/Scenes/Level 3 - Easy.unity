@@ -23130,17 +23130,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2050739900}
   _playerMovement: {fileID: 1221795046}
   _playerRespawn: {fileID: 1221795044}
-  _freezeCamX: 0
-  _freezeCamY: 0
-  _xFreezeValue: 0
-  _yFreezeValue: 0
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 1
-  _chaseSpeed: 3
-  _chaseStartOffSet: 2.5
-  _followPlayerY: 1
+  _xCameraMode: 2
+  _yCameraMode: 1
+  _xPosition: 0
+  _yPosition: 0
+  _yOffset: 2
+  _movingSpeed: 3
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &818047003
 GameObject:
   m_ObjectHideFlags: 0
@@ -24530,17 +24527,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2050739900}
   _playerMovement: {fileID: 1221795046}
   _playerRespawn: {fileID: 1221795044}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 0
-  _yFreezeValue: 2.4
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 5
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 0
+  _xPosition: 0
+  _yPosition: 2.4
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &877677592
 GameObject:
   m_ObjectHideFlags: 0
@@ -30879,17 +30873,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2050739900}
   _playerMovement: {fileID: 1221795046}
   _playerRespawn: {fileID: 1221795044}
-  _freezeCamX: 0
-  _freezeCamY: 0
-  _xFreezeValue: 0
-  _yFreezeValue: 0
-  _yOffsetValue: -0.5
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 1
-  _chaseSpeed: 2
-  _chaseStartOffSet: 0
-  _followPlayerY: 1
+  _xCameraMode: 2
+  _yCameraMode: 1
+  _xPosition: 0
+  _yPosition: 0
+  _yOffset: -0.5
+  _movingSpeed: 2
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &1086060928
 GameObject:
   m_ObjectHideFlags: 0
@@ -31322,17 +31313,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2050739900}
   _playerMovement: {fileID: 1221795046}
   _playerRespawn: {fileID: 1221795044}
-  _freezeCamX: 0
-  _freezeCamY: 1
-  _xFreezeValue: 232
-  _yFreezeValue: -3.5
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 0
-  _chaseSpeed: 0
-  _chaseStartOffSet: 0
-  _followPlayerY: 0
+  _xCameraMode: 1
+  _yCameraMode: 1
+  _xPosition: 0
+  _yPosition: -3.5
+  _yOffset: 2
+  _movingSpeed: 5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1001 &1102280796
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34045,11 +34033,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.1
+      value: -2.91
       objectReference: {fileID: 0}
     - target: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.52
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -50509,17 +50497,14 @@ MonoBehaviour:
   _cameraController: {fileID: 2050739900}
   _playerMovement: {fileID: 1221795046}
   _playerRespawn: {fileID: 1221795044}
-  _freezeCamX: 0
-  _freezeCamY: 0
-  _xFreezeValue: 0
-  _yFreezeValue: 0
-  _yOffsetValue: 2
-  _gravScaleValue: 2
-  _maxFallSpeedValue: 100
-  _isChase: 1
-  _chaseSpeed: 0.5
-  _chaseStartOffSet: 0
-  _followPlayerY: 1
+  _xCameraMode: 2
+  _yCameraMode: 1
+  _xPosition: 0
+  _yPosition: 0
+  _yOffset: 2
+  _movingSpeed: 0.5
+  _gravScale: 2
+  _maxFallSpeed: 100
 --- !u!1 &1820649915
 GameObject:
   m_ObjectHideFlags: 0
@@ -56371,6 +56356,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1221795041}
     - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 1221795041}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: chaseSpeed
       value: 3.5
       objectReference: {fileID: 0}
@@ -56378,6 +56367,22 @@ PrefabInstance:
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1221795048}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _playerHealth
+      value: 
+      objectReference: {fileID: 1221795048}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _directionalOffset
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _directionalSmoothing
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320975303708326679, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
+      propertyPath: _modeTransitionDuration
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8061211680053965661, guid: 45cfbacf9ff39424891ad6d3c8d134a4, type: 3}
       propertyPath: m_Name
       value: Main Camera

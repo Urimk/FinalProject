@@ -77,6 +77,15 @@ public class PlayerRespawn : MonoBehaviour
     /// </summary>
     public void Respawn()
     {
+        Respawn(false); // Default to instant respawn
+    }
+
+    /// <summary>
+    /// Respawns the player at the last checkpoint, resets rooms, and restores state.
+    /// </summary>
+    /// <param name="useTransitions">Whether to use smooth transitions for camera movement.</param>
+    public void Respawn(bool useTransitions)
+    {
         _playerHealth.SetFirstHealth(0);
         if (_lives <= 0)
         {
@@ -89,44 +98,56 @@ public class PlayerRespawn : MonoBehaviour
             Destroy(_playerHealth.gameObject);
             return;
         }
+
         Transform respawnRoom = _currentCheckpoint.parent;
         transform.position = _currentCheckpoint.position;
+
+        // Reset all rooms since last checkpoint
         foreach (var roomTransform in _roomsSinceCheckpoint)
         {
             var roomComp = roomTransform.GetComponent<Room>();
             if (roomComp != null)
                 roomComp.ResetRoom();
         }
+
+        // Reset checkpoint room
         if (respawnRoom != null)
         {
             var checkpointRoomComp = respawnRoom.GetComponent<Room>();
             if (checkpointRoomComp != null)
                 checkpointRoomComp.ResetRoom();
         }
+
         _roomsSinceCheckpoint.Clear();
-        if (respawnRoom != null)
-        {
-            respawnRoom.GetComponent<Room>().EnterRoom();
-        }
+
+        // Update player state
         _lives--;
         _playerHealth.Respawn();
         ScoreManager.Instance.SetScore(_scoreAtCheckpoint);
         TimerManager.Instance.SetRemainingTime(_timeAtCheckpoint);
+
+        // Handle room activation and camera movement
         if (respawnRoom != null)
         {
             _groundManager?.OnPlayerRespawn();
-            Camera.main.GetComponent<CameraController>().MoveToNewRoom(respawnRoom);
+            
+            // Deactivate current room if different
             if (_currentRoom != respawnRoom)
             {
                 _currentRoom?.GetComponent<Room>()?.ActivateRoom(false);
                 respawnRoom.GetComponent<Room>().ActivateRoom(true);
                 _currentRoom = respawnRoom;
             }
+
+            // Enter the respawn room with proper camera setup
+            respawnRoom.GetComponent<Room>().EnterRoom(useTransitions);
         }
         else
         {
-            Camera.main.GetComponent<CameraController>().MoveToNewRoom(_initialRoom);
-            Debug.LogWarning("Respawn room is null. Skipping room changes for the initial checkpoint.");
+            // Fallback to initial room
+            Debug.LogWarning("Respawn room is null. Using initial room.");
+            _currentRoom = _initialRoom;
+            _initialRoom.GetComponent<Room>().EnterRoom(useTransitions);
         }
     }
 

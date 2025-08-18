@@ -82,6 +82,14 @@ public class GPTBoss : MonoBehaviour
         InitializeAvailableCategories();
     }
 
+    private void Update()
+    {
+        if (_playerInput.isActiveAndEnabled && !_playerInput.isFocused && !UIManager.Instance.IsGamePaused)
+        {
+            _playerInput.ActivateInputField();
+        }
+    }
+
     /// <summary>
     /// Initializes the list of available categories.
     /// </summary>

@@ -47,6 +47,6 @@ public class Door : MonoBehaviour
         fromRoom.GetComponent<Room>().ActivateRoom(false);
         intoRoom.GetComponent<Room>().ActivateRoom(true);
         _playerRespawn.SetCurrentRoom(intoRoom);
-        intoRoom.GetComponent<Room>().EnterRoom();
+        intoRoom.GetComponent<Room>().EnterRoom(true);
     }
 }
