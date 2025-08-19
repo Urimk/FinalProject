@@ -36,14 +36,14 @@ public class PlayerMovementTests
     [Test]
     public void TestDefaultJumpPower()
     {
-        // Verify default jump power value.
+        // Verify default jump power value from PlayerMovement.
         Assert.AreEqual(0, playerMovement.JumpPower); // Default should match the serialized field value.
     }
 
     [Test]
     public void TestSetJumpPower()
     {
-        // Test the setter for JumpPower.
+        // Test the setter for JumpPower in PlayerMovement.
         playerMovement.JumpPower = 15f;
         Assert.AreEqual(15f, playerMovement.JumpPower);
     }
@@ -51,7 +51,7 @@ public class PlayerMovementTests
     [Test]
     public void TestGroundLayerSetter()
     {
-        // Test the setter for GroundLayer.
+        // Test the setter for GroundLayer in PlayerMovement.
         LayerMask testLayer = LayerMask.GetMask("Default");
         playerMovement.GroundLayer = testLayer;
 
@@ -64,6 +64,9 @@ public class PlayerMovementTests
         // Add a BoxCollider2D to the player GameObject
         var boxCollider = playerMovement.gameObject.AddComponent<BoxCollider2D>();
         boxCollider.size = new Vector2(1, 1); // Ensure appropriate collider size.
+
+        // Add a Rigidbody2D (required by jump controller)
+        var rigidbody = playerMovement.gameObject.AddComponent<Rigidbody2D>();
 
         // Explicitly call the Awake method to initialize the script components
         var initializeMethod = playerMovement.GetType().GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -81,11 +84,34 @@ public class PlayerMovementTests
         ground.layer = LayerMask.NameToLayer("Ground");
 
         // Assert that the isGrounded method returns true
-        var isGroundedMethod = playerMovement.GetType().GetMethod("isGrounded", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        Assert.IsNotNull(isGroundedMethod, "isGrounded method not found");
-        bool isGrounded = (bool)isGroundedMethod.Invoke(playerMovement, null);
-
-        Assert.IsTrue(isGrounded);
+        Assert.IsTrue(playerMovement.IsGrounded);
     }
 
+    [Test]
+    public void TestJumpControllerIntegration()
+    {
+        // Test that PlayerMovement jump methods work properly
+        var boxCollider = playerMovement.gameObject.AddComponent<BoxCollider2D>();
+        var rigidbody = playerMovement.gameObject.AddComponent<Rigidbody2D>();
+        
+        // Initialize components
+        var initializeMethod = playerMovement.GetType().GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        initializeMethod.Invoke(playerMovement, null);
+
+        // Test that IsGrounded and OnWall methods work
+        Assert.IsFalse(playerMovement.IsGrounded);
+        Assert.IsFalse(playerMovement.OnWall());
+    }
+
+    [Test]
+    public void TestJumpControllerProperties()
+    {
+        // Test initial properties of PlayerMovement jump system
+        Assert.AreEqual(0, playerMovement.JumpPower);
+        Assert.AreEqual(0, playerMovement.ExtraJumps);
+        Assert.IsFalse(playerMovement.IsGrounded);
+        Assert.IsFalse(playerMovement.IsOnWall);
+        Assert.IsFalse(playerMovement.CanJump);
+        Assert.IsFalse(playerMovement.CanWallJump);
+    }
 }

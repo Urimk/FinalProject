@@ -93,7 +93,7 @@ public class PlatformMover : MonoBehaviour
         float distanceToPlayer = Vector3.Distance(_playerTransform.position, transform.position);
         var pm = _player.GetComponent<PlayerMovement>();
 
-        if (distanceToPlayer <= _attachDistance && _playerTransform.position.y > (transform.position.y + PlayerYOffsetThreshold) && pm != null && pm.IsGrounded())
+        if (distanceToPlayer <= _attachDistance && _playerTransform.position.y > (transform.position.y + PlayerYOffsetThreshold) && pm != null && pm.IsGrounded)
         {
             Transform intermediateParent = transform.Find(AttachPointName);
             if (intermediateParent == null)
@@ -108,7 +108,7 @@ public class PlatformMover : MonoBehaviour
             _playerTransform.SetParent(intermediateParent, true);
             _currentPlatformParent = transform;
         }
-        else if (_currentPlatformParent == transform && pm != null && !pm.IsGrounded())
+        else if (_currentPlatformParent == transform && pm != null && !pm.IsGrounded)
         {
             _playerTransform.SetParent(null);
             _currentPlatformParent = null;

@@ -8801,6 +8801,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4742689956371029499, guid: 2fb42ae3be3e49c4cbe93914ba0b8600, type: 3}
     - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      propertyPath: _normalGrav
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1074078458198469316, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       propertyPath: groundCheck
       value: 
       objectReference: {fileID: 1457043536}
@@ -9024,7 +9028,13 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 383618733769214454, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1457043536}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3574517937744291114, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 668749371}
+    - targetCorrespondingSourceObject: {fileID: 3574517937744291114, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 668749370}
   m_SourcePrefab: {fileID: 100100000, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
 --- !u!114 &668749358 stripped
 MonoBehaviour:
@@ -9072,6 +9082,46 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44873daadc4e5d544aa70407b2073170, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &668749370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393267679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7129863dd7fa129409d20b621851b46c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseJumpPower: 11
+  _baseExtraJumps: 0
+  _coyoteTime: 0.25
+  _groundedGraceTime: 0.5
+  _groundCheckWidth: 1
+  _groundCheckHeight: 0.1
+  _groundCheck: {fileID: 1457043536}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  _wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
+--- !u!114 &668749371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393267679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baaf1d5b8539e5a4fb4dd7c02d6e468d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &669078683

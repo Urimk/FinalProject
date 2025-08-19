@@ -199,7 +199,7 @@ public class PlayerAI : Agent
         sensor.AddObservation((Vector2)transform.position);
         sensor.AddObservation(_rigidbody2D.velocity);
         sensor.AddObservation(_playerHealth != null ? _playerHealth.CurrentHealth / _playerHealth.StartingHealth : 0f);
-        sensor.AddObservation(_playerMovement != null && _playerMovement.IsGrounded());
+        sensor.AddObservation(_playerMovement != null && _playerMovement.IsGrounded);
         sensor.AddObservation(_playerHealth != null && _playerHealth.Invulnerable);
         sensor.AddObservation(_playerMovement != null && _playerMovement.OnWall());
         sensor.AddObservation(_playerMovement != null ? _playerMovement.GetFacingDirection() : 1f);

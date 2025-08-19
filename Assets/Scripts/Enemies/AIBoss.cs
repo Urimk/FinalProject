@@ -652,7 +652,7 @@ public class AIBoss : EnemyDamage, IBoss // Assuming EnemyDamage handles health 
     /// <summary>
     /// Returns whether the player is currently grounded.
     /// </summary>
-    public bool IsPlayerGrounded() { if (_playerMovement != null) { return _playerMovement.IsGrounded(); } Debug.LogWarning("[AIBoss] Cannot check player grounded status: PlayerMovement reference missing."); return true; }
+    public bool IsPlayerGrounded() { if (_playerMovement != null) { return _playerMovement.IsGrounded; } Debug.LogWarning("[AIBoss] Cannot check player grounded status: PlayerMovement reference missing."); return true; }
 
     // ==================== Coroutines and Internal Logic ====================
     private int FindFireball()
