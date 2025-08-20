@@ -107,7 +107,8 @@ public class BossHealth : MonoBehaviour, IDamageable
         UpdateHealthBar();
         foreach (var obj in _bossScriptObjects)
         {
-            if (obj is IBoss boss)
+            var boss = obj.GetComponent<IBoss>();
+            if (boss != null)
                 _bossScripts.Add(boss);
             else
                 Debug.LogError($"{obj.name} does not implement IBoss!");

@@ -38,6 +38,7 @@ public class PlayerRespawn : MonoBehaviour
     private int _scoreAtCheckpoint;
     private float _timeAtCheckpoint = DefaultTimeAtCheckpoint;
     private List<Transform> _roomsSinceCheckpoint = new List<Transform>();
+    private bool _isInTrainingMode = false;
 
     // ==================== Unity Lifecycle ====================
     /// <summary>
@@ -55,6 +56,16 @@ public class PlayerRespawn : MonoBehaviour
             initialCheckpoint.transform.parent = _currentRoom;
         }
         _currentCheckpoint = initialCheckpoint.transform;
+        
+        // Check if we're in training mode
+        PlayerAI playerAI = GetComponent<PlayerAI>();
+        PlayerMovement playerMovement = GetComponent<PlayerMovement>();
+        _isInTrainingMode = playerAI != null && playerMovement != null && playerMovement.IsAIControlled && playerAI.IsTraining;
+        
+        if (_isInTrainingMode)
+        {
+            Debug.Log("[PlayerRespawn] Training mode detected - normal respawn system will be bypassed");
+        }
     }
 
     // ==================== Checkpoint and Respawn Logic ====================
@@ -86,6 +97,13 @@ public class PlayerRespawn : MonoBehaviour
     /// <param name="useTransitions">Whether to use smooth transitions for camera movement.</param>
     public void Respawn(bool useTransitions)
     {
+        // In training mode, skip normal respawn logic - ML-Agents handles everything
+        if (_isInTrainingMode)
+        {
+            Debug.Log("[PlayerRespawn] Training mode detected - skipping normal respawn logic");
+            return;
+        }
+        
         _playerHealth.SetFirstHealth(0);
         if (_lives <= 0)
         {

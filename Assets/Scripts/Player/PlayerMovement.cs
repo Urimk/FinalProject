@@ -175,6 +175,8 @@ public class PlayerMovement : MonoBehaviour
         get => _maxFallSpeed;
         set => _maxFallSpeed = value;
     }
+    /// <summary>Whether this player is AI controlled.</summary>
+    public bool IsAIControlled => _isAIControlled;
     /// <summary>Singleton instance of PlayerMovement.</summary>
     public static PlayerMovement Instance { get; private set; }
 

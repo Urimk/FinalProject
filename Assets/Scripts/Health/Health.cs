@@ -3,10 +3,11 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-/// <summary>
-/// Handles health, damage, invulnerability, and death logic for a character.
-/// </summary>
-public class Health : MonoBehaviour, IDamageable
+    /// <summary>
+    /// Handles health, damage, invulnerability, and death logic for a character.
+    /// Supports both normal gameplay and AI training modes with different respawn behaviors.
+    /// </summary>
+    public class Health : MonoBehaviour, IDamageable
 {
     // ==================== Constants ====================
     private const int IgnoreLayerA = 8;
@@ -83,6 +84,7 @@ public class Health : MonoBehaviour, IDamageable
     private int _isFirstHealth = 1;
     private PlayerAI _playerAI;
     private PlayerMovement _player;
+    private bool _isInTrainingMode = false;
 
     /// <summary>
     /// True if the character is dead.
@@ -113,6 +115,15 @@ public class Health : MonoBehaviour, IDamageable
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _normalColor = _spriteRenderer.color;
+        
+        // Check if we're in training mode (AI-controlled player)
+        _isInTrainingMode = _playerAI != null && _player != null && _player.IsAIControlled && _playerAI.IsTraining;
+        
+        // Debug logging for training mode detection
+        if (_isInTrainingMode)
+        {
+            Debug.Log("[Health] Training mode detected - death will be handled by ML-Agents");
+        }
     }
 
     private void LateUpdate()
@@ -176,23 +187,19 @@ public class Health : MonoBehaviour, IDamageable
             if (!Dead)
             {
                 Dead = true;
-                _animator.SetTrigger("die");
-                if (_groundManager != null)
+                
+                // Handle death differently based on training mode
+                if (_isInTrainingMode)
                 {
-                    _groundManager.OnPlayerDeath();
+                    HandleTrainingModeDeath();
+                    // Don't play death animation in training mode - it has Deactivate() event
                 }
-                foreach (Behaviour component in _components)
+                else
                 {
-                    component.enabled = false;
+                    _animator.SetTrigger("die");
+                    HandleNormalModeDeath();
                 }
-                if (CompareTag("Enemy"))
-                {
-                    ScoreManager.Instance.AddScore(ScoreValue);
-                }
-                if (_player != null)
-                {
-                    _playerAttack.UnequipWeapon();
-                }
+                
                 OnDamaged?.Invoke(damage);
                 SoundManager.instance.PlaySound(_deathSound, gameObject);
             }
@@ -277,5 +284,57 @@ public class Health : MonoBehaviour, IDamageable
     public float GetHealth()
     {
         return CurrentHealth;
+    }
+    
+    /// <summary>
+    /// Handles death in training mode - doesn't disable components or trigger normal respawn.
+    /// The ML-Agents system will handle episode reset and respawn.
+    /// </summary>
+    private void HandleTrainingModeDeath()
+    {
+        // In training mode, we don't disable components or trigger normal respawn
+        // The ML-Agents system (PlayerAI) will handle episode reset and respawn
+        // We just need to mark the player as dead so the AI knows to end the episode
+        
+        Debug.Log("[Health] Player died in training mode - ML-Agents will handle respawn");
+        
+        // Don't disable components - let ML-Agents handle the reset
+        // Don't call GroundManager.OnPlayerDeath() - that's for normal gameplay
+        // Don't unequip weapon - will be handled during episode reset
+        
+        // IMPORTANT: Don't play the death animation in training mode
+        // The death animation has an animation event that calls Deactivate(),
+        // which would set gameObject.SetActive(false) and destroy the player
+        // Instead, just mark as dead and let ML-Agents handle the reset
+        
+        // The PlayerAI.HandlePlayerDamaged() method will be called via OnDamaged event
+        // and it will end the episode and trigger OnEpisodeBegin for respawn
+    }
+    
+    /// <summary>
+    /// Handles death in normal gameplay mode - disables components and triggers respawn.
+    /// </summary>
+    private void HandleNormalModeDeath()
+    {
+        // Normal gameplay death handling
+        if (_groundManager != null)
+        {
+            _groundManager.OnPlayerDeath();
+        }
+        
+        foreach (Behaviour component in _components)
+        {
+            component.enabled = false;
+        }
+        
+        if (CompareTag("Enemy"))
+        {
+            ScoreManager.Instance.AddScore(ScoreValue);
+        }
+        
+        if (_player != null)
+        {
+            _playerAttack.UnequipWeapon();
+        }
     }
 }

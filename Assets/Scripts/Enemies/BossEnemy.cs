@@ -129,7 +129,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     private Vector3 _initialBossPosition;
     private bool _isDead = false;
     private Coroutine _dashCoroutine;
-    private bool isEranged = false;
+    private bool _isEranged = false;
 
     // ==================== Unity Lifecycle ====================
     /// <summary>
@@ -163,6 +163,8 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         _fireAttackTimer = _fireAttackCooldown;
         _dashCooldownTimer = _dashCooldown;
         _isPhase2 = false;
+        Debug.Log(" _isPhase2: " + _isPhase2);
+        _isEranged = false;
         _isChargingDash = false;
         _isDashing = false;
         _isDead = false;
@@ -574,6 +576,7 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
         if (_flame != null)
         {
             _flame.SetActive(false);
+            Debug.Log("Deactivated Flame");
         }
         GameObject[] flameWarnings = GameObject.FindGameObjectsWithTag(FlameWarningTag);
         GameObject[] dashIndicators = GameObject.FindGameObjectsWithTag(DashTargetIndicatorTag);
@@ -620,5 +623,10 @@ public class BossEnemy : EnemyDamage, IBoss // Assuming EnemyDamage provides bas
     public bool IsDashReady()
     {
         return _dashCooldownTimer >= _dashCooldown && _isPhase2;
+    }
+
+    public void ResetAbilityStates()
+    {
+        Start();
     }
 }

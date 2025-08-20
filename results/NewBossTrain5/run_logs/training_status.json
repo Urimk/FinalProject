@@ -1,0 +1,47 @@
+{
+    "MyBehavior": {
+        "checkpoints": [
+            {
+                "steps": 24675,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-24675.onnx",
+                "reward": -10.55966679762619,
+                "creation_time": 1755668965.8994956,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-24675.pt"
+                ]
+            },
+            {
+                "steps": 31933,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-31933.onnx",
+                "reward": -9.875156044637642,
+                "creation_time": 1755669577.738016,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-31933.pt"
+                ]
+            },
+            {
+                "steps": 35406,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-35406.onnx",
+                "reward": -9.551984250467891,
+                "creation_time": 1755669848.8466582,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-35406.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 35406,
+            "file_path": "results\\NewBossTrain5\\MyBehavior.onnx",
+            "reward": -9.551984250467891,
+            "creation_time": 1755669848.8466582,
+            "auxillary_file_paths": [
+                "results\\NewBossTrain5\\MyBehavior\\MyBehavior-35406.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.26.0",
+        "torch_version": "2.7.0+cu118"
+    }
+}
