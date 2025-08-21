@@ -105,4 +105,29 @@ public class OneWayPlatform : MonoBehaviour
             _edgeCollider.enabled = (playerY > platformTop);
         }
     }
+    
+    /// <summary>
+    /// Checks if the player is currently on this platform.
+    /// </summary>
+    /// <returns>True if the player is on this platform.</returns>
+    public bool IsPlayerOnPlatform()
+    {
+        if (_player == null || _edgeCollider == null) return false;
+        
+        // Check if player is within the platform's horizontal bounds
+        float platformLeft = _edgeCollider.bounds.min.x;
+        float platformRight = _edgeCollider.bounds.max.x;
+        float playerX = _player.position.x;
+        
+        bool withinHorizontalBounds = playerX >= platformLeft && playerX <= platformRight;
+        
+        // Check if player is at the platform's top level
+        float platformTop = _edgeCollider.bounds.max.y + PlatformTopYOffset;
+        float playerY = _player.position.y;
+        float tolerance = 0.1f; // Small tolerance for floating point precision
+        
+        bool atPlatformLevel = Mathf.Abs(playerY - platformTop) <= tolerance;
+        
+        return withinHorizontalBounds && atPlatformLevel;
+    }
 }

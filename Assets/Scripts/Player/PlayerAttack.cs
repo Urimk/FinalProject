@@ -71,6 +71,7 @@ public class PlayerAttack : MonoBehaviour
     private PlayerMovement _playerMovement;
     private SpriteRenderer _playerSpriteRenderer;
     private float _cooldownTimer = Mathf.Infinity;
+    private bool _isAttacking = false;
 
     // ==================== Properties ====================
     /// <summary>True if the game is paused for testing.</summary>
@@ -85,6 +86,8 @@ public class PlayerAttack : MonoBehaviour
     public GameObject[] Fireballs { get => _fireballs; set => _fireballs = value; }
     /// <summary>Current attack cooldown timer.</summary>
     public float CooldownTimer { get => _cooldownTimer; set => _cooldownTimer = value; }
+    /// <summary>True if the player is currently attacking.</summary>
+    public bool IsAttacking => _isAttacking;
 
     /// <summary>
     /// For testing: triggers an attack if cooldown is ready.
@@ -150,6 +153,8 @@ public class PlayerAttack : MonoBehaviour
     private void Attack()
     {
         _cooldownTimer = 0;
+        _isAttacking = true;
+        
         if (_currentWeapon == WeaponType.Fireball)
         {
             SoundManager.instance.PlaySound(_fireballSound, gameObject);
@@ -163,6 +168,9 @@ public class PlayerAttack : MonoBehaviour
         {
             SwingSword();
         }
+        
+        // Reset attacking state after a short delay
+        StartCoroutine(ResetAttackingState());
     }
 
     /// <summary>
@@ -341,5 +349,14 @@ public class PlayerAttack : MonoBehaviour
     public void ResetCooldown()
     {
         _cooldownTimer = 0;
+    }
+    
+    /// <summary>
+    /// Coroutine to reset the attacking state after a short delay.
+    /// </summary>
+    private IEnumerator ResetAttackingState()
+    {
+        yield return new WaitForSeconds(0.1f); // Short delay to indicate attack is happening
+        _isAttacking = false;
     }
 }

@@ -1,0 +1,56 @@
+{
+    "MyBehavior": {
+        "checkpoints": [
+            {
+                "steps": 85161,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-85161.onnx",
+                "reward": 45.040962788462636,
+                "creation_time": 1755764454.301885,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-85161.pt"
+                ]
+            },
+            {
+                "steps": 102090,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-102090.onnx",
+                "reward": 48.62726360609134,
+                "creation_time": 1755764938.6063454,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-102090.pt"
+                ]
+            },
+            {
+                "steps": 299940,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-299940.onnx",
+                "reward": 59.108062460422516,
+                "creation_time": 1755770073.6922398,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-299940.pt"
+                ]
+            },
+            {
+                "steps": 395216,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.onnx",
+                "reward": 66.4145455037554,
+                "creation_time": 1755772162.645027,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 395216,
+            "file_path": "results\\NewBossTrain9\\MyBehavior.onnx",
+            "reward": 66.4145455037554,
+            "creation_time": 1755772162.645027,
+            "auxillary_file_paths": [
+                "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.26.0",
+        "torch_version": "2.7.0+cu118"
+    }
+}

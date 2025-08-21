@@ -1173,7 +1173,7 @@ MonoBehaviour:
   _playerHealth: {fileID: 182523328}
   _oneWayPlatform: {fileID: 2045978113}
   _bossHealth: {fileID: 2053115023}
-  _aiBoss: {fileID: 0}
+  _bossAI: {fileID: 0}
   _boss: {fileID: 2053115022}
   _flames: {fileID: 1690593985}
   _bossFireballs:
@@ -1216,6 +1216,14 @@ MonoBehaviour:
   _rewardSafeDistance: 0.002
   _penaltyStuck: -0.01
   _enableEnhancedRewards: 1
+  _rewardSuccessfulDodge: 0.5
+  _rewardStrategicPositioning: 0.1
+  _penaltyPoorPositioning: -0.02
+  _rewardAttackOpportunity: 0.3
+  _penaltyWastedAttack: -0.1
+  _rewardPlatformAdvantage: 0.05
+  _penaltyGroundTrapped: -0.015
+  _rewardBossPhaseTransition: 1
   _maxBossFireballsToObserve: 1
   _enableEnhancedObservations: 1
   _includeDistanceObservations: 1
@@ -1634,11 +1642,6 @@ RectTransform:
 --- !u!1 &237293938 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9161404137056642441, guid: ec58634b610c94022b27f39f0cee941e, type: 3}
-  m_PrefabInstance: {fileID: 616422263}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &237293939 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3758314118982288638, guid: ec58634b610c94022b27f39f0cee941e, type: 3}
   m_PrefabInstance: {fileID: 616422263}
   m_PrefabAsset: {fileID: 0}
 --- !u!212 &237293940
@@ -9400,12 +9403,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxEpisodeDuration: 30
+  _logFrequency: 10
   _bossMode: 1
   _bossObject: {fileID: 2053115015}
   _playerObject: {fileID: 182523322}
-  _aiBoss: {fileID: 0}
-  _boss: {fileID: 2053115017}
-  _autoBoss: {fileID: 0}
+  _bossEnemy: {fileID: 2053115017}
   _bossHealth: {fileID: 2053115023}
   _playerHealth: {fileID: 182523328}
   _playerMovement: {fileID: 182523331}
@@ -9415,7 +9417,6 @@ MonoBehaviour:
   _initialPlayerPosition: {x: -5, y: -10, z: 0}
   _initialBossPosition: {x: 5, y: -9, z: 0}
   _logFilePath: BossTrainingLog.txt
-  _logFrequency: 10
   _episodeCount: 0
   _averageReward: 0
   _accumulatedReward: 0
@@ -10911,14 +10912,14 @@ MonoBehaviour:
   _movementSpeed: 1
   _doRestHealth: 0
   _playerHealth: {fileID: 182523328}
+  _bossHealth: {fileID: 2053115023}
   _attackCooldown: 6
   _fireballDamage: 1
   _projectileSpeed: 2.5
   _projectileSize: 0.7
   _attackRange: 20
   _fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
-  _bossHealth: {fileID: 2053115023}
-  enraged: {fileID: 237293939}
+  _enragedEffect: {fileID: 0}
   _firepoint: {fileID: 1516321308}
   _projectilePrefab: {fileID: 9012877507472136899, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
   _fireballs:
@@ -11085,7 +11086,7 @@ MonoBehaviour:
   _spumPrefabObject: {fileID: 235700422}
   _boss: {fileID: 2053115022}
   _rm: {fileID: 0}
-  _isTraining: 0
+  _isTraining: 1
   _trophy: {fileID: 985361225}
   _bossScriptObjects:
   - {fileID: 2053115023}

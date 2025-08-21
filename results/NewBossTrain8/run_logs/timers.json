@@ -1,0 +1,49 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1755762457",
+        "python_version": "3.9.9 (tags/v3.9.9:ccb0e6a, Nov 15 2021, 18:08:50) [MSC v.1929 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\user1\\Unity 2D Platformer for Complete Beginners\\myenv39\\Scripts\\mlagents-learn config/config.yaml --run-id=NewBossTrain8 --time-scale=3 --resume",
+        "mlagents_version": "0.26.0",
+        "mlagents_envs_version": "0.26.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.7.0+cu118",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1755762480"
+    },
+    "total": 23.430132800000003,
+    "count": 1,
+    "self": 0.02239860000000249,
+    "children": {
+        "run_training.setup": {
+            "total": 0.24404800000000026,
+            "count": 1,
+            "self": 0.24404800000000026
+        },
+        "TrainerController.start_learning": {
+            "total": 23.1636862,
+            "count": 1,
+            "self": 0.0001446000000022707,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 22.5541268,
+                    "count": 1,
+                    "self": 22.5541268
+                },
+                "TrainerController._save_models": {
+                    "total": 0.6094147999999997,
+                    "count": 1,
+                    "self": 0.012624500000001149,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.5967902999999986,
+                            "count": 1,
+                            "self": 0.5967902999999986
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("True if this player is AI controlled.")]
     [FormerlySerializedAs("isAIControlled")]
     [SerializeField] private bool _isAIControlled;
-    
+
     [Tooltip("Movement speed of the player.")]
     [FormerlySerializedAs("speed")]
     [SerializeField] private float _speed;
@@ -232,7 +232,7 @@ public class PlayerMovement : MonoBehaviour
     /// - Wall jump cooldown must have elapsed
     /// </summary>
     public bool CanWallJump => IsOnWall && !IsGrounded && _timeSinceGrounded > _groundedGraceTime && _wallJumpCooldown > 0.05f;
-    
+
     /// <summary>
     /// Whether the player can perform any type of jump.
     /// 
@@ -423,8 +423,8 @@ public class PlayerMovement : MonoBehaviour
         if (_wallJumpCooldown > WallJumpCooldownDuration)
         {
             // Wall jump cooldown finished, handle wall interaction
-        }
-        else
+            }
+            else
         {
             _wallJumpCooldown += Time.deltaTime;
         }
@@ -453,17 +453,17 @@ public class PlayerMovement : MonoBehaviour
 
         // Priority 1: Handle wall jump movement decay
         if (_disableMovementTimer > 0f)
-        {
-            if (_isInRecoil)
             {
+                if (_isInRecoil)
+                {
                 return; // Recoil takes priority over wall jump movement
             }
             
             // Apply wall jump velocity decay
             float wallJumpVelocity = GetWallJumpVelocity();
             _rigidbody2D.velocity = new Vector2(wallJumpVelocity, _rigidbody2D.velocity.y);
-            return;
-        }
+                    return;
+                }
 
         // Priority 2: Handle after wall jump state
         if (_afterWallJump && Mathf.Approximately(horizontalInput, 0f))
@@ -508,8 +508,8 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 // No input or game paused - stop horizontal movement
-                _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
-            }
+            _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
+        }
         }
         
         // Priority 5: Update sprite facing direction
@@ -548,7 +548,7 @@ public class PlayerMovement : MonoBehaviour
     public bool TryJump()
     {
         if (!CanJump)
-            return false;
+                return false;
 
         if (IsGrounded)
         {
@@ -558,7 +558,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             PerformWallOrAirJump();
-            return false;
+        return false;
         }
     }
 
@@ -792,9 +792,9 @@ public class PlayerMovement : MonoBehaviour
             // Allow walking through falling platforms
             FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
             if (fallingPlatform != null)
-            {
-                return false;
-            }
+        {
+            return false;
+        }
             return true; // Blocked by obstacle
         }
         return false; // Not blocked
@@ -806,9 +806,9 @@ public class PlayerMovement : MonoBehaviour
     private void FlipSprite()
     {
         float horizontalInput = _inputHandler?.HorizontalInput ?? 0f;
-        
+
         if (horizontalInput > SpriteFlipThreshold)
-        {
+    {
             _facingDirection = 1;
         }
         else if (horizontalInput < -SpriteFlipThreshold)

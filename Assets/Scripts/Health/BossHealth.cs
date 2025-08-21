@@ -184,16 +184,30 @@ public class BossHealth : MonoBehaviour, IDamageable
                 _healthSlider.gameObject.SetActive(false);
             }
             OnBossDied?.Invoke();
-            if (!_isTraining)
+            
+
+            // Call Die() on all boss scripts
+            foreach (var boss in _bossScripts)
             {
-                foreach (var boss in _bossScripts)
-                {
-                    boss.Die();
-                }
+                boss.Die();
+            }
+            
+            // Check if we're in training mode (either manual flag or EpisodeManager detection)
+            bool isInTrainingMode = _isTraining || (EpisodeManager.Instance != null && EpisodeManager.Instance.CurrentBossMode != EpisodeManager.BossMode.None);
+            
+            // Only destroy the boss if not in training mode
+            if (!isInTrainingMode)
+            {
                 StartCoroutine(DestroyAfterAnimation());
             }
+            else
+            {
+                Debug.Log("[BossHealth] Boss in training mode - not destroying, will be reset by EpisodeManager. Manual flag: " + _isTraining + ", EpisodeManager mode: " + (EpisodeManager.Instance != null ? EpisodeManager.Instance.CurrentBossMode.ToString() : "null"));
+            }
         }
-        if (_trophy != null)
+        
+        // Only show trophy in non-training mode
+        if (_trophy != null && !_isTraining)
         {
             _trophy.SetActive(true);
         }
@@ -213,9 +227,36 @@ public class BossHealth : MonoBehaviour, IDamageable
     /// </summary>
     public void ResetHealth()
     {
+        Debug.Log("[BossHealth] ResetHealth called - re-enabling boss components");
+        
         CurrentHealth = MaxHealth;
         if (_healthSlider != null)
             _healthSlider.gameObject.SetActive(true);
         _isDying = false;
+        
+        // Re-enable the boss GameObject and all its components
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+        }
+        
+        // Re-enable all boss scripts
+        foreach (var boss in _bossScripts)
+        {
+            if (boss is MonoBehaviour mb && !mb.enabled)
+            {
+                mb.enabled = true;
+                Debug.Log("[BossHealth] Re-enabled boss script: " + mb.GetType().Name);
+            }
+        }
+        
+        // Re-enable this component if it was disabled
+        if (!enabled)
+        {
+            enabled = true;
+            Debug.Log("[BossHealth] Re-enabled BossHealth component");
+        }
+        
+        Debug.Log("[BossHealth] ResetHealth complete - Health: " + CurrentHealth + "/" + MaxHealth);
     }
 }

@@ -2,15 +2,6 @@
     "MyBehavior": {
         "checkpoints": [
             {
-                "steps": 24675,
-                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-24675.onnx",
-                "reward": -10.55966679762619,
-                "creation_time": 1755668965.8994956,
-                "auxillary_file_paths": [
-                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-24675.pt"
-                ]
-            },
-            {
                 "steps": 31933,
                 "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-31933.onnx",
                 "reward": -9.875156044637642,
@@ -27,15 +18,42 @@
                 "auxillary_file_paths": [
                     "results\\NewBossTrain5\\MyBehavior\\MyBehavior-35406.pt"
                 ]
+            },
+            {
+                "steps": 39174,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-39174.onnx",
+                "reward": -10.049918130040169,
+                "creation_time": 1755671189.388992,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-39174.pt"
+                ]
+            },
+            {
+                "steps": 48974,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-48974.onnx",
+                "reward": -10.184114442992723,
+                "creation_time": 1755671696.4704397,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-48974.pt"
+                ]
+            },
+            {
+                "steps": 67328,
+                "file_path": "results\\NewBossTrain5\\MyBehavior\\MyBehavior-67328.onnx",
+                "reward": -10.172157218482232,
+                "creation_time": 1755672050.6175911,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain5\\MyBehavior\\MyBehavior-67328.pt"
+                ]
             }
         ],
         "final_checkpoint": {
-            "steps": 35406,
+            "steps": 67328,
             "file_path": "results\\NewBossTrain5\\MyBehavior.onnx",
-            "reward": -9.551984250467891,
-            "creation_time": 1755669848.8466582,
+            "reward": -10.172157218482232,
+            "creation_time": 1755672050.6175911,
             "auxillary_file_paths": [
-                "results\\NewBossTrain5\\MyBehavior\\MyBehavior-35406.pt"
+                "results\\NewBossTrain5\\MyBehavior\\MyBehavior-67328.pt"
             ]
         }
     },

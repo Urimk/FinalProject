@@ -85,7 +85,7 @@ public class BossFlameAttack : MonoBehaviour
         if (_active && collision.CompareTag(PlayerTag))
         {
             collision.GetComponent<Health>()?.TakeDamage(_damage);
-            AIBoss boss = FindObjectOfType<AIBoss>();
+            BossAI boss = FindObjectOfType<BossAI>();
             if (boss != null)
             {
                 boss.FlameMissed = false;
