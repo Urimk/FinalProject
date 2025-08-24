@@ -14,6 +14,7 @@ public abstract class BaseProjectile : MonoBehaviour
     protected const string DashTargetIndicatorTag = "DashTargetIndicator";
     protected const string FlameWarningMarkerTag = "FlameWarningMarker";
     protected const string CheckPointTag = "Checkpoint";
+    protected const float IsComingOutRatio = 0.526f;
 
     // ==================== Serialized Fields ====================
     [Header("Projectile Settings")]
@@ -37,6 +38,14 @@ public abstract class BaseProjectile : MonoBehaviour
     protected Animator _animator;
     protected Collider2D _collider;
     protected SpriteRenderer _spriteRenderer;
+    
+    // Coming out effect fields
+    protected bool _isComingOut = false;
+    protected float _colliderGrowTime = 0.3f;
+    protected float _growTimer = 0f;
+    protected Vector2 _fullColliderSize;
+    protected BoxCollider2D _boxCollider;
+    protected const float LerpComplete = 1f;
 
     // ==================== Properties ====================
     public bool IsActive => _isActive;
@@ -48,6 +57,13 @@ public abstract class BaseProjectile : MonoBehaviour
         _animator = GetComponent<Animator>();
         _collider = GetComponent<Collider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        // Initialize coming out effect components
+        _boxCollider = GetComponent<BoxCollider2D>();
+        if (_boxCollider != null)
+        {
+            _fullColliderSize = _boxCollider.size;
+        }
     }
 
     protected virtual void Update()
@@ -80,6 +96,21 @@ public abstract class BaseProjectile : MonoBehaviour
         
         if (_collider != null)
             _collider.enabled = true;
+            
+        // Handle coming out effect
+        if (_isComingOut && _boxCollider != null)
+        {
+            transform.localScale = new Vector3(transform.localScale.y * IsComingOutRatio, transform.localScale.y, transform.localScale.z);
+            _boxCollider.size = Vector2.zero;
+            _boxCollider.offset = Vector2.zero;
+            _colliderGrowTime = _speed / 2.25f;
+            _growTimer = 0f;
+        }
+        else if (_boxCollider != null)
+        {
+            _boxCollider.size = _fullColliderSize;
+            _boxCollider.offset = Vector2.zero;
+        }
     }
 
     /// <summary>
@@ -110,6 +141,15 @@ public abstract class BaseProjectile : MonoBehaviour
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// Sets whether the projectile is in the 'coming out' state.
+    /// </summary>
+    /// <param name="value">True to enable coming out effect, false to disable</param>
+    public virtual void SetComingOut(bool value)
+    {
+        _isComingOut = value;
     }
 
     /// <summary>
@@ -171,6 +211,18 @@ public abstract class BaseProjectile : MonoBehaviour
     /// <param name="speed">Optional speed override</param>
     public virtual void LaunchFromPosition(Vector2 position, Vector2 direction, float speed = -1f)
     {
+        LaunchFromPosition(position, direction, speed, false);
+    }
+
+    /// <summary>
+    /// Launches the projectile from a specific position in a specific direction with coming out effect.
+    /// </summary>
+    /// <param name="position">Starting position</param>
+    /// <param name="direction">Direction to move</param>
+    /// <param name="speed">Optional speed override</param>
+    /// <param name="comingOut">Whether to enable the coming out effect</param>
+    public virtual void LaunchFromPosition(Vector2 position, Vector2 direction, float speed, bool comingOut)
+    {
         // Unparent the projectile to prevent it from moving with its parent
         if (transform.parent != null)
         {
@@ -185,11 +237,14 @@ public abstract class BaseProjectile : MonoBehaviour
             
         // Apply the size/scale
         transform.localScale = Vector3.one * _size;
+        
+        // Set coming out state before activation
+        SetComingOut(comingOut);
             
         SetDirection(direction);
         Activate();
         
-        Debug.Log($"[BaseProjectile] Launched {gameObject.name} from {position} in direction {direction} (speed: {_speed})");
+        Debug.Log($"[BaseProjectile] Launched {gameObject.name} from {position} in direction {direction} (speed: {_speed}, comingOut: {comingOut})");
     }
 
     // ==================== Protected Methods ====================
@@ -210,6 +265,38 @@ public abstract class BaseProjectile : MonoBehaviour
     /// </summary>
     protected virtual void UpdateMovement()
     {
+        // Handle coming out effect
+        if (_isComingOut && _boxCollider != null)
+        {
+            _growTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(_growTimer / _colliderGrowTime);
+            
+            Vector2 newSize;
+            Vector2 newOffset;
+            
+            if (Mathf.Abs(_direction.x) > Mathf.Abs(_direction.y))
+            {
+                newSize = new Vector2(_fullColliderSize.x * t, _fullColliderSize.y);
+                newOffset = new Vector2(_direction.x > 0 ? (newSize.x - _fullColliderSize.x) / 2f : (_fullColliderSize.x - newSize.x) / 2f, 0);
+            }
+            else
+            {
+                newSize = new Vector2(_fullColliderSize.x, _fullColliderSize.y * t);
+                newOffset = new Vector2(0, _direction.y > 0 ? (newSize.y - _fullColliderSize.y) / 2f : (_fullColliderSize.y - newSize.y) / 2f);
+            }
+            
+            _boxCollider.size = newSize;
+            _boxCollider.size = newSize;
+            _boxCollider.offset = newOffset;
+            
+            if (t >= LerpComplete)
+            {
+                _isComingOut = false;
+                _boxCollider.size = _fullColliderSize;
+                _boxCollider.offset = Vector2.zero;
+            }
+        }
+        
         Vector3 movement = (Vector3)(_direction * _speed * Time.deltaTime);
         transform.position += movement;
     }
@@ -237,7 +324,21 @@ public abstract class BaseProjectile : MonoBehaviour
             
         if (_animator != null)
         {
-            _animator.SetTrigger("explosion");
+            // Check if animator has explosion trigger
+            if (HasAnimatorTrigger("explosion"))
+            {
+                _animator.SetTrigger("explosion");
+            }
+            // Check if animator has fade trigger
+            else if (HasAnimatorTrigger("fade"))
+            {
+                _animator.SetTrigger("fade");
+            }
+            // If neither trigger exists, deactivate immediately
+            else
+            {
+                Deactivate();
+            }
         }
         else
         {
@@ -255,6 +356,14 @@ public abstract class BaseProjectile : MonoBehaviour
         _currentLifetime = 0f;
         transform.rotation = Quaternion.identity;
         gameObject.SetActive(false);
+        
+        // Reset coming out effect
+        _isComingOut = false;
+        if (_boxCollider != null)
+        {
+            _boxCollider.size = _fullColliderSize;
+            _boxCollider.offset = Vector2.zero;
+        }
     }
 
     /// <summary>
@@ -316,5 +425,29 @@ public abstract class BaseProjectile : MonoBehaviour
     {
         _size = size;
         transform.localScale = Vector3.one * size;
+    }
+    
+    /// <summary>
+    /// Checks if the animator has a specific trigger parameter.
+    /// </summary>
+    /// <param name="triggerName">Name of the trigger parameter to check</param>
+    /// <returns>True if the trigger parameter exists</returns>
+    protected virtual bool HasAnimatorTrigger(string triggerName)
+    {
+        if (_animator == null) return false;
+        
+        // Get all parameters from the animator
+        AnimatorControllerParameter[] parameters = _animator.parameters;
+        
+        // Check if the trigger parameter exists
+        foreach (var parameter in parameters)
+        {
+            if (parameter.name == triggerName && parameter.type == AnimatorControllerParameterType.Trigger)
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

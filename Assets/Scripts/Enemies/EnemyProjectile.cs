@@ -29,7 +29,7 @@ public class EnemyProjectile : BaseProjectile
     protected override bool ShouldIgnoreCollisionByTag(string tag)
     {
         // Enemy projectiles ignore enemy tags
-        if (tag == EnemyTag) return true;
+        if (tag == EnemyTag || tag == NoCollisionTag) return true;
         
         // Check if it should break with fireball
         if (!_breakWithFireball && tag == "PlayerFireball") return true;
@@ -39,6 +39,8 @@ public class EnemyProjectile : BaseProjectile
 
     protected override void OnHit(Collider2D collision)
     {
+        if (ShouldIgnoreCollisionByTag(collision.tag)) return;
+        
         // Deal damage to player
         if (collision.CompareTag(PlayerTag))
         {

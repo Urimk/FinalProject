@@ -80,8 +80,7 @@ public class ArrowTrap : MonoBehaviour
         {
             Vector2 direction = _firepoint.right;
             projectile.SetSpeed(_speed);
-            projectile.SetComingOut(_isComingOut);
-            projectile.LaunchFromPosition(_firepoint.position, direction);
+            projectile.LaunchFromPosition(_firepoint.position, direction, -1f, _isComingOut);
             
             Debug.Log($"[ArrowTrap] Fired arrow {idx} from position {_firepoint.position} in direction {direction}");
         }

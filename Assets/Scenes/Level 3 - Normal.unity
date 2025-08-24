@@ -461,6 +461,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -1699,6 +1707,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -1947,6 +1963,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -3532,6 +3552,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -4653,11 +4681,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &208023796
 GameObject:
@@ -5335,6 +5367,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -6584,6 +6620,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7140,6 +7180,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7653,6 +7697,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -7828,6 +7880,10 @@ PrefabInstance:
     - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
       objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9373,6 +9429,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -10574,6 +10638,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -12817,6 +12889,10 @@ PrefabInstance:
     - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
       objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15355,6 +15431,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -17075,6 +17155,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -17997,6 +18085,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
 --- !u!95 &708628095
 Animator:
   serializedVersion: 5
@@ -20372,11 +20463,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &779048654
 GameObject:
@@ -20475,6 +20570,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
 --- !u!95 &779048659
 Animator:
   serializedVersion: 5
@@ -20755,11 +20853,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &784447712
 GameObject:
@@ -21428,6 +21530,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -21795,6 +21905,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -22698,6 +22812,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
 --- !u!95 &848260187
 Animator:
   serializedVersion: 5
@@ -23411,6 +23528,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -23600,6 +23721,10 @@ PrefabInstance:
     - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
       objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
@@ -23922,6 +24047,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -24249,6 +24382,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -25947,6 +26088,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -27037,11 +27186,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &1004205763
 GameObject:
@@ -27848,6 +28001,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -27999,6 +28156,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -29994,6 +30159,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -33677,6 +33850,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -35613,6 +35794,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -36999,7 +37184,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: _size
-      value: 0.3
+      value: 3.8
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: speed
@@ -37011,6 +37196,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: breakWithFireball
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
+      propertyPath: _breakWithFireball
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7038307197905767762, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
@@ -39496,6 +39685,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -39944,6 +40141,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -40393,6 +40598,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -40659,11 +40872,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &1591974625
 GameObject:
@@ -41211,6 +41428,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
 --- !u!95 &1609654578
 Animator:
   serializedVersion: 5
@@ -41436,11 +41656,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1001 &1612625926
 PrefabInstance:
@@ -41537,11 +41761,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &1616866241
 GameObject:
@@ -42507,6 +42735,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
 --- !u!95 &1630180213
 Animator:
   serializedVersion: 5
@@ -44234,11 +44465,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &1703826997
 GameObject:
@@ -44718,6 +44953,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -44990,6 +45233,10 @@ PrefabInstance:
     - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
       objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
@@ -46861,7 +47108,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: _size
-      value: 0.3
+      value: 3.8
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: speed
@@ -46873,6 +47120,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
       propertyPath: breakWithFireball
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2977914538304899582, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
+      propertyPath: _breakWithFireball
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7038307197905767762, guid: 919f212a5c92b9e4c88096ce28d78766, type: 3}
@@ -47398,6 +47649,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -49961,6 +50220,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -50895,6 +51158,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 46766fad2d3e6a54eb9cf98a9cbee89c, type: 3}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _size
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162748901593792155, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
+      propertyPath: _rotateToDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8335572682635676469, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.1000004
@@ -51053,11 +51324,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &1968185260
 GameObject:
@@ -51956,18 +52231,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 1
   _isRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rb: {fileID: 2001206526}
   _movementSpeed: 1
   _doRestHealth: 0
   _playerHealth: {fileID: 1289419874}
+  _bossHealth: {fileID: 2001206528}
+  _bossRewardManager: {fileID: 0}
   _attackCooldown: 6
   _fireballDamage: 1
   _projectileSpeed: 3
   _projectileSize: 1
   _attackRange: 10
   _fireballSound: {fileID: 8300000, guid: 9f8e27600c85b594a8be7a3f9b160653, type: 3}
-  _bossHealth: {fileID: 2001206528}
-  enraged: {fileID: 850294640}
+  _enragedEffect: {fileID: 0}
   _firepoint: {fileID: 976296015}
   _projectilePrefab: {fileID: 9012877507472136899, guid: d61928f5952ad094887d3cf1b8906569, type: 3}
   _fireballs:
@@ -54295,6 +54574,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 522445551559092488, guid: 052559f34e083244480fcc7b606a2328, type: 3}
+      propertyPath: m_TagString
+      value: PlayerFireball
+      objectReference: {fileID: 0}
     - target: {fileID: 5444315292695826566, guid: 052559f34e083244480fcc7b606a2328, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -54875,11 +55158,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _isRecoil: 0
   _speed: 1
   _size: 0.3
-  _resetTime: 10
+  _lifetime: 5
+  _rotateToDirection: 1
+  _damage: 1
+  _applyRecoil: 0
+  _recoilHorizontalForce: 4
+  _recoilVerticalForce: 3
+  _recoilDuration: 0.15
   _rewardManager: {fileID: 222581458}
 --- !u!1 &2127107792
 GameObject:
