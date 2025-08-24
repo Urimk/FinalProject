@@ -1,115 +1,49 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 /// <summary>
-/// Handles boss projectile movement, collision, and reward reporting for hits/misses.
+/// Boss projectile that deals damage to the player and reports hits/misses for AI training.
 /// </summary>
-public class BossProjectile : EnemyDamage
+public class BossProjectile : BaseProjectile
 {
-    // ==================== Constants ====================
-    private const string NoCollisionTag = "NoCollision";
-    private const string EnemyTag = "Enemy";
-    private const string PlayerTag = "Player";
-    private const float ScaleZ = 1f;
-    private const string DashTargetIndicatorTag = "DashTargetIndicator";
-    private const string FlameWarningMarkerTag = "FlameWarningMarker";
-    private const float RotationZ = 0f;
-
     // ==================== Serialized Fields ====================
-    [Tooltip("Speed of the projectile.")]
-    [FormerlySerializedAs("speed")]
-    [SerializeField] private float _speed;
-    [Tooltip("Size (scale) of the projectile.")]
-    [FormerlySerializedAs("size")]
-    [SerializeField] private float _size;
-    [Tooltip("Time before the projectile resets if it doesn't hit anything.")]
-    [FormerlySerializedAs("resetTime")]
-    [SerializeField] private float _resetTime;
-    [FormerlySerializedAs("rm")]
+    [Header("Boss Projectile Settings")]
+    [Tooltip("Damage dealt to the player.")]
+    [SerializeField] private float _damage = 1f;
+    
+    [Tooltip("Whether to apply recoil to the player on hit.")]
+    [SerializeField] private bool _applyRecoil = false;
+    
+    [Tooltip("Horizontal recoil force.")]
+    [SerializeField] private float _recoilHorizontalForce = 4f;
+    
+    [Tooltip("Vertical recoil force.")]
+    [SerializeField] private float _recoilVerticalForce = 3f;
+    
+    [Tooltip("Duration of the recoil effect.")]
+    [SerializeField] private float _recoilDuration = 0.15f;
+    
+    [Tooltip("Reference to the boss reward manager for AI training.")]
     [SerializeField] private BossRewardManager _rewardManager;
-    /// <summary>
-    /// Gets or sets rewardManager.
-    /// </summary>
-    public BossRewardManager RewardManager { get => _rewardManager; set => _rewardManager = value; }
 
-    // ==================== Private Fields ====================
-    private float _lifeTime;
-    private Animator _anim;
-    private bool _hit;
-    private BoxCollider2D _collid;
-    private Vector2 _direction;
-
-    /// <summary>
-    /// Initializes animator and collider references.
-    /// </summary>
-    private void Awake()
-    {
-        // Cache references for performance
-        _anim = GetComponent<Animator>();
-        _collid = GetComponent<BoxCollider2D>();
+    // ==================== Properties ====================
+    public BossRewardManager RewardManager 
+    { 
+        get => _rewardManager; 
+        set => _rewardManager = value; 
     }
 
-    /// <summary>
-    /// Activates the projectile and resets its state.
-    /// </summary>
-    public void ActivateProjectile()
+    // ==================== Override Methods ====================
+    protected override bool ShouldIgnoreCollisionByTag(string tag)
     {
-        // Reset hit state and timer
-        _hit = false;
-        _lifeTime = 0;
-        gameObject.SetActive(true);
-        _collid.enabled = true;
+        // Boss projectiles ignore enemy tags
+        return tag == EnemyTag;
     }
 
-    /// <summary>
-    /// Launches the projectile towards a target position at a given speed.
-    /// </summary>
-    public void Launch(Vector2 startPosition, Vector2 targetPosition, float speed)
+    protected override void OnHit(Collider2D collision)
     {
-        // Set up projectile for launch
-        _hit = false;
-        _lifeTime = 0;
-        transform.localScale = new Vector3(_size, _size, ScaleZ);
-        transform.position = startPosition;
-        _speed = speed;
-        _direction = (targetPosition - startPosition).normalized;
-        float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(RotationZ, RotationZ, angle);
-        gameObject.SetActive(true);
-        _collid.enabled = true;
-    }
-
-    /// <summary>
-    /// Handles projectile movement and lifetime.
-    /// </summary>
-    private void Update()
-    {
-        // Move the projectile if it hasn't hit anything
-        if (_hit) return;
-        transform.position += (Vector3)(_direction * _speed * Time.deltaTime);
-        _lifeTime += Time.deltaTime;
-        // Check if projectile should reset (missed)
-        if (_lifeTime > _resetTime)
-        {
-            if (_rewardManager != null)
-            {
-                _rewardManager.ReportAttackMissed();
-            }
-            Deactivate();
-        }
-    }
-
-    /// <summary>
-    /// Handles collision with other objects, triggers explosion animation, and reports hit/miss.
-    /// </summary>
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == NoCollisionTag || collision.gameObject.tag == EnemyTag || collision.gameObject.tag == FlameWarningMarkerTag || collision.gameObject.tag == DashTargetIndicatorTag)
-        {
-            return;
-        }
-        bool hitPlayer = collision.tag == PlayerTag;
-        // Report hit or miss to reward manager
+        bool hitPlayer = collision.CompareTag(PlayerTag);
+        
+        // Report to reward manager for AI training
         if (_rewardManager != null)
         {
             if (hitPlayer)
@@ -121,51 +55,54 @@ public class BossProjectile : EnemyDamage
                 _rewardManager.ReportAttackMissed();
             }
         }
-        _hit = true;
-        base.OnTriggerStay2D(collision);
-        _collid.enabled = false;
-        // Play explosion animation if available
-        if (_anim != null)
+
+        // Deal damage to player
+        if (hitPlayer)
         {
-            _anim.SetTrigger("explosion");
+            if (collision.TryGetComponent<Health>(out var health))
+            {
+                health.TakeDamage(_damage);
+            }
+
+            // Apply recoil if enabled
+            if (_applyRecoil)
+            {
+                if (collision.TryGetComponent<PlayerMovement>(out var playerMovement))
+                {
+                    Vector2 recoilDirection = transform.up;
+                    playerMovement.Recoil(transform.position, recoilDirection, _recoilHorizontalForce, _recoilVerticalForce, _recoilDuration);
+                }
+            }
         }
-        else
+
+        base.OnHit(collision);
+    }
+
+    protected override void OnLifetimeExpired()
+    {
+        // Report missed attack to reward manager
+        if (_rewardManager != null)
         {
-            Deactivate();
+            _rewardManager.ReportAttackMissed();
         }
+
+        base.OnLifetimeExpired();
     }
 
-    /// <summary>
-    /// Sets the projectile's damage value.
-    /// </summary>
-    public void SetDamage(int newDamage)
+    public override void SetDamage(float damage)
     {
-        _damage = newDamage;
+        _damage = damage;
     }
 
+    // ==================== Public Methods ====================
     /// <summary>
-    /// Sets the projectile's speed value.
+    /// Sets the recoil parameters for this projectile.
     /// </summary>
-    public void SetSpeed(float newSpeed)
+    public void SetRecoil(bool applyRecoil, float horizontalForce = 4f, float verticalForce = 3f, float duration = 0.15f)
     {
-        _speed = newSpeed;
-    }
-
-    /// <summary>
-    /// Sets the projectile's size value.
-    /// </summary>
-    public void SetSize(float newSize)
-    {
-        _size = newSize;
-    }
-
-    /// <summary>
-    /// Deactivates the projectile and resets its rotation.
-    /// </summary>
-    private void Deactivate()
-    {
-        // Hide and reset the projectile
-        gameObject.SetActive(false);
-        transform.rotation = Quaternion.identity;
+        _applyRecoil = applyRecoil;
+        _recoilHorizontalForce = horizontalForce;
+        _recoilVerticalForce = verticalForce;
+        _recoilDuration = duration;
     }
 }

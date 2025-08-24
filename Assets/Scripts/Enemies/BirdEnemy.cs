@@ -71,10 +71,12 @@ public class EggLayingBird : MonoBehaviour
         SoundManager.instance.PlaySound(_eggDropSound, gameObject);
 
         GameObject egg = _eggPrefabs[FindInactiveEgg()];
-        egg.transform.position = _eggDropPoint.position;
-        egg.GetComponent<EnemyProjectile>().SetDirection(Vector2.down);
-        egg.transform.rotation = Quaternion.identity;
-        egg.GetComponent<EnemyProjectile>().ActivateProjectile();
+        EnemyProjectile projectile = egg.GetComponent<EnemyProjectile>();
+        
+        if (projectile != null)
+        {
+            projectile.LaunchFromPosition(_eggDropPoint.position, Vector2.down);
+        }
     }
 
     /// <summary>

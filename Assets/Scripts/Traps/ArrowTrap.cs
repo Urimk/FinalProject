@@ -69,30 +69,50 @@ public class ArrowTrap : MonoBehaviour
         {
             SoundManager.instance.PlaySound(_arrowSound, gameObject);
         }
+        
         int idx = FindArrow();
-        _arrows[idx].transform.position = _firepoint.position;
-        Vector2 direction = _firepoint.right;
-        var projectile = _arrows[idx].GetComponent<EnemyProjectile>();
-        projectile.GetComponent<EnemyProjectile>().SetDirection(direction.normalized);
-        projectile.SetSpeed(_speed);
-        projectile.SetComingOut(_isComingOut);
-        projectile.GetComponent<EnemyProjectile>().ActivateProjectile();
+        if (idx == -1) return; // No available arrows
+        
+        GameObject arrowObj = _arrows[idx];
+        EnemyProjectile projectile = arrowObj.GetComponent<EnemyProjectile>();
+        
+        if (projectile != null)
+        {
+            Vector2 direction = _firepoint.right;
+            projectile.SetSpeed(_speed);
+            projectile.SetComingOut(_isComingOut);
+            projectile.LaunchFromPosition(_firepoint.position, direction);
+            
+            Debug.Log($"[ArrowTrap] Fired arrow {idx} from position {_firepoint.position} in direction {direction}");
+        }
+        else
+        {
+            Debug.LogError($"[ArrowTrap] Arrow {idx} missing EnemyProjectile component!");
+        }
     }
 
     /// <summary>
     /// Finds an available arrow in the pool.
     /// </summary>
-    /// <returns>Index of the available arrow.</returns>
+    /// <returns>Index of the available arrow, or -1 if none available.</returns>
     private int FindArrow()
     {
+        int availableCount = 0;
         for (int i = 0; i < _arrows.Length; i++)
         {
-            if (!_arrows[i].activeInHierarchy)
+            if (_arrows[i] != null && !_arrows[i].activeInHierarchy)
             {
+                availableCount++;
                 return i;
             }
         }
-        return 0;
+        
+        if (availableCount == 0)
+        {
+            Debug.LogWarning($"[ArrowTrap] No available arrows in pool! All {_arrows.Length} arrows are active.");
+        }
+        
+        return -1; // No available arrows
     }
 
     /// <summary>

@@ -2,49 +2,58 @@
     "MyBehavior": {
         "checkpoints": [
             {
-                "steps": 85161,
-                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-85161.onnx",
-                "reward": 45.040962788462636,
-                "creation_time": 1755764454.301885,
+                "steps": 3599995,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-3599995.onnx",
+                "reward": 145.89520342435156,
+                "creation_time": 1755870810.5341911,
                 "auxillary_file_paths": [
-                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-85161.pt"
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-3599995.pt"
                 ]
             },
             {
-                "steps": 102090,
-                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-102090.onnx",
-                "reward": 48.62726360609134,
-                "creation_time": 1755764938.6063454,
+                "steps": 3899987,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-3899987.onnx",
+                "reward": 134.7659374276797,
+                "creation_time": 1755877333.5081508,
                 "auxillary_file_paths": [
-                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-102090.pt"
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-3899987.pt"
                 ]
             },
             {
-                "steps": 299940,
-                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-299940.onnx",
-                "reward": 59.108062460422516,
-                "creation_time": 1755770073.6922398,
+                "steps": 4199951,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4199951.onnx",
+                "reward": 140.13236295325416,
+                "creation_time": 1755883746.7850287,
                 "auxillary_file_paths": [
-                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-299940.pt"
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4199951.pt"
                 ]
             },
             {
-                "steps": 395216,
-                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.onnx",
-                "reward": 66.4145455037554,
-                "creation_time": 1755772162.645027,
+                "steps": 4499979,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4499979.onnx",
+                "reward": 146.08523855759546,
+                "creation_time": 1755890351.2148376,
                 "auxillary_file_paths": [
-                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.pt"
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4499979.pt"
+                ]
+            },
+            {
+                "steps": 4634604,
+                "file_path": "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4634604.onnx",
+                "reward": 134.95431874990464,
+                "creation_time": 1755893377.9257607,
+                "auxillary_file_paths": [
+                    "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4634604.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 395216,
+            "steps": 4634604,
             "file_path": "results\\NewBossTrain9\\MyBehavior.onnx",
-            "reward": 66.4145455037554,
-            "creation_time": 1755772162.645027,
+            "reward": 134.95431874990464,
+            "creation_time": 1755893377.9257607,
             "auxillary_file_paths": [
-                "results\\NewBossTrain9\\MyBehavior\\MyBehavior-395216.pt"
+                "results\\NewBossTrain9\\MyBehavior\\MyBehavior-4634604.pt"
             ]
         }
     },

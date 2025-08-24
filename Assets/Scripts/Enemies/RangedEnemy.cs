@@ -94,9 +94,12 @@ public class RangedEnemy : MonoBehaviour
     /// </summary>
     private bool PlayerInSight()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+        Vector2 facingDirection = GetFacingDirection();
+        Vector2 castDirection = facingDirection == Vector2.right ? Vector2.left : Vector2.right; // Cast in opposite direction to detect player
+        
+        RaycastHit2D hit = Physics2D.BoxCast(_boxCollider.bounds.center + (Vector3)facingDirection * _range * _colliderDistance,
                                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y),
-                                             BoxCastAngle, Vector2.left, BoxCastDistance, _playerLayer);
+                                             BoxCastAngle, castDirection, BoxCastDistance, _playerLayer);
 
         return hit.collider != null;
     }
@@ -106,9 +109,21 @@ public class RangedEnemy : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
+        Vector2 facingDirection = GetFacingDirection();
+        
         Gizmos.color = GizmoColor;
-        Gizmos.DrawWireCube(_boxCollider.bounds.center + transform.right * _range * transform.localScale.x * _colliderDistance,
+        Gizmos.DrawWireCube(_boxCollider.bounds.center + (Vector3)facingDirection * _range * _colliderDistance,
                              new Vector2(_boxCollider.bounds.size.x * _range, _boxCollider.bounds.size.y));
+    }
+
+    /// <summary>
+    /// Gets the direction the enemy is currently facing.
+    /// </summary>
+    /// <returns>Vector2.right if facing right, Vector2.left if facing left</returns>
+    private Vector2 GetFacingDirection()
+    {
+        // If localScale.x is negative, the enemy is flipped and facing left
+        return transform.localScale.x >= 0 ? Vector2.right : Vector2.left;
     }
 
     /// <summary>
@@ -118,10 +133,17 @@ public class RangedEnemy : MonoBehaviour
     {
         SoundManager.instance.PlaySound(_fireballSound, gameObject);
         _cooldownTimer = 0;
-        EnemyProjectile fireball = _fireballs[FindFireball()].GetComponent<EnemyProjectile>();
-        fireball.transform.position = _firepoint.position;
-        fireball.StoreInitialWorldPosition(); // New method
-        fireball.ActivateProjectile();
+        
+        GameObject fireballObj = _fireballs[FindFireball()];
+        EnemyProjectile fireball = fireballObj.GetComponent<EnemyProjectile>();
+        
+        if (fireball != null)
+        {
+            Vector2 fireDirection = GetFacingDirection();
+            fireball.LaunchFromPosition(_firepoint.position, fireDirection);
+            
+            Debug.Log($"[RangedEnemy] Fired fireball in direction {fireDirection} (facing: {(transform.localScale.x >= 0 ? "right" : "left")})");
+        }
     }
 
     /// <summary>
