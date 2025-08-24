@@ -4,6 +4,8 @@ Temp/
 Logs/
 UserSettings/
 myenv39/
+myenv/
+results/
 Packages/*
 !Packages/manifest.json
 !Packages/packages-lock.json
