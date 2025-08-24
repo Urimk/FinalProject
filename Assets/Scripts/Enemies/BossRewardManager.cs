@@ -49,6 +49,12 @@ public class BossRewardManager : MonoBehaviour
     private bool _terminalRewardPending = false;      // Flag to indicate a terminal reward is set.
     private float _currentEpisodeStartTime = 0f;
     private float _totalEpisodeReward = 0f;           // Tracks the total reward for the entire episode.
+    
+    // Reference to PlayerAI for reporting dodge rewards
+    private PlayerAI _playerAI;
+    
+    // Boss attack tracking
+    private int _totalBossAttacks = 0;
 
     // ==================== Step/Action Reporting Methods ====================
     /// <summary>
@@ -63,9 +69,50 @@ public class BossRewardManager : MonoBehaviour
     public void ReportTookDamage(float damageAmount) => _currentAccumulatedStepReward += _penaltyTookDamage;
 
     /// <summary>
+    /// Call when the boss fires an attack.
+    /// </summary>
+    public void ReportBossAttack()
+    {
+        _totalBossAttacks++;
+        
+        // Report to PlayerAI for tracking
+        if (_playerAI != null)
+        {
+            _playerAI.OnBossAttackFired();
+        }
+    }
+    
+    /// <summary>
     /// Call when the boss fires an attack that misses.
     /// </summary>
-    public void ReportAttackMissed() => _currentAccumulatedStepReward += _penaltyAttackMissed;
+    public void ReportAttackMissed()
+    {
+        _currentAccumulatedStepReward += _penaltyAttackMissed;
+        
+        // Also report to PlayerAI for dodge reward
+        if (_playerAI != null)
+        {
+            _playerAI.OnBossAttackDodged();
+        }
+    }
+    
+    /// <summary>
+    /// Sets the PlayerAI reference for reporting dodge rewards.
+    /// </summary>
+    /// <param name="playerAI">Reference to the PlayerAI component.</param>
+    public void SetPlayerAI(PlayerAI playerAI)
+    {
+        _playerAI = playerAI;
+    }
+    
+    /// <summary>
+    /// Gets the total number of boss attacks fired this episode.
+    /// </summary>
+    /// <returns>Total boss attacks fired.</returns>
+    public int GetTotalBossAttacks()
+    {
+        return _totalBossAttacks;
+    }
 
     /// <summary>
     /// Call when the player triggers a flame trap placed by the boss.
@@ -83,6 +130,7 @@ public class BossRewardManager : MonoBehaviour
         _terminalRewardPending = false;
         _currentEpisodeStartTime = Time.time;
         _totalEpisodeReward = 0f;
+        _totalBossAttacks = 0;
     }
 
     /// <summary>

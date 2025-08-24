@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     private const float DefaultNormalGravity = 2f;            // Normal gravity scale when not on wall
     private const float SpriteFlipThreshold = 0.01f;          // Minimum input to trigger sprite flipping
     private const float SmallBumpLift = 0.001f;               // Small vertical lift to help climb small obstacles
-    
+
     // Recoil System
     private const float DefaultRecoilForce = 10f;             // Base force applied during recoil
     private const float DefaultRecoilDuration = 0.3f;         // Duration of recoil effect
@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private const float DefaultHorizontalKnockback = 0.5f;    // Default horizontal knockback when direction is weak
     private const float DisableMovementDuringRecoil = 0.08f;  // Time to disable movement during recoil
     private const float RecoilInfluenceThreshold = 0.7f;      // When recoil stops blocking movement (70% through)
-    
+
     // Wall Jump System
     private const float WallJumpCooldownDuration = 0.33f;     // Cooldown between wall jumps
     private const float WallJumpGravityScale = 6f;            // Gravity scale when sliding on wall
@@ -44,12 +44,12 @@ public class PlayerMovement : MonoBehaviour
     private const float WallCheckBoxCastHeightIncrease = 0.025f; // Extra height for wall detection
     private const float WallCheckBoxCastCenterShift = 0.025f / 2f; // Center shift for wall detection
     private const float DefaultGroundedGraceTime = 0.5f;      // Time after leaving ground before wall sliding
-    
+
     // Animation Parameters
     private const string AnimatorJump = "jump";               // Animator parameter for jump trigger
     private const string AnimatorRunning = "running";         // Animator parameter for running state
     private const string AnimatorGrounded = "grounded";       // Animator parameter for grounded state
-    
+
     // Visual Effects (Ears positioning)
     private const float EarsWalkJumpX = 0.15f;                // X offset for ears during walk/jump
     private const float EarsAttack01X = 0.25f;                // X offset for ears during attack_01
@@ -72,29 +72,29 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Base jump power for the player.")]
     [FormerlySerializedAs("baseJumpPower")]
     [SerializeField] private float _baseJumpPower;
-    
+
     [Tooltip("Base number of extra jumps allowed.")]
     [FormerlySerializedAs("baseExtraJumps")]
     [SerializeField] private int _baseExtraJumps;
-    
+
     [Header("Coyote Time")]
     [Tooltip("Duration of coyote time (extra jump window).")]
     [FormerlySerializedAs("coyoteTime")]
     [SerializeField] private float _coyoteTime;
-    
+
     [Tooltip("Grace time for being considered grounded.")]
     [FormerlySerializedAs("groundedGraceTime")]
     [SerializeField] private float _groundedGraceTime = DefaultGroundedGraceTime;
-    
+
     [Header("Ground Detection")]
     [Tooltip("Width of the ground check box.")]
     [FormerlySerializedAs("groundCheckWidth")]
     [SerializeField] private float _groundCheckWidth = 1.0f;
-    
+
     [Tooltip("Height of the ground check box.")]
     [FormerlySerializedAs("groundCheckHeight")]
     [SerializeField] private float _groundCheckHeight = 0.1f;
-    
+
     [Tooltip("Transform for ground check.")]
     [FormerlySerializedAs("groundCheck")]
     [SerializeField] private Transform _groundCheck;
@@ -147,22 +147,22 @@ public class PlayerMovement : MonoBehaviour
     // ==================== Public Properties ====================
     /// <summary>Movement speed of the player.</summary>
     public float Speed { get => _speed; set => _speed = value; }
-    
+
     /// <summary>Current jump power of the player.</summary>
     public float JumpPower { get => _jumpPower; set => _jumpPower = value; }
-    
+
     /// <summary>Number of extra jumps available.</summary>
     public int ExtraJumps { get => _extraJumps; set => _extraJumps = value; }
-    
+
     /// <summary>Whether the player is currently grounded.</summary>
     public bool IsGrounded => CheckGrounded();
-    
+
     /// <summary>Layer mask for ground detection.</summary>
     public LayerMask GroundLayer { get => _groundLayer; set => _groundLayer = value; }
-    
+
     /// <summary>Whether the player is currently on a wall.</summary>
     public bool IsOnWall => CheckOnWall();
-    
+
     /// <summary>Transform for ground check (read-only).</summary>
     public float NormalGrav
     {
@@ -186,35 +186,35 @@ public class PlayerMovement : MonoBehaviour
     private Animator _animator;                               // Controls player animations
     private BoxCollider2D _boxCollider;                       // Collision detection for movement
     private SpriteRenderer _playerSpriteRenderer;             // For sprite-based visual effects
-    
+
     // Movement State
     private int _facingDirection = 1;                         // Current facing direction (1 = right, -1 = left)
     private float _disableMovementTimer;                      // Timer to disable movement input
-    
+
     // Recoil System
     private bool _isInRecoil = false;                         // Whether player is currently in recoil state
     private float _recoilTimer = 0f;                          // Timer for recoil duration
     private float _currentRecoilDuration = 0f;                // Current recoil duration (for custom recoil)
     private Vector2 _recoilDirection;                         // Direction of recoil force
     private bool _afterRecoil;                                // Flag set after recoil ends
-    
+
     // Visual Effects
     private GameObject _equippedEars;                         // Reference to equipped ears power-up
     private bool _hasPowerUp = false;                         // Whether player has active power-up
-    
+
     // ==================== Input System ====================
     private PlayerInputHandler _inputHandler;                  // Abstract input handler (human or AI)
-    
+
     // ==================== Jump System ====================
     // Jump Configuration
     private int _extraJumps;                                   // Number of extra jumps available (double/triple jump)
     private float _jumpPower;                                  // Current jump force applied
-    
+
     // Jump State Management
     private int _jumpCounter;                                  // Current number of jumps remaining
     private float _coyoteCounter;                              // Timer for coyote time (jump forgiveness)
     private float _timeSinceGrounded;                          // Time since player was last grounded
-    
+
     // Wall Jump System
     private float _wallJumpCooldown;                           // Timer for wall jump cooldown
     private float _wallJumpStartTime;                          // When the current wall jump started
@@ -359,7 +359,7 @@ public class PlayerMovement : MonoBehaviour
         {
             string spriteName = _playerSpriteRenderer.sprite.name;
             Vector3 newPosition;
-            
+
             // Position ears based on current animation
             if (spriteName.StartsWith("walk") || spriteName.StartsWith("jump"))
             {
@@ -377,7 +377,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 newPosition = new Vector3(EarsDefaultX, EarsDefaultY, 0f);
             }
-            
+
             _earsSlot.localPosition = newPosition;
         }
     }
@@ -393,7 +393,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _disableMovementTimer -= Time.deltaTime;
         }
-        
+
         // Jump timers
         _timeSinceGrounded = IsGrounded ? 0 : _timeSinceGrounded + Time.deltaTime;
         UpdateCoyoteTime();
@@ -423,8 +423,8 @@ public class PlayerMovement : MonoBehaviour
         if (_wallJumpCooldown > WallJumpCooldownDuration)
         {
             // Wall jump cooldown finished, handle wall interaction
-            }
-            else
+        }
+        else
         {
             _wallJumpCooldown += Time.deltaTime;
         }
@@ -453,17 +453,17 @@ public class PlayerMovement : MonoBehaviour
 
         // Priority 1: Handle wall jump movement decay
         if (_disableMovementTimer > 0f)
+        {
+            if (_isInRecoil)
             {
-                if (_isInRecoil)
-                {
                 return; // Recoil takes priority over wall jump movement
             }
-            
+
             // Apply wall jump velocity decay
             float wallJumpVelocity = GetWallJumpVelocity();
             _rigidbody2D.velocity = new Vector2(wallJumpVelocity, _rigidbody2D.velocity.y);
-                    return;
-                }
+            return;
+        }
 
         // Priority 2: Handle after wall jump state
         if (_afterWallJump && Mathf.Approximately(horizontalInput, 0f))
@@ -474,7 +474,7 @@ public class PlayerMovement : MonoBehaviour
             }
             return;
         }
-        
+
         // Reset wall jump and recoil flags
         _afterWallJump = false;
         _afterRecoil = false;
@@ -492,7 +492,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Apply small vertical lift
                 transform.position += new Vector3(0f, SmallBumpLift, 0f);
-                
+
                 // Check if bump helped by testing collision again
                 if (!IsHorizontallyBlocked())
                 {
@@ -508,10 +508,10 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 // No input or game paused - stop horizontal movement
-            _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
+                _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
+            }
         }
-        }
-        
+
         // Priority 5: Update sprite facing direction
         FlipSprite();
     }
@@ -548,7 +548,7 @@ public class PlayerMovement : MonoBehaviour
     public bool TryJump()
     {
         if (!CanJump)
-                return false;
+            return false;
 
         if (IsGrounded)
         {
@@ -558,7 +558,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             PerformWallOrAirJump();
-        return false;
+            return false;
         }
     }
 
@@ -579,7 +579,7 @@ public class PlayerMovement : MonoBehaviour
     private void PerformWallOrAirJump()
     {
         _afterWallJump = false;
-        
+
         if (CanWallJump)
         {
             PerformWallJump();
@@ -620,20 +620,20 @@ public class PlayerMovement : MonoBehaviour
     {
         _wallJumpCooldown = 0;
         _afterWallJump = true;
-        
+
         // Calculate wall jump velocity
         float horizontalVel = -Mathf.Sign(transform.localScale.x) * WallJumpHorizontalForce;
         _rigidbody2D.velocity = new Vector2(horizontalVel, WallJumpVerticalForce);
-        
+
         // Track for decay
         _wallJumpStartTime = Time.time;
         _initialWallJumpVelocity = horizontalVel;
-        
+
         // Flip the player
         Vector3 scale = transform.localScale;
         scale.x = -scale.x;
         transform.localScale = scale;
-        
+
         _disableMovementTimer = WallJumpCooldownDuration;
     }
 
@@ -666,17 +666,17 @@ public class PlayerMovement : MonoBehaviour
     {
         // Always reset to normal gravity first
         _rigidbody2D.gravityScale = _normalGrav;
-        
+
         // Check if wall interaction should be active
         if (IsOnWall && !IsGrounded)
         {
             // Get current horizontal input
             float horizontalInput = _inputHandler?.HorizontalInput ?? 0f;
-            
+
             // Check if player is moving toward the wall (facing direction matches input)
-            bool isMovingTowardWall = (transform.localScale.x > 0 && horizontalInput > 0) || 
+            bool isMovingTowardWall = (transform.localScale.x > 0 && horizontalInput > 0) ||
                                      (transform.localScale.x < 0 && horizontalInput < 0);
-            
+
             // Apply wall gravity only if actively moving toward wall and grace time has passed
             if (isMovingTowardWall && _timeSinceGrounded > _groundedGraceTime)
             {
@@ -764,18 +764,18 @@ public class PlayerMovement : MonoBehaviour
         {
             return false;
         }
-        
+
         // Skip collision check if no horizontal input
         float horizontalInput = _inputHandler?.HorizontalInput ?? 0f;
         if (Mathf.Approximately(horizontalInput, 0f))
             return false;
-            
+
         // Set up collision detection parameters
         Vector2 checkDirection = _facingDirection == 1 ? Vector2.right : Vector2.left;
         Vector2 size = _boxCollider.bounds.size;
         size.y += WallCheckBoxCastHeightIncrease; // Enlarge height for better detection
         Vector2 center = _boxCollider.bounds.center + new Vector3(0, WallCheckBoxCastCenterShift, 0);
-        
+
         // Perform BoxCast to detect obstacles
         RaycastHit2D hit = Physics2D.BoxCast(
             center,
@@ -785,19 +785,24 @@ public class PlayerMovement : MonoBehaviour
             WallCheckBoxCastDistance,
             _obstacleLayer | _wallLayer | _groundLayer
         );
-        
+
         // Process collision result
         if (hit.collider != null)
         {
             // Allow walking through falling platforms
             FallingPlatform fallingPlatform = hit.collider.GetComponent<FallingPlatform>();
             if (fallingPlatform != null)
-        {
-            return false;
-        }
+            {
+                return false;
+            }
             return true; // Blocked by obstacle
         }
         return false; // Not blocked
+    }
+
+    public bool IsBlockedByWall()
+    {
+        return IsHorizontallyBlocked();
     }
 
     /// <summary>
@@ -808,7 +813,7 @@ public class PlayerMovement : MonoBehaviour
         float horizontalInput = _inputHandler?.HorizontalInput ?? 0f;
 
         if (horizontalInput > SpriteFlipThreshold)
-    {
+        {
             _facingDirection = 1;
         }
         else if (horizontalInput < -SpriteFlipThreshold)
@@ -1008,7 +1013,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Recoil(sourcePosition, recoilDirection, _recoilForce, _recoilVerticalForce, _recoilDuration);
     }
-    
+
     /// <summary>
     /// Applies recoil to the player from a source position or direction with custom force and duration.
     /// 
@@ -1031,7 +1036,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 knockbackDirection;
         _afterRecoil = true;
-        
+
         // Determine recoil direction
         if (recoilDirection != Vector2.zero)
         {
@@ -1044,13 +1049,13 @@ public class PlayerMovement : MonoBehaviour
             Vector2 playerPosition = transform.position;
             knockbackDirection = (playerPosition - sourcePosition).normalized;
         }
-        
+
         // Ensure minimum horizontal knockback for consistent feel
         if (Mathf.Abs(knockbackDirection.x) < MinHorizontalKnockback)
         {
             knockbackDirection.x = _facingDirection == 1 ? DefaultHorizontalKnockback : -DefaultHorizontalKnockback;
         }
-        
+
         StartRecoil(knockbackDirection, horizontalForce, verticalForce, duration);
     }
 
@@ -1062,7 +1067,7 @@ public class PlayerMovement : MonoBehaviour
     {
         StartRecoil(direction, _recoilForce, _recoilVerticalForce, _recoilDuration);
     }
-    
+
     /// <summary>
     /// Starts the recoil effect with a given direction and custom force/duration values.
     /// 
@@ -1081,7 +1086,7 @@ public class PlayerMovement : MonoBehaviour
         _currentRecoilDuration = duration; // Store current duration for threshold calculations
         _recoilDirection = direction;
         _disableMovementTimer = duration; // Disable input until recoil finishes
-        
+
         // Apply recoil velocity using custom forces
         Vector2 recoilVelocity = new Vector2(
             direction.x * horizontalForce,
@@ -1101,7 +1106,7 @@ public class PlayerMovement : MonoBehaviour
         if (_isInRecoil)
         {
             _recoilTimer -= Time.deltaTime;
-            
+
             // End recoil when timer expires
             if (_recoilTimer <= 0f)
             {

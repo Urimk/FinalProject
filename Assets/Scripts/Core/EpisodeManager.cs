@@ -139,6 +139,7 @@ public class EpisodeManager : MonoBehaviour
     private void Start()
     {
         ValidateCriticalReferences();
+        SetupPlayerAIReference();
     }
 
     /// <summary>
@@ -222,6 +223,26 @@ public class EpisodeManager : MonoBehaviour
             Debug.LogError("[EpisodeManager] Q-Learning mode requires BossRewardManager. Disabling EpisodeManager.");
             enabled = false;
             return;
+        }
+    }
+
+    /// <summary>
+    /// Sets up the PlayerAI reference in BossRewardManager for dodge reward reporting.
+    /// </summary>
+    private void SetupPlayerAIReference()
+    {
+        if (_bossRewardManager != null && _playerObject != null)
+        {
+            PlayerAI playerAI = _playerObject.GetComponent<PlayerAI>();
+            if (playerAI != null)
+            {
+                _bossRewardManager.SetPlayerAI(playerAI);
+                Debug.Log("[EpisodeManager] PlayerAI reference set in BossRewardManager for dodge rewards.");
+            }
+            else
+            {
+                Debug.LogWarning("[EpisodeManager] PlayerAI component not found on player object.");
+            }
         }
     }
 

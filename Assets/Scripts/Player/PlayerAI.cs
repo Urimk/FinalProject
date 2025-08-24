@@ -20,26 +20,25 @@ public class PlayerAI : Agent
     private const float DefaultHazardDetectionRadius = 15f;
     private const int DefaultHazardDetectionLayerMask = -1;
     
-    // Reward Constants
-    private const float DefaultRewardWin = 10.0f; // Increased for major victory
-    private const float DefaultPenaltyLose = -5.0f; // Increased penalty for death
-    private const float DefaultRewardDamageBoss = 2.0f; // Increased for successful attacks
-    private const float DefaultPenaltyTakeDamage = -5.0f; // Increased penalty for taking damage
-    private const float DefaultPenaltyPerStep = -0.0005f; // Slightly increased time pressure
-    private const float DefaultRewardSurvival = 0.002f; // Increased survival reward
-    private const float DefaultPenaltyCloseToBoss = -0.01f; // Increased penalty for being close
-    private const float DefaultPenaltyStuck = -0.02f; // Increased penalty for being stuck
-    private const float DefaultRewardSafeDistance = 0.005f; // Increased reward for safe positioning
+    // Reward Constants - Simplified System
+    private const float DefaultRewardWin = 10.0f; // Reward for winning (killing the boss)
+    private const float DefaultPenaltyLose = -5.0f; // Penalty for losing (dying)
+    private const float DefaultRewardDamageBoss = 3.0f; // Reward for hitting the boss
+    private const float DefaultPenaltyTakeDamage = -5.0f; // Penalty for getting hit
+    private const float DefaultPenaltyPerStep = -0.001f; // Penalty for time passing
+    private const float DefaultRewardAvoidAttack = 1.0f; // Reward for avoiding boss attacks
     
-    // New Strategic Reward Constants
-    private const float DefaultRewardSuccessfulDodge = 0.5f; // Reward for avoiding attacks
-    private const float DefaultRewardStrategicPositioning = 0.1f; // Reward for good positioning
-    private const float DefaultPenaltyPoorPositioning = -0.02f; // Penalty for bad positioning
-    private const float DefaultRewardAttackOpportunity = 0.3f; // Reward for attacking when boss is vulnerable
-    private const float DefaultPenaltyWastedAttack = -0.1f; // Penalty for attacking when boss is invulnerable
-    private const float DefaultRewardPlatformAdvantage = 0.05f; // Reward for using platforms strategically
-    private const float DefaultPenaltyGroundTrapped = -0.015f; // Penalty for being trapped on ground
-    private const float DefaultRewardBossPhaseTransition = 1.0f; // Reward for surviving boss phase transition
+    // Boss Proximity Penalties
+    private const float DefaultPenaltyCloseToBossLevel1 = -0.01f; // Penalty for being close to boss (level 1)
+    private const float DefaultPenaltyCloseToBossLevel2 = -0.02f; // Penalty for being very close to boss (level 2)
+    private const float DefaultSafeDistanceFromBoss = 4.0f; // Safe distance from boss
+    private const float DefaultDangerDistanceFromBoss = 1.5f; // Very dangerous distance from boss
+    
+    // Useless Decision Penalties
+    private const float DefaultPenaltyUselessFallThrough = -0.1f; // Penalty for fall through while not on platform
+    private const float DefaultPenaltyUselessMove = -0.05f; // Penalty for moving into wall
+    private const float DefaultPenaltyUselessAction = -0.05f; // Penalty for action while disabled
+    private const float DefaultPenaltyAttackMissed = -0.1f; // Penalty for player attack missing
     
     // Action Constants
     private const float MaxJumpHoldDuration = 0.6f;
@@ -60,10 +59,7 @@ public class PlayerAI : Agent
     private const string DebugProjectilesNull = "[PlayerAI] Projectiles array is null in ObserveClosestProjectiles.";
     
     // Platform Interaction Constants
-    private const float PlatformDetectionRadius = 2f;
-    private const float PlatformFallThroughCooldown = 0.5f;
     private const float PlatformUsageReward = 0.01f;
-    private const float PlatformFallThroughPenalty = -0.005f;
 
     // ==================== Inspector Fields ====================
 
@@ -115,64 +111,55 @@ public class PlayerAI : Agent
     [Header("Platform References")]
     [Tooltip("Array of OneWayPlatform components in the room.")]
     [SerializeField] private OneWayPlatform[] _platforms;
+    [SerializeField] private OneWayPlatform _currentPlatform;
 
 
 
     [Header("Reward Settings")]
-    [Tooltip("Reward for winning.")]
+    [Tooltip("Reward for winning (killing the boss).")]
     [FormerlySerializedAs("rewardWin")]
     [SerializeField] private float _rewardWin = DefaultRewardWin;
-    [Tooltip("Penalty for losing.")]
+    [Tooltip("Penalty for losing (dying).")]
     [FormerlySerializedAs("penaltyLose")]
     [SerializeField] private float _penaltyLose = DefaultPenaltyLose;
-    [Tooltip("Reward for damaging the boss.")]
+    [Tooltip("Reward for hitting the boss.")]
     [FormerlySerializedAs("rewardDamageBoss")]
     [SerializeField] private float _rewardDamageBoss = DefaultRewardDamageBoss;
-    [Tooltip("Penalty for taking damage.")]
+    [Tooltip("Penalty for getting hit.")]
     [FormerlySerializedAs("penaltyTakeDamage")]
     [SerializeField] private float _penaltyTakeDamage = DefaultPenaltyTakeDamage;
-    [Tooltip("Penalty per step.")]
+    [Tooltip("Penalty for time passing.")]
     [FormerlySerializedAs("penaltyPerStep")]
     [SerializeField] private float _penaltyPerStep = DefaultPenaltyPerStep;
+    [Tooltip("Reward for avoiding boss attacks.")]
+    [SerializeField] private float _rewardAvoidAttack = DefaultRewardAvoidAttack;
     
-    [Header("Enhanced Reward Settings")]
-    [Tooltip("Small reward for surviving each step.")]
-    [SerializeField] private float _rewardSurvival = DefaultRewardSurvival;
-    [Tooltip("Penalty for being too close to the boss (dangerous).")]
-    [SerializeField] private float _penaltyCloseToBoss = DefaultPenaltyCloseToBoss;
-    [Tooltip("Reward for maintaining safe distance from boss.")]
-    [SerializeField] private float _rewardSafeDistance = DefaultRewardSafeDistance;
-    [Tooltip("Penalty for being stuck in the same position.")]
-    [SerializeField] private float _penaltyStuck = DefaultPenaltyStuck;
-    [Tooltip("Whether to enable enhanced reward system.")]
-    [SerializeField] private bool _enableEnhancedRewards = true;
+    [Header("Boss Proximity Penalties")]
+    [Tooltip("Penalty for being close to boss (level 1 - dangerous).")]
+    [SerializeField] private float _penaltyCloseToBossLevel1 = DefaultPenaltyCloseToBossLevel1;
+    [Tooltip("Penalty for being very close to boss (level 2 - very dangerous).")]
+    [SerializeField] private float _penaltyCloseToBossLevel2 = DefaultPenaltyCloseToBossLevel2;
+    [Tooltip("Safe distance from boss (no penalty).")]
+    [SerializeField] private float _safeDistanceFromBoss = DefaultSafeDistanceFromBoss;
+    [Tooltip("Very dangerous distance from boss (level 2 penalty).")]
+    [SerializeField] private float _dangerDistanceFromBoss = DefaultDangerDistanceFromBoss;
     
-    [Header("Strategic Combat Rewards")]
-    [Tooltip("Reward for successfully dodging boss attacks.")]
-    [SerializeField] private float _rewardSuccessfulDodge = DefaultRewardSuccessfulDodge;
-    [Tooltip("Reward for maintaining strategic positioning.")]
-    [SerializeField] private float _rewardStrategicPositioning = DefaultRewardStrategicPositioning;
-    [Tooltip("Penalty for poor positioning (trapped, cornered).")]
-    [SerializeField] private float _penaltyPoorPositioning = DefaultPenaltyPoorPositioning;
-    [Tooltip("Reward for attacking when boss is vulnerable.")]
-    [SerializeField] private float _rewardAttackOpportunity = DefaultRewardAttackOpportunity;
-    [Tooltip("Penalty for attacking when boss is invulnerable (dashing, charging).")]
-    [SerializeField] private float _penaltyWastedAttack = DefaultPenaltyWastedAttack;
-    [Tooltip("Reward for using platforms strategically.")]
-    [SerializeField] private float _rewardPlatformAdvantage = DefaultRewardPlatformAdvantage;
-    [Tooltip("Penalty for being trapped on ground level.")]
-    [SerializeField] private float _penaltyGroundTrapped = DefaultPenaltyGroundTrapped;
-    [Tooltip("Reward for surviving boss phase transition (50% health).")]
-    [SerializeField] private float _rewardBossPhaseTransition = DefaultRewardBossPhaseTransition;
+    [Header("Useless Decision Penalties")]
+    [Tooltip("Penalty for fall through while not on platform.")]
+    [SerializeField] private float _penaltyUselessFallThrough = DefaultPenaltyUselessFallThrough;
+    [Tooltip("Penalty for moving into wall.")]
+    [SerializeField] private float _penaltyUselessMove = DefaultPenaltyUselessMove;
+    [Tooltip("Penalty for action while disabled (move/fire while can't).")]
+    [SerializeField] private float _penaltyUselessAction = DefaultPenaltyUselessAction;
+    
+    [Tooltip("Penalty for player attack missing.")]
+    [SerializeField] private float _penaltyAttackMissed = DefaultPenaltyAttackMissed;
 
     [Header("Observation Settings")]
     [Tooltip("Maximum number of boss fireballs to observe.")]
     [FormerlySerializedAs("maxBossFireballsToObserve")]
     [SerializeField] private int _maxBossFireballsToObserve = DefaultMaxBossFireballsToObserve;
     
-    [Header("Enhanced Observation Settings")]
-    [Tooltip("Whether to include enhanced observations for better AI learning.")]
-    [SerializeField] private bool _enableEnhancedObservations = true;
     [Tooltip("Whether to include distance-based observations.")]
     [SerializeField] private bool _includeDistanceObservations = true;
     [Tooltip("Whether to include movement pattern observations.")]
@@ -205,6 +192,31 @@ public class PlayerAI : Agent
     private float _lastDirectionChangeTime = 0f;
     private float _lastMoveDirection = 0f; // -1, 0, or 1
     
+    // Action tracking for useless decision detection
+    private bool _lastMoveAction = false;
+    private bool _lastAttackAction = false;
+    
+    // Statistics tracking for efficiency metrics
+    private int _totalDirectionChangesAttempted = 0;
+    private int _successfulDirectionChanges = 0;
+    private int _totalMovementsAttempted = 0;
+    private int _successfulMovements = 0;
+    private int _totalFallThroughsAttempted = 0;
+    private int _successfulFallThroughs = 0;
+    private int _totalAttacksAttempted = 0;
+    private int _successfulAttacks = 0;
+    private int _totalBossAttacks = 0;
+    private int _bossAttacksAvoided = 0;
+    private float _totalBossDistance = 0f;
+    private int _bossDistanceChecks = 0;
+    private float _totalEpisodeRewards = 0f;
+    private float _totalEpisodePenalties = 0f;
+    
+    // Distance tracking for penalty calculation
+    private int _timeInSafeDistance = 0;
+    private int _timeInLevel1Distance = 0;
+    private int _timeInLevel2Distance = 0;
+    
     // ==================== Episode Management ====================
     private float _episodeStartTime = 0f;
     private float _episodeDuration = 0f;
@@ -218,33 +230,9 @@ public class PlayerAI : Agent
     private float _cooldownRemainingTime = 0f;
     private bool _isDirectionChangeBlocked = false;
     
-    // ==================== Enhanced Tracking ====================
+    // ==================== Simplified Tracking ====================
     private Vector2 _lastPosition = Vector2.zero;
     private float _lastDistanceToBoss = 0f;
-    private int _stepsWithoutMovement = 0;
-    private const int MaxStepsWithoutMovement = 60; // 1 second at 60fps
-    private float _episodeStartDistanceToBoss = 0f;
-    private bool _hasMovedThisEpisode = false;
-    private const float SafeDistanceFromBoss = 3f; // Safe distance to maintain from boss
-    
-    // ==================== Strategic Combat Tracking ====================
-    private bool _wasBossInPhase2 = false; // Track boss phase transitions
-    private bool _wasBossChargingOrDashing = false; // Track boss attack states
-    private bool _wasPlayerOnPlatform = false; // Track platform usage
-    private bool _wasPlayerOnGround = false; // Track ground positioning
-    private Vector2 _lastBossPosition = Vector2.zero; // Track boss movement
-    private bool _hasDodgedAttackThisFrame = false; // Track successful dodges
-    private float _lastAttackTime = 0f; // Track attack timing
-    private bool _wasBossVulnerable = true; // Track boss vulnerability
-    private const float AttackCooldown = 0.5f; // Minimum time between attacks
-    private const float BossVulnerabilityThreshold = 2f; // Distance where boss is vulnerable to attack
-    
-    // ==================== Platform Interaction Tracking ====================
-    private OneWayPlatform _currentPlatform = null;
-    private float _lastFallThroughTime = 0f;
-    private bool _canFallThrough = true;
-    private int _platformUsageCount = 0;
-    private float _lastPlatformRewardTime = 0f;
 
     /// <summary>
     /// Whether this AI is in training mode.
@@ -428,29 +416,34 @@ public class PlayerAI : Agent
         _cooldownRemainingTime = 0f;
         _isDirectionChangeBlocked = false;
         
-        // Reset enhanced tracking
+        // Reset simplified tracking
         _lastPosition = Vector2.zero;
         _lastDistanceToBoss = 0f;
-        _stepsWithoutMovement = 0;
-        _episodeStartDistanceToBoss = 0f;
-        _hasMovedThisEpisode = false;
         
-        // Reset strategic combat tracking
-        _wasBossInPhase2 = false;
-        _wasBossChargingOrDashing = false;
-        _wasPlayerOnPlatform = false;
-        _wasPlayerOnGround = false;
-        _lastBossPosition = Vector2.zero;
-        _hasDodgedAttackThisFrame = false;
-        _lastAttackTime = 0f;
-        _wasBossVulnerable = true;
+        // Reset action tracking
+        _lastMoveAction = false;
+        _lastAttackAction = false;
         
-        // Reset platform interaction tracking
-        _currentPlatform = null;
-        _lastFallThroughTime = 0f;
-        _canFallThrough = true;
-        _platformUsageCount = 0;
-        _lastPlatformRewardTime = 0f;
+        // Reset statistics tracking
+        _totalDirectionChangesAttempted = 0;
+        _successfulDirectionChanges = 0;
+        _totalMovementsAttempted = 0;
+        _successfulMovements = 0;
+        _totalFallThroughsAttempted = 0;
+        _successfulFallThroughs = 0;
+        _totalAttacksAttempted = 0;
+        _successfulAttacks = 0;
+        _totalBossAttacks = 0;
+        _bossAttacksAvoided = 0;
+        _totalBossDistance = 0f;
+        _bossDistanceChecks = 0;
+        _totalEpisodeRewards = 0f;
+        _totalEpisodePenalties = 0f;
+        
+        // Reset distance tracking
+        _timeInSafeDistance = 0;
+        _timeInLevel1Distance = 0;
+        _timeInLevel2Distance = 0;
         
         // Reset player position and physics
         Vector3 initialPosition = Vector3.zero;
@@ -555,13 +548,7 @@ public class PlayerAI : Agent
             sensor.AddObservation(_cooldownRemainingTime / directionChangeCooldown); // Normalized cooldown time
             sensor.AddObservation(_lastMoveDirection);
         }
-        
-        // Enhanced observations (if enabled)
-        if (_enableEnhancedObservations)
-        {
-            AddEnhancedObservations(sensor);
-        }
-        
+
         // Platform interaction observations
         AddPlatformObservations(sensor);
         // Boss state
@@ -682,11 +669,9 @@ public class PlayerAI : Agent
             // Store for reward calculations
             _lastDistanceToBoss = distanceToBoss;
             
-            // Initialize episode start distance if not set
-            if (_episodeStartDistanceToBoss == 0f)
-            {
-                _episodeStartDistanceToBoss = distanceToBoss;
-            }
+            // Track boss distance for statistics
+            _totalBossDistance += distanceToBoss;
+            _bossDistanceChecks++;
         }
         else
         {
@@ -729,21 +714,6 @@ public class PlayerAI : Agent
         // Movement speed (normalized)
         float movementSpeed = movementDelta.magnitude / Time.deltaTime;
         sensor.AddObservation(movementSpeed / 10f); // Normalize to reasonable range
-        
-        // Stuck detection
-        bool isStuck = movementDelta.magnitude < 0.01f;
-        sensor.AddObservation(isStuck ? 1f : 0f);
-        
-        // Update stuck tracking
-        if (isStuck)
-        {
-            _stepsWithoutMovement++;
-        }
-        else
-        {
-            _stepsWithoutMovement = 0;
-            _hasMovedThisEpisode = true;
-        }
         
         // Update last position
         _lastPosition = currentPosition;
@@ -799,31 +769,13 @@ public class PlayerAI : Agent
         // Current platform state
         bool isOnPlatform = _currentPlatform != null;
         sensor.AddObservation(isOnPlatform ? 1f : 0f);
-        
-        // Can fall through (cooldown check)
-        sensor.AddObservation(_canFallThrough ? 1f : 0f);
-        
-        // Fall through cooldown remaining (normalized)
-        float cooldownRemaining = Mathf.Max(0f, PlatformFallThroughCooldown - (Time.time - _lastFallThroughTime));
-        sensor.AddObservation(cooldownRemaining / PlatformFallThroughCooldown);
-        
-        // Platform usage count (normalized)
-        sensor.AddObservation(Mathf.Clamp01(_platformUsageCount / 10f)); // Normalize to 0-1 range
+    
         
         // Distance to nearest platform
         float nearestPlatformDistance = FindNearestPlatformDistance(transform.position);
         sensor.AddObservation(nearestPlatformDistance / DistanceNormalizationFactor);
         
-        // Platform strategic value (distance to boss from platform)
-        if (_boss != null && _boss.gameObject.activeInHierarchy)
-        {
-            float platformStrategicValue = CalculatePlatformStrategicValue();
-            sensor.AddObservation(platformStrategicValue / DistanceNormalizationFactor);
-        }
-        else
-        {
-            sensor.AddObservation(1f); // Default value when boss is not available
-        }
+
     }
     
     /// <summary>
@@ -841,8 +793,7 @@ public class PlayerAI : Agent
         {
             if (platform == null) continue;
             
-            float distance = Vector2.Distance(playerPosition, platform.transform.position);
-            if (distance <= PlatformDetectionRadius)
+            if (platform.IsPlayerOnPlatform())
             {
                 _currentPlatform = platform;
                 break;
@@ -850,16 +801,6 @@ public class PlayerAI : Agent
         }
     }
     
-    /// <summary>
-    /// Calculates the strategic value of the current platform position relative to the boss.
-    /// </summary>
-    /// <returns>Distance from platform to boss, or max distance if no platform.</returns>
-    private float CalculatePlatformStrategicValue()
-    {
-        if (_currentPlatform == null || _boss == null) return DistanceNormalizationFactor;
-        
-        return Vector2.Distance(_currentPlatform.transform.position, _boss.position);
-    }
 
     /// <summary>
     /// Observes the closest projectiles and adds their data to the sensor.
@@ -922,17 +863,12 @@ public class PlayerAI : Agent
     /// <param name="actions">ActionBuffers from ML-Agents containing discrete and continuous actions.</param>
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // Apply base penalty per step to encourage efficient behavior
+        // Apply base penalty per step (time passing)
         AddReward(_penaltyPerStep);
+        TrackReward(_penaltyPerStep);
         
-        // Detect successful dodges before applying actions
-        DetectSuccessfulDodges();
-        
-        // Apply enhanced rewards if enabled
-        if (_enableEnhancedRewards)
-        {
-            ApplyEnhancedRewards();
-        }
+        // Apply simplified rewards
+        ApplySimplifiedRewards();
         
         // Extract actions from ML-Agents
         int moveAction = actions.DiscreteActions[0];
@@ -940,6 +876,15 @@ public class PlayerAI : Agent
         int fallThroughAction = actions.DiscreteActions[1];
         Debug.Log("fallThroughAction: " + fallThroughAction);
         int attackAction = actions.DiscreteActions[2];
+        
+        // Store actions for useless decision detection
+        _lastMoveAction = (moveAction != 0);
+        _lastAttackAction = (attackAction == 1);
+        
+        // Track attempts for statistics
+        if (moveAction != 0) _totalMovementsAttempted++;
+        if (fallThroughAction == 1) _totalFallThroughsAttempted++;
+        if (attackAction == 1) _totalAttacksAttempted++;
         
         // Process movement direction with cooldown
         float requestedDirection = (moveAction == 1) ? -1f : (moveAction == 2) ? 1f : 0f;
@@ -954,6 +899,46 @@ public class PlayerAI : Agent
         
         // Apply actions through the new input system
         ApplyAIActions(moveDirection, jumpDuration, fallThroughPressed, attackPressed);
+    }
+
+    public void OnBossAttackDodged()
+    {
+        _bossAttacksAvoided++;
+        AddReward(_rewardAvoidAttack);
+        TrackReward(_rewardAvoidAttack);
+    }
+    
+    /// <summary>
+    /// Called when the boss fires an attack (for tracking total attacks).
+    /// </summary>
+    public void OnBossAttackFired()
+    {
+        _totalBossAttacks++;
+    }
+    
+    /// <summary>
+    /// Manually tracks rewards and penalties for statistics.
+    /// </summary>
+    /// <param name="reward">The reward value to add.</param>
+    private void TrackReward(float reward)
+    {
+        if (reward > 0)
+        {
+            _totalEpisodeRewards += reward;
+        }
+        else
+        {
+            _totalEpisodePenalties += Mathf.Abs(reward);
+        }
+    }
+    
+    /// <summary>
+    /// Called when a player attack misses (for tracking attack efficiency).
+    /// </summary>
+    public void OnPlayerAttackMissed()
+    {
+        AddReward(_penaltyAttackMissed);
+        TrackReward(_penaltyAttackMissed);
     }
     
     /// <summary>
@@ -976,6 +961,9 @@ public class PlayerAI : Agent
         _cooldownRemainingTime = Mathf.Max(0f, directionChangeCooldown - (Time.time - _lastDirectionChangeTime));
         _isDirectionChangeBlocked = _cooldownRemainingTime > 0f;
         
+        // Track direction change attempts
+        if (directionChanged) _totalDirectionChangesAttempted++;
+        
         // Apply cooldown logic
         if (!directionChanged || !_isDirectionChangeBlocked)
         {
@@ -984,6 +972,7 @@ public class PlayerAI : Agent
                 _lastDirectionChangeTime = Time.time;
                 _lastMoveDirection = requestedDirection;
                 _episodeDirectionChanges++;
+                _successfulDirectionChanges++;
                 
                 // Reset cooldown state
                 _cooldownRemainingTime = 0f;
@@ -999,6 +988,7 @@ public class PlayerAI : Agent
         if (penalizeRapidDirectionChanges)
         {
             AddReward(directionChangePenalty);
+            TrackReward(directionChangePenalty);
         }
         
         // Return last valid direction if cooldown is active
@@ -1024,265 +1014,72 @@ public class PlayerAI : Agent
     }
     
     /// <summary>
-    /// Applies enhanced strategic rewards to encourage better AI combat behavior and learning.
-    /// 
-    /// This method provides comprehensive reward signals for strategic positioning,
-    /// attack timing, dodge success, and platform usage in the boss fight.
+    /// Applies simplified rewards based on the new reward system.
     /// </summary>
-    private void ApplyEnhancedRewards()
+    private void ApplySimplifiedRewards()
     {
-        // Survival reward - small positive reward for staying alive
-        AddReward(_rewardSurvival);
+        // Apply boss proximity penalties
+        ApplyBossProximityPenalties();
         
-        // Strategic positioning rewards
-        ApplyPositioningRewards();
-        
-        // Combat timing rewards
-        ApplyCombatTimingRewards();
-        
-        // Platform usage rewards
-        ApplyPlatformRewards();
-        
-        // Boss phase transition rewards
-        ApplyPhaseTransitionRewards();
-        
-        // Dodge success rewards
-        ApplyDodgeRewards();
-        
-        // Movement and stuck penalties
-        ApplyMovementRewards();
+        // Apply useless decision penalties
+        ApplyUselessDecisionPenalties();
     }
     
     /// <summary>
-    /// Applies rewards and penalties based on player positioning relative to boss and environment.
+    /// Applies penalties for being too close to the boss (2 levels of closeness).
     /// </summary>
-    private void ApplyPositioningRewards()
+    private void ApplyBossProximityPenalties()
     {
         if (_boss == null || !_boss.gameObject.activeInHierarchy) return;
         
         float currentDistanceToBoss = Vector2.Distance(transform.position, _boss.position);
         
-        // Boss proximity penalty - discourage being too close to the boss (dangerous)
-        if (currentDistanceToBoss < SafeDistanceFromBoss)
+        // Level 2 penalty: Very close to boss (very dangerous)
+        if (currentDistanceToBoss < _dangerDistanceFromBoss)
         {
-            // Scaled penalty based on how close to the boss
-            float proximityPenalty = _penaltyCloseToBoss * (SafeDistanceFromBoss - currentDistanceToBoss) / SafeDistanceFromBoss;
-            AddReward(proximityPenalty);
+            AddReward(_penaltyCloseToBossLevel2);
+            TrackReward(_penaltyCloseToBossLevel2);
         }
-        else
+        // Level 1 penalty: Close to boss (dangerous)
+        else if (currentDistanceToBoss < _safeDistanceFromBoss)
         {
-            // Reward for maintaining safe distance
-            AddReward(_rewardSafeDistance);
-        }
-        
-        // Strategic positioning reward - reward for being in good positions
-        bool isInGoodPosition = IsInStrategicPosition();
-        if (isInGoodPosition)
-        {
-            AddReward(_rewardStrategicPositioning);
-        }
-        else
-        {
-            AddReward(_penaltyPoorPositioning);
-        }
-        
-        // Ground trapping penalty - penalty for being trapped on ground level
-        if (IsTrappedOnGround())
-        {
-            AddReward(_penaltyGroundTrapped);
+            AddReward(_penaltyCloseToBossLevel1);
+            TrackReward(_penaltyCloseToBossLevel1);
         }
     }
     
     /// <summary>
-    /// Applies rewards and penalties based on attack timing and boss vulnerability.
+    /// Applies penalties for making useless decisions.
     /// </summary>
-    private void ApplyCombatTimingRewards()
+    private void ApplyUselessDecisionPenalties()
     {
-        if (_boss == null || !_boss.gameObject.activeInHierarchy) return;
-        
-        // Check if boss is currently vulnerable (not charging/dashing)
-        bool isBossVulnerable = IsBossVulnerable();
-        
-        // Reward for attacking when boss is vulnerable
-        if (_playerAttack != null && _playerAttack.IsAttacking && isBossVulnerable)
+     
+        // Penalty for moving into wall (will be checked in movement logic)
+        if (_lastMoveAction && IsBlockedByWall())
         {
-            AddReward(_rewardAttackOpportunity);
+            AddReward(_penaltyUselessMove);
+            TrackReward(_penaltyUselessMove);
         }
         
-        // Penalty for attacking when boss is invulnerable
-        if (_playerAttack != null && _playerAttack.IsAttacking && !isBossVulnerable)
+        // Penalty for action while disabled (move/fire while can't)
+        if (_lastMoveAction && !CanMove())
         {
-            AddReward(_penaltyWastedAttack);
+            AddReward(_penaltyUselessAction);
+            TrackReward(_penaltyUselessAction);
         }
         
-        // Update vulnerability tracking
-        _wasBossVulnerable = isBossVulnerable;
-    }
-    
-    /// <summary>
-    /// Applies rewards for strategic platform usage.
-    /// </summary>
-    private void ApplyPlatformRewards()
-    {
-        bool isOnPlatform = IsOnPlatform();
-        
-        // Reward for being on a platform (strategic positioning)
-        if (isOnPlatform && !_wasPlayerOnPlatform)
+        if (_lastAttackAction && !CanAttack())
         {
-            AddReward(_rewardPlatformAdvantage);
-        }
-        
-        // Update platform tracking
-        _wasPlayerOnPlatform = isOnPlatform;
-    }
-    
-    /// <summary>
-    /// Applies rewards for surviving boss phase transitions.
-    /// </summary>
-    private void ApplyPhaseTransitionRewards()
-    {
-        if (_bossHealth == null) return;
-        
-        bool isBossInPhase2 = _bossHealth.GetHealthPercentage() <= 0.5f;
-        
-        // Reward for surviving the transition to phase 2
-        if (isBossInPhase2 && !_wasBossInPhase2)
-        {
-            AddReward(_rewardBossPhaseTransition);
-        }
-        
-        // Update phase tracking
-        _wasBossInPhase2 = isBossInPhase2;
-    }
-    
-    /// <summary>
-    /// Applies rewards for successful dodging of boss attacks.
-    /// </summary>
-    private void ApplyDodgeRewards()
-    {
-        if (_hasDodgedAttackThisFrame)
-        {
-            AddReward(_rewardSuccessfulDodge);
-            _hasDodgedAttackThisFrame = false; // Reset for next frame
+            AddReward(_penaltyUselessAction);
+            TrackReward(_penaltyUselessAction);
         }
     }
     
-    /// <summary>
-    /// Applies movement rewards and stuck penalties.
-    /// </summary>
-    private void ApplyMovementRewards()
-    {
-        // Stuck penalty - discourage staying in the same position
-        if (_stepsWithoutMovement > MaxStepsWithoutMovement)
-        {
-            AddReward(_penaltyStuck);
-        }
-        
-        // Movement encouragement - small reward for moving
-        if (_hasMovedThisEpisode && _lastPosition != Vector2.zero)
-        {
-            Vector2 movementDelta = (Vector2)transform.position - _lastPosition;
-            if (movementDelta.magnitude > 0.01f)
-            {
-                AddReward(_rewardSurvival * 0.5f); // Small bonus for movement
-            }
-        }
-    }
+
+
     
     /// <summary>
-    /// Checks if the player is in a strategic position relative to the boss and environment.
-    /// </summary>
-    /// <returns>True if the player is in a good strategic position.</returns>
-    private bool IsInStrategicPosition()
-    {
-        if (_boss == null) return false;
-        
-        Vector2 playerPos = transform.position;
-        Vector2 bossPos = _boss.position;
-        
-        // Good position: not too close, not too far, with escape routes
-        float distanceToBoss = Vector2.Distance(playerPos, bossPos);
-        bool hasEscapeRoute = HasEscapeRoute();
-        bool isNotCornered = !IsCornered();
-        
-        return distanceToBoss >= SafeDistanceFromBoss && hasEscapeRoute && isNotCornered;
-    }
-    
-    /// <summary>
-    /// Checks if the player has an escape route available.
-    /// </summary>
-    /// <returns>True if the player can escape from their current position.</returns>
-    private bool HasEscapeRoute()
-    {
-        // Check if player can move left or right without being blocked
-        bool canMoveLeft = !IsBlockedOnLeft();
-        bool canMoveRight = !IsBlockedOnRight();
-        bool canJump = _playerMovement != null && _playerMovement.IsGrounded;
-        
-        return canMoveLeft || canMoveRight || canJump;
-    }
-    
-    /// <summary>
-    /// Checks if the player is cornered or trapped.
-    /// </summary>
-    /// <returns>True if the player is cornered.</returns>
-    private bool IsCornered()
-    {
-        if (_boss == null) return false;
-        
-        Vector2 playerPos = transform.position;
-        Vector2 bossPos = _boss.position;
-        
-        // Check if boss is blocking one side and wall/platform is blocking the other
-        bool bossOnLeft = bossPos.x < playerPos.x;
-        bool bossOnRight = bossPos.x > playerPos.x;
-        
-        if (bossOnLeft && IsBlockedOnRight()) return true;
-        if (bossOnRight && IsBlockedOnLeft()) return true;
-        
-        return false;
-    }
-    
-    /// <summary>
-    /// Checks if the player is blocked on the left side.
-    /// </summary>
-    /// <returns>True if the player cannot move left.</returns>
-    private bool IsBlockedOnLeft()
-    {
-        if (_leftWall == null) return false;
-        return transform.position.x <= _leftWall.position.x + 1f;
-    }
-    
-    /// <summary>
-    /// Checks if the player is blocked on the right side.
-    /// </summary>
-    /// <returns>True if the player cannot move right.</returns>
-    private bool IsBlockedOnRight()
-    {
-        if (_rightWall == null) return false;
-        return transform.position.x >= _rightWall.position.x - 1f;
-    }
-    
-    /// <summary>
-    /// Checks if the player is trapped on ground level.
-    /// </summary>
-    /// <returns>True if the player is trapped on the ground.</returns>
-    private bool IsTrappedOnGround()
-    {
-        if (_playerMovement == null || !_playerMovement.IsGrounded) return false;
-        
-        // Check if player is on ground and boss is nearby
-        if (_boss == null) return false;
-        
-        float distanceToBoss = Vector2.Distance(transform.position, _boss.position);
-        bool isCloseToBoss = distanceToBoss < SafeDistanceFromBoss;
-        bool hasNoPlatformAccess = !IsOnPlatform() && !CanReachPlatform();
-        
-        return isCloseToBoss && hasNoPlatformAccess;
-    }
-    
-    /// <summary>
-    /// Checks if the player is currently on a platform.
+    /// Checks if the player is on a platform.
     /// </summary>
     /// <returns>True if the player is on a platform.</returns>
     private bool IsOnPlatform()
@@ -1300,68 +1097,47 @@ public class PlayerAI : Agent
     }
     
     /// <summary>
-    /// Checks if the player can reach a platform from their current position.
+    /// Checks if the player is blocked by a wall.
     /// </summary>
-    /// <returns>True if the player can reach a platform.</returns>
-    private bool CanReachPlatform()
+    /// <returns>True if the player is blocked by a wall.</returns>
+    private bool IsBlockedByWall()
     {
-        if (_platforms == null || _playerMovement == null) return false;
-        
-        foreach (var platform in _platforms)
+        // Check if player is trying to move but can't due to wall collision
+        if (_playerMovement != null)
         {
-            if (platform != null)
-            {
-                float distanceToPlatform = Vector2.Distance(transform.position, platform.transform.position);
-                if (distanceToPlatform < 3f) // Within jumping distance
-                {
-                    return true;
-                }
-            }
+            return _playerMovement.IsBlockedByWall();
         }
         return false;
     }
     
     /// <summary>
-    /// Checks if the boss is currently vulnerable to attacks.
+    /// Checks if the player can move.
     /// </summary>
-    /// <returns>True if the boss is vulnerable.</returns>
-    private bool IsBossVulnerable()
+    /// <returns>True if the player can move.</returns>
+    private bool CanMove()
     {
-        if (_bossAI == null) return true;
+        // Check if direction change cooldown is active
+        if (_isDirectionChangeBlocked && _cooldownRemainingTime > 0f)
+        {
+            return false;
+        }
         
-        // Boss is vulnerable when not charging or dashing
-        return !_bossAI.IsCurrentlyChargingOrDashing();
+        return true; // Can move if no cooldown is active
     }
     
     /// <summary>
-    /// Detects successful dodges of boss attacks.
+    /// Checks if the player can attack.
     /// </summary>
-    private void DetectSuccessfulDodges()
+    /// <returns>True if the player can attack.</returns>
+    private bool CanAttack()
     {
-        if (_boss == null || _playerHealth == null) return;
-        
-        // Check if player moved away from boss attack
-        Vector2 currentPosition = transform.position;
-        Vector2 bossPosition = _boss.position;
-        float currentDistance = Vector2.Distance(currentPosition, bossPosition);
-        
-        // If player moved away from boss and is at a safe distance, consider it a successful dodge
-        if (_lastPosition != Vector2.zero && _lastDistanceToBoss > 0f)
+        if (_playerAttack != null)
         {
-            float distanceDelta = currentDistance - _lastDistanceToBoss;
-            Vector2 movementDelta = currentPosition - _lastPosition;
-            
-            // Successful dodge: moved away from boss while boss was close
-            if (distanceDelta > 0.5f && _lastDistanceToBoss < SafeDistanceFromBoss && movementDelta.magnitude > 0.1f)
-            {
-                _hasDodgedAttackThisFrame = true;
-            }
+            return _playerAttack.CanAttack();
         }
-        
-        // Update tracking for next frame
-        _lastPosition = currentPosition;
-        _lastDistanceToBoss = currentDistance;
+        return true; // Default to true if no attack component
     }
+    
     
     /// <summary>
     /// Applies AI actions through the new input system.
@@ -1388,11 +1164,27 @@ public class PlayerAI : Agent
         aiInput.SetMovementInput(moveDirection);
         aiInput.SetJumpInput(jumpDuration);
         
+        // Track successful movements (if not blocked by wall or cooldown)
+        if (moveDirection != 0f && !IsBlockedByWall() && CanMove())
+        {
+            _successfulMovements++;
+        }
+        
         // Apply platform fall-through action
-        HandlePlatformFallThrough(fallThrough);
+        if (_currentPlatform != null) {
+            _currentPlatform.SetAIFallThrough(fallThrough);
+            if (fallThrough) _successfulFallThroughs++;
+        }
+        else{
+            if (fallThrough) {
+                AddReward(_penaltyUselessFallThrough);
+                TrackReward(_penaltyUselessFallThrough);
+            }
+        }
         
         // Apply attack action
         _playerAttack?.SetAIAttack(attack);
+        if (attack && CanAttack()) _successfulAttacks++;
         
         // Debug logging (can be removed in production)
         if (Debug.isDebugBuild && Time.frameCount % 60 == 0) // Log every 60 frames
@@ -1400,40 +1192,7 @@ public class PlayerAI : Agent
             //Debug.Log($"[PlayerAI] Actions applied - Move: {moveDirection}, Jump: {jumpDuration:F2}s, Attack: {attack}");
                 }
     }
-    
-    /// <summary>
-    /// Handles platform fall-through logic with cooldown and strategic considerations.
-    /// </summary>
-    /// <param name="shouldFallThrough">Whether the AI wants to fall through the platform.</param>
-    private void HandlePlatformFallThrough(bool shouldFallThrough)
-    {
-        Debug.Log("HandlePlatformFallThrough");
-        // Update cooldown state
-        _canFallThrough = (Time.time - _lastFallThroughTime) >= PlatformFallThroughCooldown;
-        
-        // Check if we can and should fall through
-        if (shouldFallThrough && _canFallThrough && _currentPlatform != null)
-        {
-            // Apply fall-through
-            _currentPlatform.SetAIFallThrough(true);
-            
-            // Update tracking
-            _lastFallThroughTime = Time.time;
-            _canFallThrough = false;
-            _platformUsageCount++;
-            
-            // Apply penalty for fall-through (encourages strategic usage)
-            AddReward(PlatformFallThroughPenalty);
-            
-            Debug.Log($"[PlayerAI] Fall-through executed on platform. Usage count: {_platformUsageCount}");
-        }
-        else if (shouldFallThrough && !_canFallThrough)
-        {
-            // Penalty for trying to fall through during cooldown
-            AddReward(PlatformFallThroughPenalty * 0.5f);
-        }
-    }
-
+   
     // ==================== Reward and Episode Logic ====================
     /// <summary>
     /// Handles player damage, applies penalty, and ends episode if dead.
@@ -1451,6 +1210,7 @@ public class PlayerAI : Agent
         
         // Apply penalty
         AddReward(_penaltyTakeDamage);
+        TrackReward(_penaltyTakeDamage);
         
         // Check if player died
         if (_playerHealth != null && _playerHealth.CurrentHealth <= 0)
@@ -1462,10 +1222,11 @@ public class PlayerAI : Agent
             _episodeDuration = Time.time - _episodeStartTime;
             
             // Log episode outcome
-            LogEpisodeOutcome("Player Death", damage);
+            LogEpisodeOutcome("Player Death", damage, true);
             
             // Apply death penalty and end episode
             AddReward(_penaltyLose);
+            TrackReward(_penaltyLose);
             
             // Record episode end with EpisodeManager
             if (EpisodeManager.Instance != null)
@@ -1496,6 +1257,7 @@ public class PlayerAI : Agent
         
         // Apply reward
         AddReward(_rewardDamageBoss);
+        TrackReward(_rewardDamageBoss);
     }
 
     /// <summary>
@@ -1519,6 +1281,7 @@ public class PlayerAI : Agent
         
         // Apply win reward and end episode
         AddReward(_rewardWin);
+        TrackReward(_rewardWin);
         
         // Record episode end with EpisodeManager
         if (EpisodeManager.Instance != null)
@@ -1541,7 +1304,8 @@ public class PlayerAI : Agent
     /// </summary>
     /// <param name="outcome">The outcome of the episode (e.g., "Player Death", "Boss Defeated").</param>
     /// <param name="finalDamage">The final damage value that triggered the episode end.</param>
-    private void LogEpisodeOutcome(string outcome, float finalDamage)
+    /// <param name="includeEnhancedStats">Whether to include enhanced statistics in the log.</param>
+    private void LogEpisodeOutcome(string outcome, float finalDamage, bool includeEnhancedStats = false)
     {
         string bossModeInfo = EpisodeManager.Instance != null ? 
             $"Boss Mode: {EpisodeManager.Instance.CurrentBossMode}" : "Boss Mode: Unknown";
@@ -1554,11 +1318,13 @@ public class PlayerAI : Agent
                            $"\n  Duration: {_episodeDuration:F2}s" +
                            $"\n  Damage Taken: {_episodeDamageTaken}" +
                            $"\n  Damage Dealt: {_episodeDamageDealt}" +
-                           $"\n  Direction Changes: {_episodeDirectionChanges} (Blocked: {_episodeBlockedDirectionChanges})" +
-                           $"\n  Direction Change Efficiency: {directionChangeEfficiency:P1}" +
-                           $"\n  Platform Usage: {_platformUsageCount}" +
-                           $"\n  Final Damage: {finalDamage}" +
                            $"\n  {bossModeInfo}";
+        
+        // Add enhanced statistics if requested
+        if (includeEnhancedStats)
+        {
+            episodeInfo += "\n\n" + GetEnhancedStatistics();
+        }
         
         Debug.Log(episodeInfo);
     }
@@ -1577,10 +1343,11 @@ public class PlayerAI : Agent
         _episodeDuration = Time.time - _episodeStartTime;
         
         // Log timeout outcome
-        LogEpisodeOutcome("Timeout", 0f);
+        LogEpisodeOutcome("Timeout", 0f, true);
         
         // Apply timeout penalty
         AddReward(_penaltyLose);
+        TrackReward(_penaltyLose);
         
         // Record episode end with EpisodeManager
         if (EpisodeManager.Instance != null)
@@ -1619,47 +1386,66 @@ public class PlayerAI : Agent
                $"\n  Damage Dealt: {_episodeDamageDealt}" +
                $"\n  Direction Changes: {_episodeDirectionChanges} (Blocked: {_episodeBlockedDirectionChanges})" +
                $"\n  Direction Change Efficiency: {directionChangeEfficiency:P1}" +
-               $"\n  Platform Usage: {_platformUsageCount}" +
                $"\n  Current Platform: {(_currentPlatform != null ? "On Platform" : "Not on Platform")}" +
-               $"\n  Can Fall Through: {_canFallThrough}" +
                $"\n  Cooldown Status: {cooldownStatus}" +
-               $"\n  Enhanced Rewards: {(_enableEnhancedRewards ? "Enabled" : "Disabled")}" +
-               $"\n  Enhanced Observations: {(_enableEnhancedObservations ? "Enabled" : "Disabled")}" +
                $"\n  Episode Ended: {_episodeEnded}" +
                $"\n  {bossModeInfo}";
     }
     
     /// <summary>
-    /// Gets enhanced statistics for the current episode including movement and learning metrics.
-    /// 
-    /// This method provides comprehensive information about AI behavior and learning effectiveness,
-    /// including movement patterns, reward accumulation, and observation utilization.
+    /// Gets enhanced statistics for the current episode including comprehensive efficiency metrics.
     /// </summary>
     /// <returns>A string containing enhanced episode statistics.</returns>
     public string GetEnhancedStatistics()
     {
         float currentDuration = Time.time - _episodeStartTime;
-        float movementEfficiency = currentDuration > 0 ? (_episodeDirectionChanges * 60f) / currentDuration : 0f;
-        float stuckPercentage = currentDuration > 0 ? (_stepsWithoutMovement / 60f) / currentDuration * 100f : 0f;
+        
+        // Episode length and penalty
+        float episodeLengthPenalty = currentDuration * Mathf.Abs(_penaltyPerStep);
+        
+        // Movement efficiency
+        float movementEfficiency = _totalMovementsAttempted > 0 ? 
+            (float)_successfulMovements / _totalMovementsAttempted * 100f : 0f;
+        float movementPenalty = (_totalMovementsAttempted - _successfulMovements) * _penaltyUselessMove;
+        
+        // Direction change efficiency
+        float directionChangeEfficiency = _totalDirectionChangesAttempted > 0 ? 
+            (float)_successfulDirectionChanges / _totalDirectionChangesAttempted * 100f : 0f;
+        float directionChangePenalty = (_totalDirectionChangesAttempted - _successfulDirectionChanges) * _penaltyUselessAction;
+        
+        // Boss distance statistics and penalties
+        float averageBossDistance = _bossDistanceChecks > 0 ? _totalBossDistance / _bossDistanceChecks : 0f;
+        float bossDistancePenalty = (_timeInLevel1Distance * _penaltyCloseToBossLevel1) + (_timeInLevel2Distance * _penaltyCloseToBossLevel2);
+        int totalDistanceChecks = _timeInSafeDistance + _timeInLevel1Distance + _timeInLevel2Distance;
+        
+        // Platform efficiency
+        float platformEfficiency = _totalFallThroughsAttempted > 0 ? 
+            (float)_successfulFallThroughs / _totalFallThroughsAttempted * 100f : 0f;
+        float platformPenalty = (_totalFallThroughsAttempted - _successfulFallThroughs) * _penaltyUselessFallThrough;
+        
+        // Attack efficiency
+        float attackEfficiency = _totalAttacksAttempted > 0 ? 
+            (float)_successfulAttacks / _totalAttacksAttempted * 100f : 0f;
+        float attackPenalty = (_totalAttacksAttempted - _successfulAttacks) * _penaltyAttackMissed;
+        
+        // Boss attack avoidance
+        float bossAttackAvoidance = _totalBossAttacks > 0 ? 
+            (float)_bossAttacksAvoided / _totalBossAttacks * 100f : 0f;
+        float bossAttackReward = _bossAttacksAvoided * _rewardAvoidAttack;
         
         string bossModeInfo = EpisodeManager.Instance != null ? 
             $"Boss Mode: {EpisodeManager.Instance.CurrentBossMode}" : "Boss Mode: Unknown";
         
         return $"[PlayerAI] Enhanced Statistics:" +
-               $"\n  Episode Duration: {currentDuration:F2}s" +
-               $"\n  Movement Efficiency: {movementEfficiency:F1} changes/minute" +
-               $"\n  Stuck Time: {stuckPercentage:F1}%" +
-               $"\n  Has Moved: {_hasMovedThisEpisode}" +
-               $"\n  Distance to Boss: {_lastDistanceToBoss:F2}" +
-               $"\n  Safe Distance Maintained: {(_lastDistanceToBoss >= SafeDistanceFromBoss ? "Yes" : "No")}" +
-               $"\n  Platform Usage Count: {_platformUsageCount}" +
-               $"\n  Current Platform: {(_currentPlatform != null ? "On Platform" : "Not on Platform")}" +
-               $"\n  Can Fall Through: {_canFallThrough}" +
-               $"\n  Enhanced Rewards: {(_enableEnhancedRewards ? "Enabled" : "Disabled")}" +
-               $"\n  Enhanced Observations: {(_enableEnhancedObservations ? "Enabled" : "Disabled")}" +
-               $"\n  Distance Observations: {(_includeDistanceObservations ? "Enabled" : "Disabled")}" +
-               $"\n  Movement Pattern Observations: {(_includeMovementPatternObservations ? "Enabled" : "Disabled")}" +
-               $"\n  Environmental Observations: {(_includeEnvironmentalObservations ? "Enabled" : "Disabled")}" +
+               $"\n  Episode Length: {currentDuration:F2}s (Penalty: {episodeLengthPenalty:F3})" +
+               $"\n  Movement Efficiency: {movementEfficiency:F1}% ({_successfulMovements}/{_totalMovementsAttempted}) (Penalty: {movementPenalty:F1})" +
+               $"\n  Direction Change Efficiency: {directionChangeEfficiency:F1}% ({_successfulDirectionChanges}/{_totalDirectionChangesAttempted}) (Penalty: {directionChangePenalty:F1})" +
+               $"\n  Boss Distance: Safe:{_timeInSafeDistance} Level1:{_timeInLevel1Distance} Level2:{_timeInLevel2Distance} (Penalty: {bossDistancePenalty:F3})" +
+               $"\n  Platform Efficiency: {platformEfficiency:F1}% ({_successfulFallThroughs}/{_totalFallThroughsAttempted}) (Penalty: {platformPenalty:F1})" +
+               $"\n  Attack Efficiency: {attackEfficiency:F1}% ({_successfulAttacks}/{_totalAttacksAttempted}) (Penalty: {attackPenalty:F1})" +
+               $"\n  Boss Attack Avoidance: {bossAttackAvoidance:F1}% ({_bossAttacksAvoided}/{_totalBossAttacks}) (Reward: {bossAttackReward:F1})" +
+               $"\n  Total Rewards: {_totalEpisodeRewards:F2}" +
+               $"\n  Total Penalties: {_totalEpisodePenalties:F2}" +
                $"\n  {bossModeInfo}";
     }
     

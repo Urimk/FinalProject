@@ -12,6 +12,16 @@ public class PlayerProjectile : BaseProjectile
     
     [Tooltip("Whether to flip the sprite based on direction.")]
     [SerializeField] private bool _flipSprite = true;
+    
+    [Tooltip("Reference to the PlayerAI component for reporting missed attacks.")]
+    [SerializeField] private PlayerAI _playerAI;
+
+    // ==================== Properties ====================
+    public PlayerAI PlayerAI 
+    { 
+        get => _playerAI; 
+        set => _playerAI = value; 
+    }
 
     // ==================== Override Methods ====================
     protected override bool ShouldIgnoreCollisionByTag(string tag)
@@ -26,6 +36,11 @@ public class PlayerProjectile : BaseProjectile
         if (collision.TryGetComponent<IDamageable>(out var damageable))
         {
             damageable.TakeDamage(_damage);
+        } else {
+            if (_playerAI != null)
+            {
+                _playerAI.OnPlayerAttackMissed();
+            }
         }
 
         base.OnHit(collision);

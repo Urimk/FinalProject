@@ -173,6 +173,15 @@ public class PlayerAttack : MonoBehaviour
         StartCoroutine(ResetAttackingState());
     }
 
+    public bool CanAttack()
+    {
+        if (IsAttackReady() == 1.0f)
+        {
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Handles sword swing logic and applies damage to enemies.
     /// </summary>

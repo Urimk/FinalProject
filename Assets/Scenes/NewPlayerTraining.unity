@@ -1206,26 +1206,22 @@ MonoBehaviour:
   _platforms:
   - {fileID: 2045978113}
   - {fileID: 42829902}
+  _currentPlatform: {fileID: 0}
   _rewardWin: 1
   _penaltyLose: -1
   _rewardDamageBoss: 0.75
   _penaltyTakeDamage: -3
   _penaltyPerStep: -0.0001
-  _rewardSurvival: 0.001
-  _penaltyCloseToBoss: -0.005
-  _rewardSafeDistance: 0.002
-  _penaltyStuck: -0.01
-  _enableEnhancedRewards: 1
-  _rewardSuccessfulDodge: 0.5
-  _rewardStrategicPositioning: 0.1
-  _penaltyPoorPositioning: -0.02
-  _rewardAttackOpportunity: 0.3
-  _penaltyWastedAttack: -0.1
-  _rewardPlatformAdvantage: 0.05
-  _penaltyGroundTrapped: -0.015
-  _rewardBossPhaseTransition: 1
+  _rewardAvoidAttack: 1
+  _penaltyCloseToBossLevel1: -0.01
+  _penaltyCloseToBossLevel2: -0.02
+  _safeDistanceFromBoss: 4
+  _dangerDistanceFromBoss: 1.5
+  _penaltyUselessFallThrough: -0.1
+  _penaltyUselessMove: -0.05
+  _penaltyUselessAction: -0.05
+  _penaltyAttackMissed: -0.1
   _maxBossFireballsToObserve: 1
-  _enableEnhancedObservations: 1
   _includeDistanceObservations: 1
   _includeMovementPatternObservations: 1
   _includeEnvironmentalObservations: 1
@@ -1250,7 +1246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 53
+    VectorObservationSize: 37
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 1
@@ -1317,6 +1313,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7e217ad7fa099647bf16fc73e1431f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &182523336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182523322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
 --- !u!1 &200034900
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,14 +1435,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &217919509
 GameObject:
@@ -1852,14 +1865,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &283943397
 GameObject:
@@ -2549,14 +2563,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1001 &398015200
 PrefabInstance:
@@ -3069,14 +3084,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1001 &500929381
 PrefabInstance:
@@ -4302,14 +4318,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!4 &742307472 stripped
 Transform:
@@ -5874,14 +5891,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &1015359220 stripped
 GameObject:
@@ -5905,14 +5923,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &1020068994
 GameObject:
@@ -6679,6 +6698,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3574517937744291114, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 182523335}
+    - targetCorrespondingSourceObject: {fileID: 3574517937744291114, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 182523336}
   m_SourcePrefab: {fileID: 100100000, guid: ec7912d2ac7732a4b8d06826e16e892d, type: 3}
 --- !u!1 &1075128320
 GameObject:
@@ -7793,14 +7815,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &1456937860
 GameObject:
@@ -8525,14 +8548,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &1601871616
 GameObject:
@@ -9911,14 +9935,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba7abc2c3f98aa45a792d32cf1aa66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 1
+  _size: 0.3
+  _lifetime: 15
+  _rotateToDirection: 1
   _damage: 1
-  _isRecoil: 0
+  _applyRecoil: 0
   _recoilHorizontalForce: 4
   _recoilVerticalForce: 3
   _recoilDuration: 0.15
-  _speed: 1
-  _size: 0.3
-  _resetTime: 10
   _rewardManager: {fileID: 0}
 --- !u!1 &1902931362
 GameObject:
@@ -10913,6 +10938,7 @@ MonoBehaviour:
   _doRestHealth: 0
   _playerHealth: {fileID: 182523328}
   _bossHealth: {fileID: 2053115023}
+  _bossRewardManager: {fileID: 0}
   _attackCooldown: 6
   _fireballDamage: 1
   _projectileSpeed: 2.5
@@ -11085,7 +11111,7 @@ MonoBehaviour:
   _healthSlider: {fileID: 1596712840}
   _spumPrefabObject: {fileID: 235700422}
   _boss: {fileID: 2053115022}
-  _rm: {fileID: 0}
+  _rm: {fileID: 1235243212}
   _isTraining: 1
   _trophy: {fileID: 985361225}
   _bossScriptObjects:

@@ -93,6 +93,17 @@ public class BossProjectile : BaseProjectile
     {
         _damage = damage;
     }
+    
+    public override void Activate()
+    {
+        base.Activate();
+        
+        // Report boss attack when projectile is activated
+        if (_rewardManager != null)
+        {
+            _rewardManager.ReportBossAttack();
+        }
+    }
 
     // ==================== Public Methods ====================
     /// <summary>

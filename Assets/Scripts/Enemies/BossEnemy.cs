@@ -44,6 +44,9 @@ public class BossEnemy : EnemyDamage, IBoss
     [Tooltip("Reference to the BossHealth component.")]
     [FormerlySerializedAs("bossHealth")]
     [SerializeField] private BossHealth _bossHealth;
+    [Tooltip("Reference to the BossRewardManager component.")]
+    [FormerlySerializedAs("bossRewardManager")]
+    [SerializeField] private BossRewardManager _bossRewardManager;
 
     [Header("Attack Parameters")]
     [Tooltip("Cooldown time between attacks.")]
@@ -423,6 +426,10 @@ public class BossEnemy : EnemyDamage, IBoss
         bossProjectile.SetDamage(_fireballDamage);
         bossProjectile.SetSize(_projectileSize);
         bossProjectile.Launch(_firepoint.position, targetPosition, _projectileSpeed);
+        if (_bossRewardManager != null)
+        {
+            _bossRewardManager.ReportBossAttack();
+        }
         
         if (_anim != null)
         {
@@ -844,6 +851,10 @@ public class BossEnemy : EnemyDamage, IBoss
         Destroy(marker);
         _flame.transform.position = targetPosition;
         _flame.SetActive(true);
+        if (_bossRewardManager != null)
+        {
+            _bossRewardManager.ReportBossAttack();
+        }
         
         BossFlameAttack flameAttack = _flame.GetComponent<BossFlameAttack>();
         if (flameAttack != null)
