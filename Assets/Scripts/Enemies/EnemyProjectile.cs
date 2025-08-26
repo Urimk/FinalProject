@@ -96,22 +96,4 @@ public class EnemyProjectile : BaseProjectile
     {
         Activate();
     }
-
-    /// <summary>
-    /// Legacy method for backward compatibility with old scripts.
-    /// </summary>
-    public void SetComingOut(bool value)
-    {
-        // This was used for collider growth animation, not needed in new system
-        // Keeping for backward compatibility but it does nothing
-    }
-
-    /// <summary>
-    /// Legacy method for backward compatibility with old scripts.
-    /// </summary>
-    public void StoreInitialWorldPosition()
-    {
-        // This was used for parent transform handling, not needed in new system
-        // Keeping for backward compatibility but it does nothing
-    }
 }

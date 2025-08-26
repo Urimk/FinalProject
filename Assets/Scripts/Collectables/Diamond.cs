@@ -36,7 +36,6 @@ public class Diamond : CollectableBase
     /// </summary>
     protected override void OnCollect()
     {
-        DebugManager.Log(DebugCategory.Collectable, $"Diamond {_collectableID} collected! Score: {_scoreValue}", this);
 
         // Play the collection sound if available
         if (_collectSound != null)
@@ -69,7 +68,7 @@ public class Diamond : CollectableBase
     /// </summary>
     protected override void OnReset()
     {
-        DebugManager.Log(DebugCategory.Collectable, $"Diamond {_collectableID} reset!", this);
+        DebugManager.Log(DebugCategory.Collectable, $"Diamond {gameObject.name} reset!", this);
 
         // Ensure the diamond is visible and collectable
         SetVisibility(true);

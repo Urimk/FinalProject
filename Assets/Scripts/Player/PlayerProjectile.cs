@@ -27,7 +27,7 @@ public class PlayerProjectile : BaseProjectile
     protected override bool ShouldIgnoreCollisionByTag(string tag)
     {
         // Player projectiles ignore player and enemy tags
-        return tag == PlayerTag || tag == EnemyTag;
+        return tag == PlayerTag || tag == EnemyTag || tag == NoCollisionTag;
     }
 
     protected override void OnHit(Collider2D collision)

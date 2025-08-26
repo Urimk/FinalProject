@@ -50,12 +50,12 @@ public class PlayFabTestPlayer : MonoBehaviour
 
         PlayFabClientAPI.LoginWithCustomID(request, result =>
         {
-            Debug.Log($"Logged in as {customId}");
+            DebugManager.Log(DebugCategory.Database, $"Logged in as {customId}");
             SetDisplayName(customId);
             SubmitTestScore();
         }, error =>
         {
-            Debug.LogError("Login failed: " + error.GenerateErrorReport());
+            DebugManager.LogError(DebugCategory.Database, "Login failed: " + error.GenerateErrorReport());
         });
     }
 
@@ -68,8 +68,8 @@ public class PlayFabTestPlayer : MonoBehaviour
         string displayName = customId;
         var updateRequest = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
         PlayFabClientAPI.UpdateUserTitleDisplayName(updateRequest,
-            result => Debug.Log($"Display name set to: {displayName}"),
-            error => Debug.LogError("Failed to set display name: " + error.GenerateErrorReport()));
+            result => DebugManager.Log(DebugCategory.Database, $"Display name set to: {displayName}"),
+            error => DebugManager.LogError(DebugCategory.Database, "Failed to set display name: " + error.GenerateErrorReport()));
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public class PlayFabTestPlayer : MonoBehaviour
         };
 
         PlayFabClientAPI.UpdatePlayerStatistics(request,
-            result => Debug.Log("Score submitted successfully!"),
-            error => Debug.LogError("Failed to submit score: " + error.GenerateErrorReport()));
+            result => DebugManager.Log(DebugCategory.Database, "Score submitted successfully!"),
+            error => DebugManager.LogError(DebugCategory.Database, "Failed to submit score: " + error.GenerateErrorReport()));
     }
 }

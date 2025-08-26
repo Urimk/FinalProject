@@ -7,36 +7,13 @@ using UnityEngine.Events;
 /// </summary>
 public abstract class CollectableBase : MonoBehaviour, ICollectable
 {
-    // ==================== Events ====================
-    /// <summary>
-    /// Event triggered when this collectable is collected.
-    /// </summary>
-    [System.Serializable]
-    public class CollectableCollectedEvent : UnityEvent<string> { }
-
-    [Header("Base Collectable Settings")]
-    [Tooltip("Event triggered when this collectable is collected. Parameter: collectableID")]
-    [SerializeField] protected CollectableCollectedEvent _onCollected = new CollectableCollectedEvent();
-
-    [Tooltip("Unique identifier for this collectable (used for save/load or analytics).")]
-    [SerializeField] protected string _collectableID;
-
-    [Tooltip("Whether this collectable can be collected multiple times.")]
-    [SerializeField] protected bool _canRespawn = false;
-
     // ==================== Protected Fields ====================
     protected bool _isCollected = false;
     protected Collider2D _collider;
 
     // ==================== Properties ====================
-    public string CollectableID => _collectableID;
     public bool IsCollected => _isCollected;
-    public bool CanRespawn => _canRespawn;
 
-    /// <summary>
-    /// Gets the event that triggers when this collectable is collected.
-    /// </summary>
-    public CollectableCollectedEvent OnCollected => _onCollected;
 
     // ==================== Unity Lifecycle ====================
     protected virtual void Awake()
@@ -61,13 +38,12 @@ public abstract class CollectableBase : MonoBehaviour, ICollectable
 
         _isCollected = true;
         OnCollect();
-        _onCollected?.Invoke(_collectableID);
     }
 
     public virtual void Reset()
     {
-        Debug.Log($"Resetting collectable {_collectableID}");
-
+        DebugManager.Log(DebugCategory.Collectable, $"Resetting collectable {gameObject.name}", this);
+    
         _isCollected = false;
         gameObject.SetActive(true);
 
@@ -100,12 +76,12 @@ public abstract class CollectableBase : MonoBehaviour, ICollectable
     {
         if (_collider == null)
         {
-            Debug.LogError($"Collectable {gameObject.name} is missing a Collider2D component!", this);
+            DebugManager.LogError(DebugCategory.Collectable, $"Collectable {gameObject.name} is missing a Collider2D component!", this);
         }
 
         if (_collider != null && !_collider.isTrigger)
         {
-            Debug.LogWarning($"Collectable {gameObject.name} collider should be set to 'Is Trigger' for proper collection behavior.", this);
+            DebugManager.LogWarning(DebugCategory.Collectable, $"Collectable {gameObject.name} collider should be set to 'Is Trigger' for proper collection behavior.", this);
         }
     }
 

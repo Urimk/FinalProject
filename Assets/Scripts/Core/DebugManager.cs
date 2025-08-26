@@ -36,6 +36,12 @@ public class DebugManager : MonoBehaviour
     [Tooltip("Enable debug logs for sound system.")]
     [SerializeField] private bool _soundDebug = false;
 
+    [Tooltip("Enable debug logs for training system.")]
+    [SerializeField] private bool _trainingDebug = false;
+
+    [Tooltip("Enable debug logs for database system.")]
+    [SerializeField] private bool _databaseDebug = false;
+
     // ==================== Properties ====================
     /// <summary>
     /// Gets whether global debug mode is enabled.
@@ -54,6 +60,8 @@ public class DebugManager : MonoBehaviour
     public static bool EnemyDebug => Instance != null && Instance._enemyDebug;
     public static bool RoomDebug => Instance != null && Instance._roomDebug;
     public static bool SoundDebug => Instance != null && Instance._soundDebug;
+    public static bool TrainingDebug => Instance != null && Instance._trainingDebug;
+    public static bool DatabaseDebug => Instance != null && Instance._databaseDebug;
 
     // ==================== Unity Lifecycle ====================
     private void Awake()
@@ -146,6 +154,8 @@ public class DebugManager : MonoBehaviour
             DebugCategory.Enemy => EnemyDebug,
             DebugCategory.Room => RoomDebug,
             DebugCategory.Sound => SoundDebug,
+            DebugCategory.Training => TrainingDebug,
+            DebugCategory.Database => DatabaseDebug,
             _ => false
         };
     }
@@ -160,5 +170,7 @@ public enum DebugCategory
     Player,
     Enemy,
     Room,
-    Sound
+    Sound,
+    Training,
+    Database
 }

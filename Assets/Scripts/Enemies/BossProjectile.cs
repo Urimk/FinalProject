@@ -35,8 +35,9 @@ public class BossProjectile : BaseProjectile
     // ==================== Override Methods ====================
     protected override bool ShouldIgnoreCollisionByTag(string tag)
     {
-        // Boss projectiles ignore enemy tags
-        return tag == EnemyTag;
+        // Enemy projectiles ignore enemy tags
+        if (tag == EnemyTag || tag == NoCollisionTag) return true;
+        return false;
     }
 
     protected override void OnHit(Collider2D collision)

@@ -334,7 +334,10 @@ using UnityEngine.Serialization;
         
         if (_player != null)
         {
-            _playerAttack.UnequipWeapon();
+            if (_playerAttack != null)
+            {
+                _playerAttack.UnequipWeapon();
+            }
         }
     }
 }

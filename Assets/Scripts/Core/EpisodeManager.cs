@@ -177,7 +177,7 @@ public class EpisodeManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("[EpisodeManager] Duplicate EpisodeManager found. Destroying this one.");
+            DebugManager.LogWarning(DebugCategory.Training, "Duplicate EpisodeManager found. Destroying this one.");
             Destroy(gameObject);
         }
         else
@@ -191,18 +191,18 @@ public class EpisodeManager : MonoBehaviour
     /// </summary>
     private void ValidateReferences()
     {
-        if (_playerObject == null) Debug.LogError("[EpisodeManager] Player GameObject not assigned!");
-        if (_bossObject == null && _bossMode != BossMode.None) Debug.LogError("[EpisodeManager] Boss GameObject not assigned!");
-        if (_bossHealth == null && _bossObject != null) Debug.LogWarning("[EpisodeManager] BossHealth component not assigned!");
-        if (_playerHealth == null && _playerObject != null) Debug.LogWarning("[EpisodeManager] Player Health component not assigned!");
-        if (_playerMovement == null && _playerObject != null) Debug.LogWarning("[EpisodeManager] PlayerMovement component not assigned!");
-        if (_playerAttack == null && _playerObject != null) Debug.LogWarning("[EpisodeManager] PlayerAttack component not assigned!");
+        if (_playerObject == null) DebugManager.LogError(DebugCategory.Training, "Player GameObject not assigned!");
+        if (_bossObject == null && _bossMode != BossMode.None) DebugManager.LogError(DebugCategory.Training, "Boss GameObject not assigned!");
+        if (_bossHealth == null && _bossObject != null) DebugManager.LogWarning(DebugCategory.Training, "BossHealth component not assigned!");
+        if (_playerHealth == null && _playerObject != null) DebugManager.LogWarning(DebugCategory.Training, "Player Health component not assigned!");
+        if (_playerMovement == null && _playerObject != null) DebugManager.LogWarning(DebugCategory.Training, "PlayerMovement component not assigned!");
+        if (_playerAttack == null && _playerObject != null) DebugManager.LogWarning(DebugCategory.Training, "PlayerAttack component not assigned!");
 
         // Q-Learning specific validation
         if (_bossMode == BossMode.QLearning)
         {
-            if (_bossRewardManager == null) Debug.LogError("[EpisodeManager] BossRewardManager reference not assigned! Required for Q-learning mode.");
-            if (_bossQLearning == null) Debug.LogWarning("[EpisodeManager] BossQLearning reference not assigned (optional for QL logging).");
+            if (_bossRewardManager == null) DebugManager.LogError(DebugCategory.Training, "BossRewardManager reference not assigned! Required for Q-learning mode.");
+            if (_bossQLearning == null) DebugManager.LogWarning(DebugCategory.Training, "BossQLearning reference not assigned (optional for QL logging).");
         }
     }
 
@@ -213,14 +213,14 @@ public class EpisodeManager : MonoBehaviour
     {
         if (_playerObject == null)
         {
-            Debug.LogError("[EpisodeManager] Player GameObject reference missing. Disabling EpisodeManager.");
+            DebugManager.LogError(DebugCategory.Training, "Player GameObject reference missing. Disabling EpisodeManager.");
             enabled = false;
             return;
         }
 
         if (_bossMode == BossMode.QLearning && _bossRewardManager == null)
         {
-            Debug.LogError("[EpisodeManager] Q-Learning mode requires BossRewardManager. Disabling EpisodeManager.");
+            DebugManager.LogError(DebugCategory.Training, "Q-Learning mode requires BossRewardManager. Disabling EpisodeManager.");
             enabled = false;
             return;
         }
@@ -237,11 +237,11 @@ public class EpisodeManager : MonoBehaviour
             if (playerAI != null)
             {
                 _bossRewardManager.SetPlayerAI(playerAI);
-                Debug.Log("[EpisodeManager] PlayerAI reference set in BossRewardManager for dodge rewards.");
+                DebugManager.Log(DebugCategory.Training, "PlayerAI reference set in BossRewardManager for dodge rewards.");
             }
             else
             {
-                Debug.LogWarning("[EpisodeManager] PlayerAI component not found on player object.");
+                DebugManager.LogWarning(DebugCategory.Training, "PlayerAI component not found on player object.");
             }
         }
     }
@@ -267,12 +267,12 @@ public class EpisodeManager : MonoBehaviour
     private void SetupLogging()
     {
         _logFilePath = Path.Combine(Application.persistentDataPath, _logFilePath);
-        Debug.Log($"[EpisodeManager] Training log file path: {_logFilePath}");
+        DebugManager.Log(DebugCategory.Training, $"Training log file path: {_logFilePath}");
         
         // Check if log file exists, if not reset episode count and create new log
         if (!File.Exists(_logFilePath))
         {
-            Debug.Log("[EpisodeManager] Log file not found. Resetting episode count and creating new log file.");
+            DebugManager.Log(DebugCategory.Training, "Log file not found. Resetting episode count and creating new log file.");
             ResetEpisodeCount();
             CreateNewLogFile();
         }
@@ -284,7 +284,7 @@ public class EpisodeManager : MonoBehaviour
     private void LoadEpisodeCount()
     {
         _episodeCount = PlayerPrefs.GetInt(EpisodeCountKey, 0);
-        Debug.Log($"[EpisodeManager] Loaded episode count: {_episodeCount}");
+        DebugManager.Log(DebugCategory.Training, $"Loaded episode count: {_episodeCount}");
     }
 
     /// <summary>
@@ -294,7 +294,7 @@ public class EpisodeManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(EpisodeCountKey, _episodeCount);
         PlayerPrefs.Save();
-        Debug.Log($"[EpisodeManager] Saved episode count: {_episodeCount}");
+        DebugManager.Log(DebugCategory.Training, $"Saved episode count: {_episodeCount}");
     }
 
     // ==================== Episode Management ====================
@@ -315,8 +315,7 @@ public class EpisodeManager : MonoBehaviour
     /// </summary>
     private void HandleEpisodeTimeout()
     {
-        Debug.LogWarning("[EpisodeManager] Episode timed out! Applying penalty and ending episode.");
-
+        DebugManager.LogWarning(DebugCategory.Training, "Episode timed out! Applying penalty and ending episode.");
         var agent = _playerObject.GetComponent<PlayerAI>();
         if (agent != null)
         {
@@ -324,7 +323,7 @@ public class EpisodeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[EpisodeManager] Could not find PlayerAI to handle timeout!");
+            DebugManager.LogError(DebugCategory.Training, "Could not find PlayerAI to handle timeout!");
         }
     }
 
@@ -334,6 +333,8 @@ public class EpisodeManager : MonoBehaviour
     /// <param name="bossWon">Did the boss win this episode?</param>
     public void RecordEndOfEpisode(bool bossWon)
     {
+        DebugManager.Log(DebugCategory.Training, $"RecordEndOfEpisode called - bossWon={bossWon}, _bossMode={_bossMode}, _bossRewardManager={(_bossRewardManager != null ? "not null" : "null")}");
+        
         // Report outcome to reward manager
         if (_bossMode == BossMode.QLearning && _bossRewardManager != null)
         {
@@ -346,6 +347,11 @@ public class EpisodeManager : MonoBehaviour
         if (_bossMode == BossMode.QLearning && _bossRewardManager != null)
         {
             episodeTotalReward = _bossRewardManager.GetEpisodeTotalReward();
+            DebugManager.Log(DebugCategory.Training, $"Got episode total reward: {episodeTotalReward}");
+        }
+        else
+        {
+            DebugManager.Log(DebugCategory.Training, $"Skipping GetEpisodeTotalReward - _bossMode={_bossMode}, _bossRewardManager={(_bossRewardManager != null ? "not null" : "null")}");
         }
 
         // Update statistics
@@ -373,7 +379,7 @@ public class EpisodeManager : MonoBehaviour
     /// </summary>
     public void ResetEnvironmentForNewEpisode()
     {
-        Debug.Log("[EpisodeManager] Resetting environment for new episode.");
+        DebugManager.Log(DebugCategory.Training, "Resetting environment for new episode.");
 
         // Reset reward manager state
         if (_bossMode == BossMode.QLearning && _bossRewardManager != null)
@@ -386,9 +392,6 @@ public class EpisodeManager : MonoBehaviour
         {
             ResetBossState();
         }
-
-        // Reset shared hazards
-        ResetSharedHazards();
 
         // Start episode timer
         _episodeStartTime = Time.time;
@@ -403,7 +406,7 @@ public class EpisodeManager : MonoBehaviour
     {
         if (_bossObject == null) return;
 
-        Debug.Log("[EpisodeManager] Resetting boss state.");
+        DebugManager.Log(DebugCategory.Training, "Resetting boss state.");
 
         // Reset position and physics
         _bossObject.transform.position = _initialBossPosition;
@@ -417,7 +420,7 @@ public class EpisodeManager : MonoBehaviour
         // Reset boss based on mode
         if (_bossEnemy != null)
         {
-            Debug.Log("[EpisodeManager] Re-enabling BossEnemy component");
+            DebugManager.Log(DebugCategory.Training, "Re-enabling BossEnemy component");
             _bossEnemy.enabled = true;
             _bossEnemy.ResetState();
         }
@@ -425,7 +428,7 @@ public class EpisodeManager : MonoBehaviour
         // Reset health
         if (_bossHealth != null)
         {
-            Debug.Log("[EpisodeManager] Calling BossHealth.ResetHealth()");
+            DebugManager.Log(DebugCategory.Training, "Calling BossHealth.ResetHealth()");
             _bossHealth.ResetHealth();
         }
 
@@ -434,26 +437,17 @@ public class EpisodeManager : MonoBehaviour
         if (bossCol != null) 
         {
             bossCol.enabled = true;
-            Debug.Log("[EpisodeManager] Re-enabled boss collider");
+            DebugManager.Log(DebugCategory.Training, "Re-enabled boss collider");
         }
 
         Renderer bossRenderer = _bossObject.GetComponent<Renderer>();
         if (bossRenderer != null) 
         {
             bossRenderer.enabled = true;
-            Debug.Log("[EpisodeManager] Re-enabled boss renderer");
+            DebugManager.Log(DebugCategory.Training, "Re-enabled boss renderer");
         }
         
-        Debug.Log("[EpisodeManager] Boss reset complete - GameObject active: " + _bossObject.activeInHierarchy + ", BossEnemy enabled: " + (_bossEnemy != null ? _bossEnemy.enabled : "null") + ", BossHealth enabled: " + (_bossHealth != null ? _bossHealth.enabled : "null"));
-    }
-
-    /// <summary>
-    /// Resets shared hazards in the environment.
-    /// </summary>
-    private void ResetSharedHazards()
-    {
-        // Boss hazards are handled by BossEnemy.ResetState()
-        // Add any additional shared hazards here if needed
+        DebugManager.Log(DebugCategory.Training, "Boss reset complete - GameObject active: " + _bossObject.activeInHierarchy + ", BossEnemy enabled: " + (_bossEnemy != null ? _bossEnemy.enabled : "null") + ", BossHealth enabled: " + (_bossHealth != null ? _bossHealth.enabled : "null"));
     }
 
     // ==================== Logging ====================
@@ -473,7 +467,7 @@ public class EpisodeManager : MonoBehaviour
                            $"\n  Boss Mode: {_bossMode}" +
                            qlStats;
 
-        Debug.Log($"[EpisodeManager]\n{logMessage}");
+        DebugManager.Log(DebugCategory.Training, $"\n{logMessage}");
         LogToFile(logMessage);
 
         // Reset accumulators
@@ -518,7 +512,7 @@ public class EpisodeManager : MonoBehaviour
             // Ensure log file exists, create it if missing
             if (!File.Exists(_logFilePath))
             {
-                Debug.LogWarning("[EpisodeManager] Log file missing during write. Creating new log file.");
+                DebugManager.LogWarning(DebugCategory.Training, "Log file missing during write. Creating new log file.");
                 CreateNewLogFile();
             }
 
@@ -531,7 +525,7 @@ public class EpisodeManager : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[EpisodeManager] Failed to write to log file: {ex.Message}");
+            DebugManager.LogError(DebugCategory.Training, $"Failed to write to log file: {ex.Message}");
         }
     }
 
@@ -549,7 +543,7 @@ public class EpisodeManager : MonoBehaviour
         PlayerPrefs.SetInt(EpisodeCountKey, 0);
         PlayerPrefs.Save();
         
-        Debug.Log("[EpisodeManager] Episode count reset to 0.");
+        DebugManager.Log(DebugCategory.Training, "Episode count reset to 0.");
     }
 
     /// <summary>
@@ -568,11 +562,11 @@ public class EpisodeManager : MonoBehaviour
 
             // Create new log file with header
             File.WriteAllText(_logFilePath, LogFileHeader);
-            Debug.Log($"[EpisodeManager] Created new log file: {_logFilePath}");
+            DebugManager.Log(DebugCategory.Training, $"Created new log file: {_logFilePath}");
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[EpisodeManager] Failed to create new log file: {ex.Message}");
+            DebugManager.LogError(DebugCategory.Training, $"Failed to create new log file: {ex.Message}");
         }
     }
 
@@ -583,7 +577,7 @@ public class EpisodeManager : MonoBehaviour
     public void SetBossMode(BossMode newMode)
     {
         _bossMode = newMode;
-        Debug.Log($"[EpisodeManager] Boss mode changed to: {_bossMode}");
+        DebugManager.Log(DebugCategory.Training, $"Boss mode changed to: {_bossMode}");
         ValidateReferences();
     }
 

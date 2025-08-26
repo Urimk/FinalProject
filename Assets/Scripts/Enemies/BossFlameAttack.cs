@@ -72,9 +72,6 @@ public class BossFlameAttack : MonoBehaviour
         _active = true;
 
         yield return new WaitForSeconds(_fireActiveTime);
-
-        // Destroy the fire effect after duration
-        //Destroy(gameObject);
     }
 
     /// <summary>

@@ -60,13 +60,21 @@ public class BossRewardManager : MonoBehaviour
     /// <summary>
     /// Call when the boss hits the player.
     /// </summary>
-    public void ReportHitPlayer() => _currentAccumulatedStepReward += _rewardHitPlayer;
+    public void ReportHitPlayer()
+    {
+        _currentAccumulatedStepReward += _rewardHitPlayer;
+        Debug.Log($"[BossRewardManager] ReportHitPlayer: +{_rewardHitPlayer}, total={_currentAccumulatedStepReward}");
+    }
 
     /// <summary>
     /// Call when the boss takes damage from the player.
     /// </summary>
     /// <param name="damageAmount">Amount of damage taken (not currently used).</param>
-    public void ReportTookDamage(float damageAmount) => _currentAccumulatedStepReward += _penaltyTookDamage;
+    public void ReportTookDamage(float damageAmount)
+    {
+        _currentAccumulatedStepReward += _penaltyTookDamage;
+        Debug.Log($"[BossRewardManager] ReportTookDamage: {_penaltyTookDamage}, total={_currentAccumulatedStepReward}");
+    }
 
     /// <summary>
     /// Call when the boss fires an attack.
@@ -88,6 +96,7 @@ public class BossRewardManager : MonoBehaviour
     public void ReportAttackMissed()
     {
         _currentAccumulatedStepReward += _penaltyAttackMissed;
+        Debug.Log($"[BossRewardManager] ReportAttackMissed: {_penaltyAttackMissed}, total={_currentAccumulatedStepReward}");
         
         // Also report to PlayerAI for dodge reward
         if (_playerAI != null)
@@ -125,12 +134,14 @@ public class BossRewardManager : MonoBehaviour
     /// </summary>
     public void StartNewEpisode()
     {
+        Debug.Log($"[BossRewardManager] StartNewEpisode called - resetting all reward state");
         _currentAccumulatedStepReward = 0f;
         _pendingTerminalReward = 0f;
         _terminalRewardPending = false;
         _currentEpisodeStartTime = Time.time;
         _totalEpisodeReward = 0f;
         _totalBossAttacks = 0;
+        Debug.Log($"[BossRewardManager] StartNewEpisode complete - _totalEpisodeReward={_totalEpisodeReward}");
     }
 
     /// <summary>
@@ -148,6 +159,7 @@ public class BossRewardManager : MonoBehaviour
         }
         _pendingTerminalReward = finalReward;
         _terminalRewardPending = true;
+        Debug.Log($"[BossRewardManager] ReportBossWin: duration={duration:F2}s, finalReward={finalReward}");
     }
 
     /// <summary>
@@ -167,6 +179,7 @@ public class BossRewardManager : MonoBehaviour
         //}
         _pendingTerminalReward = finalPenalty;
         _terminalRewardPending = true;
+        Debug.Log($"[BossRewardManager] ReportBossLoss: duration={duration:F2}s, finalPenalty={finalPenalty}");
     }
 
     // ==================== Q-Learning/Reward Methods ====================
@@ -187,6 +200,10 @@ public class BossRewardManager : MonoBehaviour
         }
         _currentAccumulatedStepReward = 0f;
         _totalEpisodeReward += rewardToReturn;
+        
+        // Debug logging to track step rewards
+        Debug.Log($"[BossRewardManager] GetStepRewardAndReset: stepReward={rewardToReturn}, _totalEpisodeReward={_totalEpisodeReward}");
+        
         return rewardToReturn;
     }
 
@@ -203,6 +220,10 @@ public class BossRewardManager : MonoBehaviour
             total += _pendingTerminalReward;
         }
         total += _currentAccumulatedStepReward;
+        
+        // Debug logging to track reward accumulation
+        Debug.Log($"[BossRewardManager] GetEpisodeTotalReward: _totalEpisodeReward={_totalEpisodeReward}, _pendingTerminalReward={_pendingTerminalReward}, _terminalRewardPending={_terminalRewardPending}, _currentAccumulatedStepReward={_currentAccumulatedStepReward}, total={total}");
+        
         return total;
     }
 

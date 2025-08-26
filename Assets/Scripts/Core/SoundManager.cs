@@ -27,7 +27,7 @@ public class SoundManager : MonoBehaviour
     [Tooltip("Audio clip for the menu background music.")]
     [SerializeField] private AudioClip menuMusic;
     [Tooltip("Audio clip for the Level 1 background music.")]
-    [SerializeField] private AudioClip level1Music;
+    [SerializeField] private AudioClip levelMusic;
     [SerializeField] private bool isSoundLocal = true;
 
     /// <summary>
@@ -37,7 +37,7 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Gets the Level 1 music audio clip.
     /// </summary>
-    public AudioClip Level1Music => level1Music;
+    public AudioClip levelMusic => levelMusic;
 
     // ==================== Unity Lifecycle ====================
     private void Awake()

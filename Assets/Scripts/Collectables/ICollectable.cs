@@ -4,20 +4,11 @@
 /// </summary>
 public interface ICollectable
 {
-    /// <summary>
-    /// Gets the unique identifier for this collectable.
-    /// </summary>
-    string CollectableID { get; }
 
     /// <summary>
     /// Gets whether this collectable has been collected.
     /// </summary>
     bool IsCollected { get; }
-
-    /// <summary>
-    /// Gets whether this collectable can be collected multiple times.
-    /// </summary>
-    bool CanRespawn { get; }
 
     /// <summary>
     /// Manually triggers the collection of this collectable.

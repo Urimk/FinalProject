@@ -28,7 +28,9 @@ public class CameraController : MonoBehaviour
     private const float DefaultMovingSpeed = 5f;
     private const float DefaultModeTransitionDuration = 0.5f;
     private const float InstantFollowSmoothing = 100f;
-
+    private const float DefaultFollowYOffset = 2f;
+    private const float DefaultFollowXOffset = 0f;
+    
     // ==================== Dependencies ====================
     [Header("Dependencies")]
     [Tooltip("Reference to the player Transform.")]
@@ -48,9 +50,9 @@ public class CameraController : MonoBehaviour
     // ==================== Follow Settings ====================
     [Header("Follow Settings")]
     [Tooltip("Base X offset when following the player.")]
-    [SerializeField] private float _followXOffset = 0f;
+    [SerializeField] private float _followXOffset = DefaultFollowXOffset;
     [Tooltip("Y offset when following the player.")]
-    [SerializeField] private float _followYOffset = 2f;
+    [SerializeField] private float _followYOffset = DefaultFollowYOffset;
     [Tooltip("Smoothing speed for following the player.")]
     [SerializeField] private float _followSmoothing = DefaultFollowSmoothing;
 

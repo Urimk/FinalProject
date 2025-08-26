@@ -131,19 +131,19 @@ public class BossAI : BossEnemy
     {
         if (_rewardManager == null)
         {
-            Debug.LogError("[BossAI] BossRewardManager not assigned! Learning will fail.");
+            DebugManager.LogError(DebugCategory.Enemy, "BossRewardManager not assigned! Learning will fail.");
         }
         if (Players == null || Players.Count == 0)
         {
-            Debug.LogError("[BossAI] No player references found!");
+            DebugManager.LogError(DebugCategory.Enemy, "No player references found!");
         }
         if (_leftWall == null || _rightWall == null)
         {
-            Debug.LogWarning("[BossAI] Wall references not assigned - movement may be limited.");
+            DebugManager.LogWarning(DebugCategory.Enemy, "Wall references not assigned - movement may be limited.");
         }
         if (_ground == null || _ceiling == null)
         {
-            Debug.LogWarning("[BossAI] Ground/Ceiling references not assigned - boundary checking may not work properly.");
+            DebugManager.LogWarning(DebugCategory.Enemy, "Ground/Ceiling references not assigned - boundary checking may not work properly.");
         }
     }
 
@@ -176,7 +176,7 @@ public class BossAI : BossEnemy
         SetFireAttackCooldown(AIFireAttackCooldown);
         SetDashCooldown(AIDashCooldown);
 
-        Debug.Log("[BossAI] AI state reset - Energy: " + _currentEnergy + "/" + _maxEnergy);
+        DebugManager.Log(DebugCategory.Enemy, "AI state reset - Energy: " + _currentEnergy + "/" + _maxEnergy);
     }
 
     // ==================== AI Update Logic ====================
@@ -309,7 +309,7 @@ public class BossAI : BossEnemy
         {
             return _playerMovement.IsGrounded;
         }
-        Debug.LogWarning("[BossAI] Cannot check player grounded status: PlayerMovement reference missing.");
+        DebugManager.LogWarning(DebugCategory.Enemy, "Cannot check player grounded status: PlayerMovement reference missing.");
         return true;
     }
 
@@ -385,7 +385,7 @@ public class BossAI : BossEnemy
                 moveDirection = (targetPosition - bossPos).normalized;
                 break;
             default:
-                Debug.LogWarning("[BossAI] Received unexpected move action: " + moveAction);
+                DebugManager.LogWarning(DebugCategory.Enemy, "Received unexpected move action: " + moveAction);
                 AIRequestIdle();
                 return;
         }
@@ -783,7 +783,7 @@ public class BossAI : BossEnemy
             yield return null;
         }
         
-        // Stop movement (no teleportation)
+        // Stop movement
         _isDashing = false;
         if (_rb != null)
         {
@@ -794,29 +794,6 @@ public class BossAI : BossEnemy
         
         // Call virtual method for derived classes
         OnDashCompleted();
-    }
-
-    // ==================== Boundary Checking ====================
-    /// <summary>
-    /// Checks if a position is within the room boundaries.
-    /// </summary>
-    /// <param name="position">The position to check.</param>
-    /// <returns>True if the position is within boundaries, false otherwise.</returns>
-    private bool IsPositionWithinBoundaries(Vector2 position)
-    {
-        if (_leftWall == null || _rightWall == null || _ground == null || _ceiling == null)
-        {
-            Debug.LogWarning("[BossAI] Boundary references missing - cannot check position");
-            return true; // Allow if boundaries not set
-        }
-        
-        float leftBound = _leftWall.position.x + WallBuffer;
-        float rightBound = _rightWall.position.x - WallBuffer;
-        float bottomBound = _ground.position.y + WallBuffer;
-        float topBound = _ceiling.position.y - WallBuffer;
-        
-        return position.x >= leftBound && position.x <= rightBound && 
-               position.y >= bottomBound && position.y <= topBound;
     }
     
     /// <summary>

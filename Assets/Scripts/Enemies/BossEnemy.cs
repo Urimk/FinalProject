@@ -172,6 +172,10 @@ public class BossEnemy : EnemyDamage, IBoss
     protected Vector2 _dashTarget;
     protected Coroutine _dashCoroutine;
     
+    // ==================== Facing Direction Management ====================
+    private bool _lastDesiredFacingLeft = false;
+    private float _facingDirectionChangeTime = 0f;
+    
     // ==================== Cooldown Management ====================
     protected float _cooldownTimer = Mathf.Infinity;
     protected float _fireAttackTimer = Mathf.Infinity;
@@ -224,19 +228,19 @@ public class BossEnemy : EnemyDamage, IBoss
     {
             if (_bossHealth == null)
             {
-                Debug.LogError("[BossEnemy] BossHealth component not found!");
+                DebugManager.LogError(DebugCategory.Enemy, "BossHealth component not found!");
             }
         if (_rb == null)
         {
-            Debug.LogError("[BossEnemy] Rigidbody2D component not found!");
+            DebugManager.LogError(DebugCategory.Enemy, "Rigidbody2D component not found!");
         }
         if (_firepoint == null)
         {
-            Debug.LogError("[BossEnemy] Firepoint Transform not assigned!");
+            DebugManager.LogError(DebugCategory.Enemy, "Firepoint Transform not assigned!");
         }
         if (_flame == null)
         {
-            Debug.LogError("[BossEnemy] Flame GameObject not assigned!");
+            DebugManager.LogError(DebugCategory.Enemy, "Flame GameObject not assigned!");
         }
     }
 
@@ -326,6 +330,10 @@ public class BossEnemy : EnemyDamage, IBoss
     {
         _detectedPlayer = false;
         _isDead = false;
+        
+        // Reset facing direction state
+        _lastDesiredFacingLeft = false;
+        _facingDirectionChangeTime = 0f;
     }
 
     // ==================== Public Reset Interface ====================
@@ -628,13 +636,13 @@ public class BossEnemy : EnemyDamage, IBoss
             float healthPercentage = _bossHealth.GetHealthPercentage();
             if (healthPercentage <= 0.5f)
             {
-                Debug.Log("[BossEnemy] UpdatePhaseTransition - Health percentage: " + healthPercentage + " <= 0.5f, entering Phase 2");
-                EnterPhase2();
+                DebugManager.Log(DebugCategory.Enemy, $"Health percentage: {healthPercentage} <= 0.5f, entering Phase 2");
+                EnterPhase2();  
             }
         }
     }
 
-    /// <summary>
+    /// <summary>   
     /// Updates cooldown timers.
     /// </summary>
     protected virtual void UpdateCooldowns()
@@ -679,8 +687,20 @@ public class BossEnemy : EnemyDamage, IBoss
         if (closestPlayer != null)
         {
             bool shouldFaceLeft = closestPlayer.position.x < transform.position.x;
-            float scaleX = Mathf.Abs(transform.localScale.x) * (shouldFaceLeft ? 1f : -1f);
-            transform.localScale = new Vector3(scaleX, transform.localScale.y, transform.localScale.z);
+            
+            // Only flip if the desired direction has been consistent for 0.5 seconds
+            if (shouldFaceLeft != _lastDesiredFacingLeft)
+            {
+                _lastDesiredFacingLeft = shouldFaceLeft;
+                _facingDirectionChangeTime = Time.time;
+            }
+            
+            // Check if enough time has passed since the direction change
+            if (Time.time - _facingDirectionChangeTime >= 0.5f)
+            {
+                float scaleX = Mathf.Abs(transform.localScale.x) * (shouldFaceLeft ? 1f : -1f);
+                transform.localScale = new Vector3(scaleX, transform.localScale.y, transform.localScale.z);
+            }
         }
         
         // Update fireball holder scale
@@ -762,7 +782,7 @@ public class BossEnemy : EnemyDamage, IBoss
         BossProjectile bossProjectile = projectile.GetComponent<BossProjectile>();
         if (bossProjectile == null)
         {
-            Debug.LogError("[BossEnemy] Fireball prefab missing BossProjectile script!");
+            DebugManager.LogError(DebugCategory.Enemy, "Fireball prefab missing BossProjectile script!");
             return;
         }
         
@@ -776,7 +796,7 @@ public class BossEnemy : EnemyDamage, IBoss
         }
         else
         {
-            Debug.LogWarning("[BossEnemy] Player transform is null, cannot launch fireball.");
+            DebugManager.LogWarning(DebugCategory.Enemy, "Player transform is null, cannot launch fireball.");
             return;
         }
         
@@ -864,7 +884,7 @@ public class BossEnemy : EnemyDamage, IBoss
         }
         else
         {
-            Debug.LogError("[BossEnemy] Flame object is missing the BossFlameAttack script!");
+            DebugManager.LogError(DebugCategory.Enemy, "Flame object is missing the BossFlameAttack script!");
         }
     }
 
@@ -916,11 +936,11 @@ public class BossEnemy : EnemyDamage, IBoss
             // Set dash target (boundary checking handled by derived classes)
             _dashTarget = targetPosition;
             
-            Debug.Log($"[BossEnemy] Dash target set to {_dashTarget}");
+            DebugManager.Log(DebugCategory.Enemy, $"Dash target set to {_dashTarget}");
         }
         else
         {
-            Debug.LogWarning("[BossEnemy] Player transform is null, cannot set dash target.");
+            DebugManager.LogWarning(DebugCategory.Enemy, "Player transform is null, cannot set dash target.");
             _isChargingDash = false;
             return;
         }
@@ -1016,7 +1036,7 @@ public class BossEnemy : EnemyDamage, IBoss
             yield return null;
         }
         
-        // Stop movement (no teleportation)
+        // Stop movement
         _isDashing = false;
         if (_rb != null)
         {
@@ -1055,7 +1075,7 @@ public class BossEnemy : EnemyDamage, IBoss
         _attackCooldown = Mathf.Max(MinCooldown, _attackCooldown);
         _fireAttackCooldown = Mathf.Max(MinCooldown, _fireAttackCooldown);
         
-        Debug.Log("[BossEnemy] Entered Phase 2 - Enraged!");
+        DebugManager.Log(DebugCategory.Enemy, "Entered Phase 2 - Enraged!");
     }
 
     // ==================== Death Handling ====================
@@ -1089,14 +1109,14 @@ public class BossEnemy : EnemyDamage, IBoss
         
         if (isInTrainingMode)
         {
-            Debug.Log("[BossEnemy] Boss died in training mode - recording episode end and resetting environment");
+            DebugManager.Log(DebugCategory.Enemy, "Boss died in training mode - recording episode end and resetting environment");
             
             // Notify EpisodeManager that boss died (player won)
             EpisodeManager.Instance.RecordEndOfEpisode(false); // false = boss lost, player won
             
             // Disable the boss temporarily - EpisodeManager will reset it for the next episode
             enabled = false;
-            Debug.Log("[BossEnemy] Boss disabled for training mode - will be reset by EpisodeManager. BossMode: " + EpisodeManager.Instance.CurrentBossMode);
+            DebugManager.Log(DebugCategory.Enemy, "Boss disabled for training mode - will be reset by EpisodeManager. BossMode: " + EpisodeManager.Instance.CurrentBossMode);
             
             // Reset environment for the next episode (after disabling)
             EpisodeManager.Instance.ResetEnvironmentForNewEpisode();
@@ -1106,7 +1126,7 @@ public class BossEnemy : EnemyDamage, IBoss
             // Not in training mode, destroy the boss
             enabled = false;
             Destroy(gameObject, DeathDestroyDelay);
-            Debug.Log("[BossEnemy] Boss destroyed - not in training mode");
+            DebugManager.Log(DebugCategory.Enemy, "Boss destroyed - not in training mode");
         }
     }
 
@@ -1115,13 +1135,13 @@ public class BossEnemy : EnemyDamage, IBoss
     /// </summary>
     public void DeactivateFlameAndWarning()
     {
-        Debug.Log("[BossEnemy] Deactivating all hazards and warnings...");
+        DebugManager.Log(DebugCategory.Enemy, "Deactivating all hazards and warnings...");
         
         // Deactivate flame
         if (_flame != null)
         {
             _flame.SetActive(false);
-            Debug.Log("[BossEnemy] Deactivated Flame");
+            DebugManager.Log(DebugCategory.Enemy, "Deactivated Flame");
         }
         
         // Deactivate all flame warning markers
@@ -1134,7 +1154,7 @@ public class BossEnemy : EnemyDamage, IBoss
                 if (marker.name == "Warning(Clone)" || marker.name == "Target(Clone)") {
                     Destroy(marker);
                 }
-                Debug.Log("[BossEnemy] Deactivated flame warning marker: " + marker.name);
+                DebugManager.Log(DebugCategory.Enemy, "Deactivated flame warning marker: " + marker.name);
             }
         }
         
@@ -1145,7 +1165,7 @@ public class BossEnemy : EnemyDamage, IBoss
             if (marker != null)
         {
             marker.SetActive(false);
-                Debug.Log("[BossEnemy] Deactivated dash indicator: " + marker.name);
+                DebugManager.Log(DebugCategory.Enemy, "Deactivated dash indicator: " + marker.name);
         }
         }
         
@@ -1153,14 +1173,14 @@ public class BossEnemy : EnemyDamage, IBoss
         if (_targetIconInstance != null)
         {
             _targetIconInstance.SetActive(false);
-            Debug.Log("[BossEnemy] Deactivated target icon instance");
+            DebugManager.Log(DebugCategory.Enemy, "Deactivated target icon instance");
         }
         
         // Force stop any ongoing dash state
         _isChargingDash = false;
         _isDashing = false;
         
-        Debug.Log("[BossEnemy] All hazards and warnings deactivated");
+        DebugManager.Log(DebugCategory.Enemy, "All hazards and warnings deactivated");
     }
 
     // ==================== Public Interface ====================
@@ -1206,7 +1226,7 @@ public class BossEnemy : EnemyDamage, IBoss
     /// </summary>
     public void ForceReset()
     {
-        Debug.Log("[BossEnemy] Force reset called");
+        DebugManager.Log(DebugCategory.Enemy, "Force reset called");
         ResetState();
     }
 
