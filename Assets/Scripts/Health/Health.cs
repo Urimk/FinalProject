@@ -71,9 +71,9 @@ using UnityEngine.Serialization;
 
     // ==================== Properties ====================
     /// <summary>Current health of the character.</summary>
-    public float CurrentHealth { get => _currentHealth; private set => _currentHealth = value; }
+    public float CurrentHealth { get => _currentHealth; set => _currentHealth = value; }
     /// <summary>Starting health of the character.</summary>
-    public float StartingHealth => _startingHealth;
+    public float StartingHealth { get => _startingHealth; set => _startingHealth = value; }
     /// <summary>Score value for this character.</summary>
     public int ScoreValue => _scoreValue;
 

@@ -1,133 +1,168 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
+using System.Collections;
 
 /// <summary>
-/// Handles one-way platform logic, including fall-through for player and AI.
+/// Handles one-way platform logic using collider disable/enable instead of platform effector.
+/// Supports multiple players, where each player controls a different edge collider.
 /// </summary>
 public class OneWayPlatform : MonoBehaviour
 {
     // ==================== Constants ====================
-    private const float DefaultWaitTime = 0.4f;
+    private const float DefaultFallThroughDuration = 0.3f;
     private const float PlatformTopYOffset = 1.1f;
-    private const float EffectorFallThroughRotation = 180f;
-    private const float EffectorNormalRotation = 0f;
     private const string PlayerTag = "Player";
-    private const string GroundLayerName = "Ground";
     private const KeyCode FallThroughKey = KeyCode.S;
 
     // ==================== Inspector Fields ====================
-    [Tooltip("True if this platform is controlled by AI.")]
-    [FormerlySerializedAs("isAIControlled")]
-    [SerializeField] private bool _isAIControlled;
-    [Tooltip("True if the platform can be fallen through.")]
-    [FormerlySerializedAs("isFallable")]
-    [SerializeField] private bool _isFallable = true;
-    [Tooltip("Wait time before resetting the platform.")]
-    [FormerlySerializedAs("waitTime")]
-    [SerializeField] private float _waitTime = DefaultWaitTime;
-    [Tooltip("Reference to the player Transform.")]
-    [FormerlySerializedAs("player")]
-    [SerializeField] private Transform _player;
+    [Header("Platform Settings")]
+    [Tooltip("Duration the collider stays disabled when falling through.")]
+    [SerializeField] private float _fallThroughDuration = DefaultFallThroughDuration;
+    [Tooltip("Reference to the first player Transform.")]
+    [SerializeField] private Transform _player1;
+    [Tooltip("Reference to the second player Transform (optional).")]
+    [SerializeField] private Transform _player2;
 
     // ==================== Private Fields ====================
-    private PlatformEffector2D _effector;
-    private EdgeCollider2D _edgeCollider;
-    private PlayerMovement _playerMovement;
+    private EdgeCollider2D[] _edgeColliders;
+    private bool _isManuallyDisabled1 = false;
+    private bool _isManuallyDisabled2 = false;
 
     // ==================== Unity Lifecycle ====================
-    /// <summary>
-    /// Unity Start callback. Initializes platform and player references.
-    /// </summary>
     private void Start()
     {
-        _effector = GetComponent<PlatformEffector2D>();
-        _edgeCollider = GetComponent<EdgeCollider2D>();
-        _playerMovement = _player.GetComponent<PlayerMovement>();
+        _edgeColliders = GetComponents<EdgeCollider2D>();
+        if (_edgeColliders == null || _edgeColliders.Length == 0)
+        {
+            Debug.LogError($"[{gameObject.name}] OneWayPlatform requires at least one EdgeCollider2D component!");
+        }
     }
 
-    /// <summary>
-    /// Unity Update callback. Handles fall-through input and collider state.
-    /// </summary>
     private void Update()
     {
-        if (!_isAIControlled)
-        {
-            if (Input.GetKeyDown(FallThroughKey) && _isFallable)
-            {
-                FallThroughPlatform();
-            }
-        }
-        CheckPlayerPosition();
+        HandlePlayerInput();
+        UpdateColliderStates();
     }
 
-    // ==================== AI and Platform Logic ====================
+    // ==================== Public Methods ====================
     /// <summary>
-    /// Allows AI to trigger fall-through.
+    /// Allows AI to trigger fall-through for the first player.
     /// </summary>
-    /// <param name="shouldFall">True if the AI should fall through.</param>
-    public void SetAIFallThrough(bool shouldFall)
+    public void SetAIFallThrough()
     {
-        if (_isAIControlled && shouldFall && _isFallable)
-        {
-            FallThroughPlatform();
-        }
+        StartCoroutine(DisableColliderTemporarily(1));
     }
 
     /// <summary>
-    /// Makes the player fall through the platform.
+    /// Allows AI to trigger fall-through for the second player.
     /// </summary>
-    private void FallThroughPlatform()
+    public void SetAIFallThrough2()
     {
-        _effector.rotationalOffset = EffectorFallThroughRotation;
-        _playerMovement.ResetCoyoteCounter();
-        _playerMovement.GroundLayer = 0;
-        Invoke(nameof(ResetPlatform), _waitTime);
+        StartCoroutine(DisableColliderTemporarily(2));
     }
 
     /// <summary>
-    /// Resets the platform to normal collision.
+    /// Checks if a specific player is currently on this platform.
     /// </summary>
-    private void ResetPlatform()
-    {
-        _effector.rotationalOffset = EffectorNormalRotation;
-        _playerMovement.GroundLayer = LayerMask.GetMask(GroundLayerName);
-    }
-
-    /// <summary>
-    /// Enables or disables the collider based on player position.
-    /// </summary>
-    private void CheckPlayerPosition()
-    {
-        if (_player != null)
-        {
-            float platformTop = _edgeCollider.bounds.max.y + PlatformTopYOffset;
-            float playerY = _player.position.y;
-            _edgeCollider.enabled = (playerY > platformTop);
-        }
-    }
-    
-    /// <summary>
-    /// Checks if the player is currently on this platform.
-    /// </summary>
+    /// <param name="playerTransform">The player transform to check.</param>
     /// <returns>True if the player is on this platform.</returns>
-    public bool IsPlayerOnPlatform()
+    public bool IsPlayerOnPlatform(Transform playerTransform)
     {
-        if (_player == null || _edgeCollider == null) return false;
+        Debug.Log("IsPlayerOnPlatform: " + playerTransform.name);
+        if (playerTransform == null || _edgeColliders == null || _edgeColliders.Length == 0) return false;
+        
+        // Use the first collider for platform detection
+        EdgeCollider2D collider = _edgeColliders[0];
         
         // Check if player is within the platform's horizontal bounds
-        float platformLeft = _edgeCollider.bounds.min.x;
-        float platformRight = _edgeCollider.bounds.max.x;
-        float playerX = _player.position.x;
+        float platformLeft = collider.bounds.min.x;
+        float platformRight = collider.bounds.max.x;
+        float playerX = playerTransform.position.x;
         
         bool withinHorizontalBounds = playerX >= platformLeft && playerX <= platformRight;
         
         // Check if player is at the platform's top level
-        float platformTop = _edgeCollider.bounds.max.y + PlatformTopYOffset;
-        float playerY = _player.position.y;
-        float tolerance = 0.1f; // Small tolerance for floating point precision
+        float platformTop = collider.bounds.max.y + PlatformTopYOffset;
+        float playerY = playerTransform.position.y;
+        float tolerance = 0.5f;
         
+        Debug.Log("Player Y: " + playerY + " Platform top: " + platformTop);
         bool atPlatformLevel = Mathf.Abs(playerY - platformTop) <= tolerance;
         
+        Debug.Log("Within horizontal bounds: " + withinHorizontalBounds + " At platform level: " + atPlatformLevel);
         return withinHorizontalBounds && atPlatformLevel;
     }
+
+    // ==================== Private Methods ====================
+    private void HandlePlayerInput()
+    {
+        // Handle first player input
+        if (_player1 != null && IsPlayerOnPlatform(_player1) && Input.GetKeyDown(FallThroughKey))
+        {
+            Debug.Log("Player 1 pressed S");
+            StartCoroutine(DisableColliderTemporarily(1));
+        }
+
+        // Handle second player input (if exists)
+        if (_player2 != null && IsPlayerOnPlatform(_player2) && Input.GetKeyDown(FallThroughKey))
+        {
+            Debug.Log("Player 2 pressed S");
+            StartCoroutine(DisableColliderTemporarily(2));
+        }
+    }
+
+    private void UpdateColliderStates()
+    {
+        if (_edgeColliders == null || _edgeColliders.Length == 0) return;
+
+        // Update first collider (controlled by player 1)
+        if (_edgeColliders.Length > 0)
+        {
+            bool shouldDisableCollider1 = _isManuallyDisabled1;
+            
+            if (_player1 != null)
+            {
+                float platformTop = _edgeColliders[0].bounds.max.y + PlatformTopYOffset;
+                if (_player1.position.y < platformTop || _player1.GetComponent<Rigidbody2D>().velocity.y > 0)
+                {
+                    shouldDisableCollider1 = true;
+                }
+            }
+            
+            _edgeColliders[0].enabled = !shouldDisableCollider1;
+        }
+
+        // Update second collider (controlled by player 2, if exists)
+        if (_edgeColliders.Length > 1)
+        {
+            bool shouldDisableCollider2 = _isManuallyDisabled2;
+            
+            if (_player2 != null)
+            {
+                float platformTop = _edgeColliders[1].bounds.max.y + PlatformTopYOffset;
+                if (_player2.position.y < platformTop || _player2.GetComponent<Rigidbody2D>().velocity.y > 0)
+                {
+                    shouldDisableCollider2 = true;
+                }
+            }
+            
+            _edgeColliders[1].enabled = !shouldDisableCollider2;
+        }
+    }
+
+    private IEnumerator DisableColliderTemporarily(int playerNumber)
+    {
+        if (playerNumber == 1)
+        {
+            _isManuallyDisabled1 = true;
+            yield return new WaitForSeconds(_fallThroughDuration);
+            _isManuallyDisabled1 = false;
+        }
+        else if (playerNumber == 2)
+        {
+            _isManuallyDisabled2 = true;
+            yield return new WaitForSeconds(_fallThroughDuration);
+            _isManuallyDisabled2 = false;
+        }
+    }
 }
+

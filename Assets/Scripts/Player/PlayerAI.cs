@@ -793,7 +793,7 @@ public class PlayerAI : Agent
         {
             if (platform == null) continue;
             
-            if (platform.IsPlayerOnPlatform())
+            if (platform.IsPlayerOnPlatform(this.transform))
             {
                 _currentPlatform = platform;
                 break;
@@ -1088,7 +1088,7 @@ public class PlayerAI : Agent
         
         foreach (var platform in _platforms)
         {
-            if (platform != null && platform.IsPlayerOnPlatform())
+            if (platform != null && platform.IsPlayerOnPlatform(this.transform))
             {
                 return true;
             }
@@ -1171,9 +1171,13 @@ public class PlayerAI : Agent
         }
         
         // Apply platform fall-through action
-        if (_currentPlatform != null) {
-            _currentPlatform.SetAIFallThrough(fallThrough);
-            if (fallThrough) _successfulFallThroughs++;
+        if (_currentPlatform != null)
+        {
+            if (fallThrough)
+            {
+                _currentPlatform.SetAIFallThrough();
+                _successfulFallThroughs++;
+            }
         }
         else{
             if (fallThrough) {

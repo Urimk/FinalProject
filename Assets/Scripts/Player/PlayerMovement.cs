@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
     private const float DefaultMaxFallSpeed = 100f;           // Maximum fall speed to prevent excessive velocity
     private const float DefaultNormalGravity = 2f;            // Normal gravity scale when not on wall
     private const float SpriteFlipThreshold = 0.01f;          // Minimum input to trigger sprite flipping
-    private const float SmallBumpLift = 0.001f;               // Small vertical lift to help climb small obstacles
+    private const float SmallBumpLift = 0.05f;               // Small vertical lift to help climb small obstacles
 
     // Recoil System
     private const float DefaultRecoilForce = 10f;             // Base force applied during recoil
@@ -190,6 +190,7 @@ public class PlayerMovement : MonoBehaviour
     // Movement State
     private int _facingDirection = 1;                         // Current facing direction (1 = right, -1 = left)
     private float _disableMovementTimer;                      // Timer to disable movement input
+    private bool _hasTriedBump = false;                       // Whether we've already tried the small bump for current blockage
 
     // Recoil System
     private bool _isInRecoil = false;                         // Whether player is currently in recoil state
@@ -479,37 +480,45 @@ public class PlayerMovement : MonoBehaviour
         _afterWallJump = false;
         _afterRecoil = false;
 
-        // Priority 3: Apply normal movement with collision detection
-        if (!IsHorizontallyBlocked())
+        if (IsHorizontallyBlocked())
         {
-            // No obstacles - apply full movement
-            _rigidbody2D.velocity = new Vector2(horizontalInput * _speed, _rigidbody2D.velocity.y);
-        }
-        else if (IsHorizontallyBlocked())
-        {
-            // Priority 4: Try small bump to help with small height differences
-            if (Mathf.Abs(horizontalInput) > SpriteFlipThreshold && !UIManager.Instance.IsGamePaused)
+            // Priority 3: Try small bump to help with small height differences (only if upper space is clear)
+            if (Mathf.Abs(horizontalInput) > SpriteFlipThreshold && !UIManager.Instance.IsGamePaused && !_hasTriedBump)
             {
-                // Apply small vertical lift
-                transform.position += new Vector3(0f, SmallBumpLift, 0f);
+                // Check if upper space is clear before attempting bump
+                if (IsUpperSpaceClear())
+                {
+                    // Apply small vertical lift
+                    transform.position += new Vector3(0f, SmallBumpLift, 0f);
+                }
 
                 // Check if bump helped by testing collision again
                 if (!IsHorizontallyBlocked())
                 {
                     // Bump worked - allow movement
                     _rigidbody2D.velocity = new Vector2(horizontalInput * _speed, _rigidbody2D.velocity.y);
+                    _hasTriedBump = false; // Reset for next blockage
                 }
                 else
                 {
                     // Bump didn't help - stop horizontal movement
                     _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
+                    _hasTriedBump = true; // Mark that we've tried the bump for this blockage
                 }
             }
             else
             {
-                // No input or game paused - stop horizontal movement
+                // Already tried bump or no input - stop horizontal movement
                 _rigidbody2D.velocity = new Vector2(0f, _rigidbody2D.velocity.y);
             }
+        }
+        else
+        {
+            // Priority 4: Normal horizontal movement
+            _rigidbody2D.velocity = new Vector2(horizontalInput * _speed, _rigidbody2D.velocity.y);
+            
+            // Reset bump flag when not blocked
+            _hasTriedBump = false;
         }
 
         // Priority 5: Update sprite facing direction
@@ -803,6 +812,37 @@ public class PlayerMovement : MonoBehaviour
     public bool IsBlockedByWall()
     {
         return IsHorizontallyBlocked();
+    }
+
+    /// <summary>
+    /// Checks if the upper 75% of the player's collision box has clear space in the facing direction.
+    /// Used to determine if a small bump would be effective.
+    /// </summary>
+    private bool IsUpperSpaceClear()
+    {
+        // Skip if no horizontal input
+        float horizontalInput = _inputHandler?.HorizontalInput ?? 0f;
+        if (Mathf.Approximately(horizontalInput, 0f))
+            return false;
+
+        // Set up collision detection parameters for upper portion
+        Vector2 checkDirection = _facingDirection == 1 ? Vector2.right : Vector2.left;
+        Vector2 size = _boxCollider.bounds.size;
+        size.y *= 0.85f; // Use only upper 75% of the collision box
+        Vector2 center = _boxCollider.bounds.center + new Vector3(0, size.y * 0.25f, 0); // Shift center to upper portion
+
+        // Perform BoxCast to detect obstacles in upper space
+        RaycastHit2D hit = Physics2D.BoxCast(
+            center,
+            size,
+            0f,
+            checkDirection,
+            WallCheckBoxCastDistance,
+            _obstacleLayer | _wallLayer | _groundLayer
+        );
+
+        // Return true if no collision detected (upper space is clear)
+        return hit.collider == null;
     }
 
     /// <summary>

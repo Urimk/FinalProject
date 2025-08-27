@@ -41,6 +41,7 @@ public class PatrolSystem : MonoBehaviour
     [SerializeField] private TriggerType _triggerType = TriggerType.Always;
     [SerializeField] private bool _destroyAfterPatrol = false;
     [SerializeField] private float _destroyDelay = 0f;
+    [SerializeField] private bool _flipSprite = true;
 
     [Header("Patrol Points")]
     [SerializeField] private PatrolPointType _patrolPointType = PatrolPointType.Coordinates;
@@ -281,7 +282,7 @@ public class PatrolSystem : MonoBehaviour
         transform.position += movement;
         
         // Update sprite direction
-        if (direction.x != 0)
+        if (_flipSprite && direction.x != 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(_initScale.x) * Mathf.Sign(direction.x), _initScale.y, _initScale.z);
         }
