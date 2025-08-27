@@ -56,7 +56,7 @@ public class RangedEnemy : MonoBehaviour
     // ==================== Private Fields ====================
     private float _cooldownTimer = Mathf.Infinity;
     private Animator _animator;
-    private EnemyPatrol _enemyPatrol;
+    private PatrolSystem _patrolSystem;
 
     // ==================== Unity Lifecycle ====================
     /// <summary>
@@ -65,7 +65,7 @@ public class RangedEnemy : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        _patrolSystem = GetComponentInParent<PatrolSystem>();
     }
 
     /// <summary>
@@ -82,9 +82,16 @@ public class RangedEnemy : MonoBehaviour
                 _animator.SetTrigger("rangedAttack");
             }
         }
-        if (_enemyPatrol != null)
+        if (_patrolSystem != null)
         {
-            _enemyPatrol.enabled = !PlayerInSight();
+            if (PlayerInSight())
+            {
+                _patrolSystem.StopPatrol();
+            }
+            else if (!_patrolSystem.IsPatrolling)
+            {
+                _patrolSystem.StartPatrol();
+            }
         }
     }
 

@@ -200,10 +200,7 @@ public class BossRewardManager : MonoBehaviour
         }
         _currentAccumulatedStepReward = 0f;
         _totalEpisodeReward += rewardToReturn;
-        
-        // Debug logging to track step rewards
-        Debug.Log($"[BossRewardManager] GetStepRewardAndReset: stepReward={rewardToReturn}, _totalEpisodeReward={_totalEpisodeReward}");
-        
+                
         return rewardToReturn;
     }
 

@@ -64,7 +64,6 @@ public class BossAI : BossEnemy
     private bool _flameMissed = true;
     private bool _isFlameDeactivationCanceled = false;
     private PlayerMovement _playerMovement;
-    private Coroutine _dashCoroutine;
 
     // ==================== Unity Lifecycle ====================
     /// <summary>

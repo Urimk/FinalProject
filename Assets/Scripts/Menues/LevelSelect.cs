@@ -45,7 +45,7 @@ public class LevelSelect : MonoBehaviour
 
         // Load the selected level
         SceneManager.LoadScene(string.Format(LevelSceneFormat, levelIndex, difficulty));
-        SoundManager.instance.ChangeMusic(SoundManager.instance.Level1Music);
+        SoundManager.instance.ChangeMusic(SoundManager.instance.LevelMusic);
     }
 
     /// <summary>

@@ -49,7 +49,7 @@ public class MeleeEnemy : MonoBehaviour
     // ==================== Private Fields ====================
     private float _cooldownTimer = Mathf.Infinity;
     private Health _playerHealth;
-    private EnemyPatrol _enemyPatrol;
+    private PatrolSystem _patrolSystem;
     private Animator _animator;
 
     // ==================== Unity Lifecycle ====================
@@ -59,7 +59,7 @@ public class MeleeEnemy : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        _patrolSystem = GetComponent<PatrolSystem>();
     }
 
     /// <summary>
@@ -77,9 +77,16 @@ public class MeleeEnemy : MonoBehaviour
                 SoundManager.instance.PlaySound(_attackSound, gameObject);
             }
         }
-        if (_enemyPatrol != null)
+        if (_patrolSystem != null)
         {
-            _enemyPatrol.enabled = !PlayerInSight();
+            if (PlayerInSight())
+            {
+                _patrolSystem.StopPatrol();
+            }
+            else if (!_patrolSystem.IsPatrolling)
+            {
+                _patrolSystem.StartPatrol();
+            }
         }
     }
 

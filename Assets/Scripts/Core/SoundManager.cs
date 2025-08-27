@@ -37,7 +37,7 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Gets the Level 1 music audio clip.
     /// </summary>
-    public AudioClip levelMusic => levelMusic;
+    public AudioClip LevelMusic => levelMusic;
 
     // ==================== Unity Lifecycle ====================
     private void Awake()
