@@ -38,7 +38,16 @@ public class AdminOptions : MonoBehaviour
     private void Start()
     {
         // Find the player health component on object with Player tag
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject playerObject = players[0];
+        foreach (GameObject obj in players)
+        {
+            if (obj.layer == LayerMask.NameToLayer("Player"))
+            {
+                playerObject = obj;
+                break;
+            }
+        }
         if (playerObject != null)
         {
             _playerHealth = playerObject.GetComponent<Health>();

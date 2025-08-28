@@ -191,6 +191,7 @@ public class UsernameInputMenu : MonoBehaviour
     private void LoadMainMenu()
     {
         Time.timeScale = 1; // Resume time before loading
+        SoundManager.instance.ChangeMusic(SoundManager.instance.MenuMusic);
         SceneManager.LoadScene(0);
     }
 }

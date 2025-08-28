@@ -19,7 +19,7 @@ using UnityEngine.Serialization;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
-    // ==================== Constants ====================
+    // ==================== Constants =========d===========
     // Movement and Physics
     private const float DefaultMaxFallSpeed = 100f;           // Maximum fall speed to prevent excessive velocity
     private const float DefaultNormalGravity = 2f;            // Normal gravity scale when not on wall

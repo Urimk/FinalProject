@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &97272
 MonoBehaviour:
@@ -9476,7 +9476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &357990049
 MonoBehaviour:
@@ -20673,7 +20673,7 @@ EdgeCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 768
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -20714,7 +20714,7 @@ EdgeCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1280
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -21434,7 +21434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &819608863
 MonoBehaviour:
@@ -23656,7 +23656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &919799274
 MonoBehaviour:
@@ -24015,7 +24015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &924633944
 MonoBehaviour:
@@ -30878,7 +30878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &1182573371
 MonoBehaviour:
@@ -40935,7 +40935,7 @@ EdgeCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 768
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -40976,7 +40976,7 @@ EdgeCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1280
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -44157,7 +44157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &1578611545
 MonoBehaviour:
@@ -56558,7 +56558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0f3f1e96ace96448666a9fccb0862e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform: {fileID: 0}
+  _playerTransform: {fileID: 567619361}
   _attachDistance: 2
 --- !u!114 &2051185662
 MonoBehaviour:
